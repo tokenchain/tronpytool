@@ -46,6 +46,7 @@ from tronpytool.common.encoding import (
 )
 from tronpytool.common.key import PrivateKey as PrivateKeyFactory
 from tronpytool.common.normalizers import abi_resolver
+from tronpytool.compile.solwrap import SolcWrap
 from tronpytool.exceptions import (
     InvalidTronError,
     TronError
@@ -62,6 +63,7 @@ DEFAULT_MODULES = {
 class Tron:
     # Providers
     HTTPProvider = HttpProvider
+    SolcWrap = SolcWrap
 
     _default_block = None
     _private_key = None
