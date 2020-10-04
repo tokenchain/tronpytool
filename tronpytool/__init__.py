@@ -8,14 +8,14 @@
 import sys
 
 import pkg_resources
-
 from eth_account import Account  # noqa: E402
-from tronpytool.providers.http import HttpProvider  # noqa: E402
+
+from tronpytool.compile.solwrap import SolcWrap
 from tronpytool.main import Tron  # noqa: E402
+from tronpytool.providers.http import HttpProvider  # noqa: E402
 
 if sys.version_info < (3, 5):
     raise EnvironmentError("Python 3.5 or above is required")
-
 
 __version__ = pkg_resources.get_distribution("tronpytool").version
 
@@ -24,4 +24,5 @@ __all__ = [
     'HttpProvider',
     'Account',
     'Tron',
+    'SolcWrap'
 ]
