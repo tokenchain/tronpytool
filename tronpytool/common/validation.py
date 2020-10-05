@@ -22,7 +22,7 @@ from trx_utils import (
     is_integer,
     is_binary_address, is_hex_address, is_checksum_address)
 
-from common.account import PrivateKey
+from tronpytool.common.account import PrivateKey
 from tronpytool.common.abi import filter_by_type, abi_to_signature, is_recognized_type, is_string_type, is_bytes_type, \
     is_address_type, is_int_type, is_uint_type, is_bool_type, sub_type_of_array_type, is_array_type, \
     length_of_array_type
