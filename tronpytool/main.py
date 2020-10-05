@@ -46,7 +46,6 @@ from tronpytool.common.encoding import (
 )
 from tronpytool.common.key import PrivateKey as PrivateKeyFactory
 from tronpytool.common.normalizers import abi_resolver
-from tronpytool.compile.solwrap import SolcWrap
 from tronpytool.exceptions import (
     InvalidTronError,
     TronError
@@ -63,7 +62,7 @@ DEFAULT_MODULES = {
 class Tron:
     # Providers
     HTTPProvider = HttpProvider
-    SolcWrap = SolcWrap
+    # SolcWrap = SolcWrap
 
     _default_block = None
     _private_key = None
@@ -160,6 +159,9 @@ class Tron:
         """Get a private key"""
         return self._private_key
 
+    def get_private_key(self) -> PrivateKey:
+        return self.private_key_class
+
     @private_key.setter
     def private_key(self, value: str) -> None:
         """Set a private key used with the TronAPI instance,
@@ -172,7 +174,7 @@ class Tron:
             private_key = PrivateKey(value)
         except ValueError:
             raise TronError('Invalid private key provided')
-
+        self.private_key_class = private_key
         self._private_key = str(private_key).lower()
 
     @property
@@ -297,7 +299,7 @@ class Tron:
         Note:
             If you wish to convert generic data to hexadecimal strings,
             please use the function tron.to_hex.
-
+            return a static class
         """
         return Address()
 
