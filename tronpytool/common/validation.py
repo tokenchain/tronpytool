@@ -5,20 +5,15 @@
 # --------------------------------------------------------------------------------------------
 import itertools
 import re
-from _sha256 import sha256
-from typing import Any
 
-import base58
 from eth_utils import (
     function_abi_to_4byte_selector,
     apply_formatter_to_array
 )
 
 from trx_utils import (
-    is_hex,
     encode_hex,
     is_0x_prefixed,
-    is_text,
     is_list_like,
     is_dict,
     is_string,
@@ -27,16 +22,17 @@ from trx_utils import (
     is_integer,
     is_binary_address, is_hex_address, is_checksum_address)
 
+from common.account import PrivateKey
+from tronpytool.common.abi import filter_by_type, abi_to_signature, is_recognized_type, is_string_type, is_bytes_type, \
+    is_address_type, is_int_type, is_uint_type, is_bool_type, sub_type_of_array_type, is_array_type, \
+    length_of_array_type
+
 from tronpytool.common.toolz import (
     compose,
     groupby,
     valfilter,
     valmap,
 )
-
-from tronpytool.common.abi import filter_by_type, abi_to_signature, is_recognized_type, is_string_type, is_bytes_type, \
-    is_address_type, is_int_type, is_uint_type, is_bool_type, sub_type_of_array_type, is_array_type, \
-    length_of_array_type
 from tronpytool.exceptions import InvalidAddress
 
 
@@ -195,3 +191,8 @@ def assert_one_val(*args, **kwargs):
             "Exactly one of the passed values can be specified. "
             "Instead, values were: %r, %r" % (args, kwargs)
         )
+
+
+def is_private_key(i: any) -> bool:
+    return isinstance(i, PrivateKey)
+

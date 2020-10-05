@@ -201,7 +201,7 @@ class PublicKey(BaseKey):
 class PrivateKey(BaseKey):
     """The private key."""
 
-    public_key = None
+    _pubkey = None
 
     def __init__(self, private_key_bytes: bytes):
         try:
@@ -218,9 +218,13 @@ class PrivateKey(BaseKey):
         self._raw_key = private_key_bytes
 
         priv_key = ecdsa.SigningKey.from_string(self._raw_key, curve=ecdsa.SECP256k1)
-        self.public_key = PublicKey(priv_key.get_verifying_key().to_string())
+        self._pubkey = PublicKey(priv_key.get_verifying_key().to_string())
 
         super().__init__()
+
+    @property
+    def public_key(self) -> "PublicKey":
+        return self._pubkey
 
     def sign_msg(self, message: bytes) -> "Signature":
         """Sign a raw message."""
@@ -232,7 +236,7 @@ class PrivateKey(BaseKey):
             signature, message, curve=ecdsa.SECP256k1, hashfunc=hashlib.sha256
         )
         for v, pk in enumerate(vks):
-            if pk.to_string() == self.public_key:
+            if pk.to_string() == self._pubkey:
                 break
 
         signature += bytes([v])
@@ -248,7 +252,7 @@ class PrivateKey(BaseKey):
             signature, message_hash, curve=ecdsa.SECP256k1, hashfunc=hashlib.sha256
         )
         for v, pk in enumerate(vks):
-            if pk.to_string() == self.public_key:
+            if pk.to_string() == self._pubkey:
                 break
 
         signature += bytes([v])

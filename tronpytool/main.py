@@ -34,7 +34,7 @@ from trx_utils import (
     to_hex
 )
 
-from tronpytool import HttpProvider, constants
+from tronpytool import constants
 from tronpytool.common.abi import map_abi_data
 from tronpytool.common.account import Address, PrivateKey, Account
 from tronpytool.common.encoding import (
@@ -61,7 +61,6 @@ DEFAULT_MODULES = {
 
 class Tron:
     # Providers
-    HTTPProvider = HttpProvider
     # SolcWrap = SolcWrap
 
     _default_block = None
@@ -126,11 +125,7 @@ class Tron:
 
     def setNetwork(self, networkname="nile"):
         group = constants.conf_for_name(networkname)
-        self.manager = TronManager(self, dict(
-            full_node=HttpProvider(group["full_node"]),
-            solidity_node=HttpProvider(group["solidity_node"]),
-            event_server=HttpProvider(group["event_server"])
-        ))
+        self.manager = TronManager(self, constants.to_providers_set(group))
         return self
 
     @property
@@ -155,12 +150,13 @@ class Tron:
         return self.manager.providers
 
     @property
-    def private_key(self):
+    def private_key(self) -> str:
         """Get a private key"""
         return self._private_key
 
-    def get_private_key(self) -> PrivateKey:
+    def getKey(self) -> "PrivateKey":
         return self.private_key_class
+
 
     @private_key.setter
     def private_key(self, value: str) -> None:
@@ -331,15 +327,6 @@ class Tron:
 
         """
         return Account.create()
-
-    @staticmethod
-    def is_valid_provider(provider) -> bool:
-        """Check connected provider
-
-        Args:
-            provider(HttpProvider): Provider
-        """
-        return isinstance(provider, HttpProvider)
 
     def solidity_sha3(self, abi_types, values):
         """

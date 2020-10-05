@@ -27,13 +27,22 @@ from requests.exceptions import (
 )
 
 from tronpytool.common.encoding import to_text
-from tronpytool.providers.base import BaseProvider
 from tronpytool.exceptions import HTTP_EXCEPTIONS, TransportError
+from tronpytool.providers.base import BaseProvider
 
 HTTP_SCHEMES = {'http', 'https'}
 HttpResponse = namedtuple('HttpResponse', ('status_code', 'headers', 'data'))
 
 log = logging.getLogger(__name__)
+
+
+def is_valid_provider(provider) -> bool:
+    """Check connected provider
+
+    Args:
+        provider(HttpProvider): Provider
+    """
+    return isinstance(provider, HttpProvider)
 
 
 class HttpProvider(BaseProvider):

@@ -10,6 +10,8 @@
 # If you do not know what links are used for, it is recommended not to change
 from typing import Tuple
 
+from tronpytool.providers.http import HttpProvider
+
 DEFAULT_NODES = {
     'full_node': 'https://api.trongrid.io',
     'solidity_node': 'https://api.trongrid.io',
@@ -69,6 +71,14 @@ RES_CODE = dict(
 
 def conf_for_name(name: str) -> dict:
     return ALL.get(name, None)
+
+
+def to_providers_set(d: dict) -> dict:
+    return dict(
+        full_node=HttpProvider(d["full_node"]),
+        solidity_node=HttpProvider(d["solidity_node"]),
+        event_server=HttpProvider(d["event_server"])
+    )
 
 
 def handle_res(r: dict) -> Tuple[bool, str, str]:

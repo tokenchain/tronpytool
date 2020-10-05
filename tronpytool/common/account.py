@@ -11,7 +11,7 @@ import base58
 import ecdsa
 from eth_account import Account as ETHAccount
 from eth_keys import KeyAPI
-from trx_utils import is_hex, is_bytes, is_dict
+from trx_utils import is_hex, is_bytes
 
 from tronpytool.common.datastructures import AttributeDict
 from tronpytool.common.key import PrivateKey as PFactory
@@ -56,6 +56,7 @@ class Account:
 
 
 class Address:
+
     @staticmethod
     def from_hex(address) -> str:
         """Helper function that will convert a generic value from hex"""
@@ -70,33 +71,6 @@ class Address:
             return address.lower().replace('0x', '41', 2)
 
         return base58.b58decode_check(address).hex().upper()
-
-    @staticmethod
-    def to_hexv2(address: any) -> str:
-        """Helper function that will convert a generic value (TRON ADDRESS) to hex"""
-
-        if is_dict(address):
-            addressp = ''
-            if hasattr(address, 'hex'):
-                addressp = address.hex
-
-            if hasattr(address, 'Hex'):
-                addressp = address.Hex
-
-            print(addressp)
-
-            if is_hex(addressp):
-                return addressp.lower().replace('0x', '41', 2)
-            else:
-                return base58.b58decode_check(addressp).hex().upper()
-        elif type(address) is str:
-            if is_hex(address):
-                return address.lower().replace('0x', '41', 2)
-            else:
-                return base58.b58decode_check(address).hex().upper()
-        else:
-            raise KeyError(
-                "is this not a proper address type, please look for the good one but found item {}".format(address))
 
     @staticmethod
     def from_private_key(private_key) -> AttributeDict:
@@ -117,6 +91,7 @@ class PrivateKey(object):
 
         _private = unhexlify(bytes(private_key, encoding='utf8'))
         self._key = KeyAPI.PrivateKey(_private)
+        self.stored_privkey = private_key
         _length = len(self._key)
 
         # Key length must not exceed 64 length
@@ -137,6 +112,7 @@ class PrivateKey(object):
     def address(self) -> AttributeDict:
         public_key = self._key.public_key
         address = '41' + public_key.to_address()[2:]
+        contract_address = '0x' + public_key.to_address()[2:]
         to_base58 = base58.b58encode_check(bytes.fromhex(address))
 
         # If bytecode then convert to string
@@ -145,11 +121,18 @@ class PrivateKey(object):
 
         return AttributeDict({
             'hex': address,
-            'base58': to_base58
+            'base58': to_base58,
+            'sol': contract_address
         })
 
+    def printKeys(self):
+        pair = self.address
+        print("public hex: {}".format(pair.hex))
+        print("public wallet address in base58: {}".format(pair.base58))
+        print("public address in contract: {}".format(pair.sol))
+
     def __str__(self):
-        return self.private_key
+        return self.stored_privkey
 
     def __bytes__(self):
         return self._key.to_bytes()
