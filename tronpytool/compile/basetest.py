@@ -42,8 +42,8 @@ class SolcWrap(object):
         return self
 
     def WrapModel(self):
-        # path="{}/combinded.json".format(self.OUTPUTBUILD)
-        pathc = os.path.join(os.path.dirname(__file__), self.OUTPUT_BUILD, "combined.json")
+        """setup initialize the file for combined.json"""
+        pathc = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, "combined.json")
         try:
             pathcli = codecs.open(pathc, 'r', 'utf-8-sig')
             self.combined_data = json.load(pathcli)
@@ -51,9 +51,9 @@ class SolcWrap(object):
             print("Problems from loading items from the file: ", e)
         return self
 
-    def GetCodeClass(self, classname) -> [str, str]:
-        p1bin = os.path.join(os.path.dirname(__file__), self.OUTPUT_BUILD, "{}.bin".format(classname))
-        p2abi = os.path.join(os.path.dirname(__file__), self.OUTPUT_BUILD, "{}.abi".format(classname))
+    def GetCodeClass(self, classname) -> [any, any]:
+        p1bin = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, "{}.bin".format(classname))
+        p2abi = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, "{}.abi".format(classname))
         bin = codecs.open(p1bin, 'r', 'utf-8-sig').read()
         abi = json.load(codecs.open(p2abi, 'r', 'utf-8-sig'))
         return abi, bin
@@ -65,8 +65,9 @@ class SolcWrap(object):
         return self.combined_data["contracts"][fullname]["abi"], self.combined_data["contracts"][fullname]["bin"]
 
     def GetCode(self, path, classname) -> [str, str]:
-        return self.combined_data["contracts"][self.byClassName(path, classname)]["abi"], \
-               self.combined_data["contracts"][self.byClassName(path, classname)]["bin"]
+        abi = self.combined_data["contracts"][self.byClassName(path, classname)]["abi"]
+        bin = self.combined_data["contracts"][self.byClassName(path, classname)]["bin"]
+        return abi, bin
 
     def writeFile(self, content, filename):
         fo = open(filename, "w")
@@ -117,12 +118,34 @@ class CoreDeploy:
         else:
             sol_contr = SolcWrap(ROOT)
 
-        sol_contr = sol_contr.WrapModel()
-        self.deploy = deploy
+        self.is_deploy = deploy
         self.sol_cont = sol_contr
         return self
 
-    def sol_dat_deploy(self, sol_wrap: SolcWrap, path: str, classname: str, params: list = []) -> str:
+    def deploy(self, sol_wrap: SolcWrap, classname: str, params: list = []) -> str:
+        """This is using the faster way to deploy files by using the specific abi and bin files"""
+        _abi, _bytecode = sol_wrap.GetCodeClass(classname)
+        contractwork = self.tron.trx.contract(abi=_abi, bytecode=_bytecode)
+        contract = contractwork.constructor()
+        tx_data = contract.transact(
+            fee_limit=10 ** 9,
+            call_value=0,
+            parameters=params,
+            consume_user_resource_percent=1)
+        print("======== TX Result ✅")
+        sign = self.tron.trx.sign(tx_data)
+        print("======== Signing {} ✅".format(classname))
+        result = self.tron.trx.broadcast(sign)
+        path = "{}/{}.json".format(self.ACTION_FOLDER, classname)
+        print("======== Broadcast Result ✅ -> {}".format(path))
+        sol_wrap.StoreTxResult(result, path)
+        contract_address = self.tron.address.from_hex(result["transaction"]["contract_address"])
+        self._contract_dict[classname] = contract_address
+        print("======== address saved to ✅ {} -> {}".format(contract_address, classname))
+        return contract_address
+
+    def classic_deploy(self, sol_wrap: SolcWrap, path: str, classname: str, params: list = []) -> str:
+        self.sol_cont.WrapModel()
         _abi, _bytecode = sol_wrap.GetCode(path, classname)
         contractwork = self.tron.trx.contract(abi=_abi, bytecode=_bytecode)
         contract = contractwork.constructor()
