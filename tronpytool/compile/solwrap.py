@@ -106,3 +106,52 @@ class CoreDeploy:
         self._contract_dict[classname] = contract_address
         print("======== address saved to ✅ {} -> {}".format(contract_address, classname))
         return contract_address
+
+
+class WrapContract(object):
+    """docstring for WrapContract The contract for this BOBA TEA"""
+
+    def __init__(self, _network):
+        nn1 = Tron().setNetwork(_network)
+        if nn1.is_connected():
+            self.tron_client = nn1
+        else:
+            print(
+                "client v1 is not connected. please check the internet connection or the service is down! network: {}".format(
+                    _network))
+
+        self._tron_module = nn1.trx
+        self._contract = None
+
+    def getClientTron(self) -> "Tron":
+        return self.tron_client
+
+    def setMasterKey(self, pub: str, pri: str) -> "WrapContract":
+        self.tron_client.private_key = pri
+        self.tron_client.default_address = pub
+        return self
+
+    def initContract(self, contract_metadata) -> "WrapContract":
+        """
+        Load and initiate contract interface by using the deployed contract json metadata
+        try:
+        except FileNotFoundError as e:
+            print("Could not load the file ", e)
+        except Exception as e:
+            print("Problems from loading items from the file: ", e)
+        """
+        contractDict = json.load(codecs.open(contract_metadata, 'r', 'utf-8-sig'))
+        trn = contractDict["transaction"]
+        hex_address = trn["contract_address"]
+        self.transction_detail = contractDict
+        self.trc_address = self.tron_client.address.from_hex(hex_address)
+        print("@contract address {} from hex {}".format(self.trc_address, hex_address))
+        # self.init_internal_contract()
+        self.implcontract()
+        return self
+
+    def getTxID(self):
+        return self.transction_detail["txid"]
+
+    def implcontract(self):
+        pass
