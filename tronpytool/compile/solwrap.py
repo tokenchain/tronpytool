@@ -13,19 +13,20 @@ ROOT = os.path.join(os.path.dirname(__file__))
 
 class SolcWrap(object):
     """docstring for SolcWrap"""
-    outputfolder = "build"
+    OUTPUT_BUILD = "build"
+    WORKSPACE_PATH = ""
     solfolder = ""
     file_name = "xxx.sol"
     prefixname = ""
     statement = 'End : {}, IO File {}'
-    workspace = ""
 
     def __init__(self, workspace):
-        self.workspace = workspace
+        """param workspace: this is the local path for the file set"""
+        self.WORKSPACE_PATH = workspace
         super(SolcWrap, self).__init__()
 
     def SetOutput(self, path):
-        self.outputfolder = path
+        self.OUTPUTBUILD = path
         return self
 
     def SetSolPath(self, path):
@@ -33,21 +34,29 @@ class SolcWrap(object):
         return self
 
     def BuildRemote(self):
-        """using remote compile method to compile the sol files
+        """This is the remote command to execute the solc_remote bash file
+        using remote compile method to compile the sol files
         all works will be done with the remote server or using the docker"""
-        list_files = subprocess.run(["{}/solc_remote".format(self.workspace)])
+        list_files = subprocess.run(["{}/solc_remote".format(self.WORKSPACE_PATH)])
         print("The exit code was: %d" % list_files.returncode)
         return self
 
     def WrapModel(self):
-        # path="{}/combinded.json".format(self.outputfolder)
-        pathc = os.path.join(os.path.dirname(__file__), self.outputfolder, "combined.json")
+        # path="{}/combinded.json".format(self.OUTPUTBUILD)
+        pathc = os.path.join(os.path.dirname(__file__), self.OUTPUT_BUILD, "combined.json")
         try:
             pathcli = codecs.open(pathc, 'r', 'utf-8-sig')
             self.combined_data = json.load(pathcli)
         except Exception as e:
             print("Problems from loading items from the file: ", e)
         return self
+
+    def GetCodeClass(self, classname) -> [str, str]:
+        p1bin = os.path.join(os.path.dirname(__file__), self.OUTPUT_BUILD, "{}.bin".format(classname))
+        p2abi = os.path.join(os.path.dirname(__file__), self.OUTPUT_BUILD, "{}.abi".format(classname))
+        bin = codecs.open(p1bin, 'r', 'utf-8-sig').read()
+        abi = json.load(codecs.open(p2abi, 'r', 'utf-8-sig'))
+        return abi, bin
 
     def byClassName(self, path, classname):
         return "{prefix}:{name}".format(prefix=path, name=classname)
@@ -81,10 +90,37 @@ class CoreDeploy:
         self._contract_dict = dict()
 
     def getAddr(self, keyname: str) -> str:
+        """example: TT67rPNwgmpeimvHUMVzFfKsjL9GZ1wGw8"""
         return self._contract_dict.get(keyname)
+
+    def getAddr0x(self, keyname: str) -> str:
+        """example: 0xBBC8C05F1B09839E72DB044A6AA57E2A5D414A10"""
+        return self.tron.address.to_hex_0x(self._contract_dict.get(keyname))
+
+    def getAddr0x41(self, keyname: str) -> str:
+        """example: 0x41BBC8C05F1B09839E72DB044A6AA57E2A5D414A10"""
+        return self.tron.address.to_hex_0x_41(self._contract_dict.get(keyname))
+
+    def getAddrHex(self, keyname: str) -> str:
+        """example: 41BBC8C05F1B09839E72DB044A6AA57E2A5D414A10"""
+        return self.tron.address.to_hex(self._contract_dict.get(keyname))
+
+    def getAllAddress(self) -> dict:
+        return self._contract_dict
 
     def preview_all_addresses(self):
         print(self._contract_dict)
+
+    def connect_deploy(self, rebuild=False, deploy=False) -> "CoreDeploy":
+        if rebuild:
+            sol_contr = SolcWrap(ROOT).BuildRemote()
+        else:
+            sol_contr = SolcWrap(ROOT)
+
+        sol_contr = sol_contr.WrapModel()
+        self.deploy = deploy
+        self.sol_cont = sol_contr
+        return self
 
     def sol_dat_deploy(self, sol_wrap: SolcWrap, path: str, classname: str, params: list = []) -> str:
         _abi, _bytecode = sol_wrap.GetCode(path, classname)
@@ -97,7 +133,7 @@ class CoreDeploy:
             consume_user_resource_percent=1)
         print("======== TX Result ✅")
         sign = self.tron.trx.sign(tx_data)
-        print("======== Signing LendingPoolAddressesProvider ✅")
+        print("======== Signing {} ✅".format(classname))
         result = self.tron.trx.broadcast(sign)
         path = "{}/{}.json".format(self.ACTION_FOLDER, classname)
         print("======== Broadcast Result ✅ -> {}".format(path))

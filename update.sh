@@ -32,16 +32,16 @@ fined() {
   rm -rf html
   #python3 -m pdoc --html tronpytool
   #python3 -m pip install --user --upgrade setuptools wheel
-  python3 -m pip install --proxy 127.0.0.1:1087 --upgrade setuptools wheel
+  python3 -m pip install --upgrade setuptools wheel
   python3 setup.py sdist bdist_wheel
   #python3 -m pip install --user --upgrade twine
-  python3 -m pip install --proxy 127.0.0.1:1087 --upgrade twine
+  python3 -m pip install --upgrade twine
   #python3 -m twine upload --repository testpypi dist/*
   python3 -m twine upload dist/* --verbose
 
   echo "please update the package by using this command"
   echo "pip3 install tronpytool==$VERSION"
-  echo "pi install tronpytool==$VERSION"
+  echo "pi tronpytool==$VERSION"
   echo "wait 30 seconds until it gets uploaded online... "
   #sleep 30
   #echo "ready and install it again.. "

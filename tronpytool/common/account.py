@@ -73,6 +73,20 @@ class Address:
         return base58.b58decode_check(address).hex().upper()
 
     @staticmethod
+    def to_hex_0x(address) -> str:
+        """Helper function that will convert a generic value to hex"""
+        if is_hex(address):
+            return address
+        return '0x' + base58.b58decode_check(address).hex().upper()[2:]
+
+    @staticmethod
+    def to_hex_0x_41(address) -> str:
+        """Helper function that will convert a generic value to hex"""
+        if is_hex(address):
+            return address
+        return '0x' + base58.b58decode_check(address).hex().upper()
+
+    @staticmethod
     def from_private_key(private_key) -> AttributeDict:
         return PrivateKey(private_key).address
 
