@@ -6,6 +6,8 @@ import os
 import subprocess
 import time
 
+from tronpytool import Tron
+
 ROOT = os.path.join(os.path.dirname(__file__))
 
 
@@ -50,7 +52,7 @@ class SolcWrap(object):
     def byClassName(self, path, classname):
         return "{prefix}:{name}".format(prefix=path, name=classname)
 
-    def GetCode(self, fullname):
+    def GetCodeTag(self, fullname):
         return self.combined_data["contracts"][fullname]["abi"], self.combined_data["contracts"][fullname]["bin"]
 
     def GetCode(self, path, classname) -> [str, str]:
@@ -65,3 +67,42 @@ class SolcWrap(object):
 
     def StoreTxResult(self, tx_result_data, filepath):
         self.writeFile(json.dumps(tx_result_data, ensure_ascii=False), filepath)
+
+
+class CoreDeploy:
+    """DEFI Contract deployment
+    with the right strategies
+    """
+    _contract_dict: dict
+    ACTION_FOLDER = "deploy_results"
+
+    def __init__(self, tron: Tron):
+        self.tron = tron
+        self._contract_dict = dict()
+
+    def getAddr(self, keyname: str) -> str:
+        return self._contract_dict.get(keyname)
+
+    def preview_all_addresses(self):
+        print(self._contract_dict)
+
+    def sol_dat_deploy(self, sol_wrap: SolcWrap, path: str, classname: str, params: list = []) -> str:
+        _abi, _bytecode = sol_wrap.GetCode(path, classname)
+        contractwork = self.tron.trx.contract(abi=_abi, bytecode=_bytecode)
+        contract = contractwork.constructor()
+        tx_data = contract.transact(
+            fee_limit=10 ** 9,
+            call_value=0,
+            parameters=params,
+            consume_user_resource_percent=1)
+        print("======== TX Result ✅")
+        sign = self.tron.trx.sign(tx_data)
+        print("======== Signing LendingPoolAddressesProvider ✅")
+        result = self.tron.trx.broadcast(sign)
+        path = "{}/{}.json".format(self.ACTION_FOLDER, classname)
+        print("======== Broadcast Result ✅ -> {}".format(path))
+        sol_wrap.StoreTxResult(result, path)
+        contract_address = self.tron.address.from_hex(result["transaction"]["contract_address"])
+        self._contract_dict[classname] = contract_address
+        print("======== address saved to ✅ {} -> {}".format(contract_address, classname))
+        return contract_address
