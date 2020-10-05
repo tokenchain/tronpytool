@@ -114,7 +114,6 @@ class PrivateKey(object):
         address = '41' + public_key.to_address()[2:]
         contract_address = '0x' + public_key.to_address()[2:]
         to_base58 = base58.b58encode_check(bytes.fromhex(address))
-
         # If bytecode then convert to string
         if is_bytes(to_base58):
             to_base58 = to_base58.decode()
