@@ -75,6 +75,10 @@ class SolcWrap(object):
         fo.close()
         print(self.statement.format(time.ctime(), filename))
 
+    @property
+    def workspace(self):
+        return self.WORKSPACE_PATH
+
     def StoreTxResult(self, tx_result_data, filepath):
         self.writeFile(json.dumps(tx_result_data, ensure_ascii=False), filepath)
 
@@ -84,11 +88,31 @@ class CoreDeploy:
     with the right strategies
     """
     _contract_dict: dict
+    FILE_CONTRACT = "backedup"
     ACTION_FOLDER = "deploy_results"
+    COLLECTION_CONTRACTS = "deployments"
 
     def __init__(self, tron: Tron):
         self.tron = tron
         self._contract_dict = dict()
+
+    @property
+    def backupname(self) -> str:
+        """preview the file name"""
+        return self.FILE_CONTRACT
+
+    @backupname.setter
+    def backupname(self, filename: str) -> None:
+        """the file name does not require extension name"""
+        self.FILE_CONTRACT = filename
+
+    @property
+    def deployment_location(self) -> str:
+        return self.COLLECTION_CONTRACTS
+
+    @deployment_location.setter
+    def deployment_location(self, path: str) -> None:
+        self.COLLECTION_CONTRACTS = path
 
     def getAddr(self, keyname: str) -> str:
         """example: TT67rPNwgmpeimvHUMVzFfKsjL9GZ1wGw8"""
@@ -109,8 +133,12 @@ class CoreDeploy:
     def getAllAddress(self) -> dict:
         return self._contract_dict
 
-    def preview_all_addresses(self):
+    def preview_all_addresses(self) -> None:
         print(self._contract_dict)
+
+    def deployedAddrsFilePath(self) -> str:
+        return os.path.join(self.sol_cont.workspace, self.ACTION_FOLDER,
+                            "{}.json".format(self.COLLECTION_CONTRACTS))
 
     def connect_deploy(self, rebuild=False, deploy=False) -> "CoreDeploy":
         if rebuild:
@@ -120,7 +148,22 @@ class CoreDeploy:
 
         self.is_deploy = deploy
         self.sol_cont = sol_contr
+        if not deploy:
+            """try to load up the file from the existing path"""
+            try:
+                self._contract_dict = json.load(codecs.open(self.deployedAddrsFilePath(), 'r', 'utf-8-sig'))
+                print("==== 🛄 data is prepared and it is ready now.. ")
+                self.preview_all_addresses()
+            except ValueError:
+                pass
+            except TypeError as e:
+                print(e)
+
         return self
+
+    def complete_deployment(self) -> None:
+        """store up the deployed contrcat addresses to the local file storage"""
+        self.sol_cont.StoreTxResult(self._contract_dict, self.deployedAddrsFilePath())
 
     def deploy(self, sol_wrap: SolcWrap, classname: str, params: list = []) -> str:
         """This is using the faster way to deploy files by using the specific abi and bin files"""
