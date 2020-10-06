@@ -5,13 +5,13 @@
 # See License.txt in the project root for license information.
 # --------------------------------------------------------------------
 
-import sys
-
 import pkg_resources
+import sys
 from eth_account import Account  # noqa: E402
 
 # from tronpytool.compile.solwrap import SolcWrap
 from .main import Tron  # noqa: E402
+from .providers.coreplayer import CoreSimulatePlayers
 from .providers.http import HttpProvider  # noqa: E402
 
 if sys.version_info < (3, 5):
@@ -23,6 +23,7 @@ __all__ = [
     '__version__',
     'HttpProvider',
     'Account',
+    'CoreSimulatePlayers',
     'Tron'
     #  'SolcWrap'
 ]
