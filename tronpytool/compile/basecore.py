@@ -3,11 +3,10 @@
 
 from typing import Any, Union, Tuple
 
-from tronpytool.common.abi import method_result_handler
 from tronpytool import Tron
+from tronpytool.common.abi import method_result_handler, decode_single
 from tronpytool.common.key import to_hex_address, keccak256, is_address
 from tronpytool.common.normalizers import to_checksum_address
-from tronpytool.compile import abi
 from tronpytool.contract import Contract
 from tronpytool.exceptions import DoubleSpending
 from tronpytool.transactionbuilder import TransactionBuilder
@@ -38,6 +37,8 @@ class Validator:
 
 
 class ContractMethod:
+    debug = True
+
     def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str,
                  validator: Validator = None):
 
@@ -58,6 +59,9 @@ class ContractMethod:
 
     def __str__(self):
         return self.function_type
+
+    def setDebug(self, b: bool) -> None:
+        self.debug = b
 
     @staticmethod
     def validate_and_checksum_address(address: str):
@@ -100,16 +104,12 @@ class ContractMethod:
         print(event)
         print("=======end event report ========")
 
-    def handle_ret(self, r: dict) -> any:
+    def handle_url_response(self, r: dict) -> any:
         ok, key, message = method_result_handler(r)
 
         if ok:
-            display = ""
-            print("=======debug request result {}".format(key))
-            for result in key:
-                display = self.parse_output(result)
-                print(display)
-            print("=======end event report ========")
+            display = self.parse_output(key)
+            self.debug_raw_io(key)
             return display
         else:
             raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, message, self.parse_output(message)))
@@ -117,18 +117,74 @@ class ContractMethod:
     def parse_output(self, raw: any) -> any:
         if type(raw) is bytes:
             """Parse contract result as result."""
-            parsed_result = abi.decode_single(self.output_type, bytes.fromhex(raw))
+
+            parsed_result = decode_single(self.output_type, bytes.fromhex(raw))
             if len(self.outputs) == 1:
                 return parsed_result[0]
             if len(self.outputs) == 0:
                 return None
             return parsed_result
+
+        elif type(raw) is str:
+            """Parse contract result as result."""
+
+            parsed_result = decode_single(self.output_type, bytes.fromhex(raw))
+            if len(self.outputs) == 1:
+                return parsed_result[0]
+            if len(self.outputs) == 0:
+                return None
+            return parsed_result
+
+        elif type(raw) is list:
+            """Parse contract result as result."""
+
+            parsed_result = []
+            for k in raw:
+                p = decode_single(self.output_type, bytes.fromhex(k))
+                parsed_result.append(p)
+            if len(self.outputs) >= 1:
+                self.debug_io(parsed_result)
+                return parsed_result[0]
+            if len(self.outputs) == 0:
+                print("no returns.. ")
+                return None
+
+            return None
+
         else:
+
+            print("there is not type were found.. ")
+            print(self.output_type)
             return raw
 
-    def __call__(self, *args, **kwargs) -> "TransactionBuilder":
+    def debug_input_io(self, data_type, args):
+        if self.debug:
+            print("=======raw input ======== type-label: {}, type: {}".format(data_type, type(data_type)))
+            print(args)
+            print("=======end raw input ========")
+
+    def debug_params(self, data):
+        if self.debug:
+            print("=======param input ========")
+            print(data)
+            print("=======end param input========")
+
+    def debug_raw_io(self, data):
+        if self.debug:
+            print("=======raw output ========")
+            print(data)
+            print("=======end raw output ========")
+
+    def debug_io(self, data):
+        if self.debug:
+            print("====testing output type")
+            print("output type {}".format(type(data[0])))
+            print("output type detail: {}".format(self.output_type))
+            print("==end")
+
+    def __call__(self, *args, **kwargs) -> any:
         """Call the contract method."""
-        parameter = ""
+        parameters = []
 
         if args and kwargs:
             raise ValueError("do not mix positional arguments and keyword arguments")
@@ -139,7 +195,17 @@ class ContractMethod:
         elif args:
             if len(args) != len(self.inputs):
                 raise TypeError("wrong number of arguments, require {} got {}".format(len(self.inputs), len(args)))
-            parameter = abi.encode_single(self.input_type, args).hex()
+            self.debug_input_io(self.input_type, args)
+            argpos = 0
+            # vals = encode_single(self.input_type, args).hex()
+            # self.debug_params(vals)
+            for type_label in self.input_type_list:
+                parameters.append(dict(
+                    type=type_label,
+                    value=args[argpos],
+                ))
+                argpos = argpos + 1
+
         elif kwargs:
             if len(kwargs) != len(self.inputs):
                 raise TypeError("wrong number of arguments, require {} got {}".format(len(self.inputs), len(args)))
@@ -149,7 +215,7 @@ class ContractMethod:
                     args.append(kwargs[arg["name"]])
                 except KeyError:
                     raise TypeError("missing argument '{}'".format(arg["name"]))
-            parameter = abi.encode_single(self.input_type, args).hex()
+            # parameter = encode_single(self.input_type, args).hex()
         else:
             raise TypeError("wrong number of arguments, require {}".format(len(self.inputs)))
 
@@ -161,14 +227,16 @@ class ContractMethod:
             call_value=0
         )
 
+        if len(parameters) > 0:
+            paramdict['parameters'] = parameters
+
         if self._abi.get("stateMutability", None).lower() in ["view", "pure"]:
             # const call, contract ret
             ret = self.transaction_builder.trigger_smart_contract(paramdict)
-            return self.handle_ret(ret)
+            return self.handle_url_response(ret)
         else:
-            paramdict.setdefault('parameters', []).append(parameter)
             ret = self.transaction_builder.trigger_smart_contract(paramdict)
-            return self.handle_ret(ret)
+            return self.handle_url_response(ret)
 
     @property
     def name(self) -> str:
@@ -177,6 +245,10 @@ class ContractMethod:
     @property
     def input_type(self) -> str:
         return "(" + (",".join(self.__format_json_abi_type_entry(arg) for arg in self.inputs)) + ")"
+
+    @property
+    def input_type_list(self) -> list:
+        return self.input_type[1:len(self.input_type) - 1].split(",")
 
     @property
     def output_type(self) -> str:

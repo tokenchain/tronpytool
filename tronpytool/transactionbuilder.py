@@ -642,17 +642,16 @@ class TransactionBuilder(object):
 
         """remove all the spaces"""
         function_selector = function_selector.replace('/\s*/g', '')
-
+        print(parameters)
+        print("-------------- this is the last parameters.. ")
         if len(parameters) > 0:
             types = []
             values = []
             for abi in parameters:
                 if 'type' not in abi or not is_string(abi['type']):
                     raise ValueError('Invalid parameter type provided: ' + abi['type'])
-
                 if abi['type'] == 'address':
                     abi['value'] = self.tron.address.to_hex(abi['value']).replace('41', '0x', 1)
-
                 types.append(abi['type'])
                 values.append(abi['value'])
 

@@ -4,14 +4,15 @@
 # See License.txt in the project root for license information.
 # --------------------------------------------------------------------
 
-import binascii
-import itertools
 import re
 from collections import (
     namedtuple,
 )
 from typing import Tuple
 
+import binascii
+import eth_abi
+import itertools
 from eth_abi import (
     encoding,
     decoding
@@ -19,7 +20,7 @@ from eth_abi import (
 from eth_abi.codec import ABICodec
 from eth_abi.registry import (
     BaseEquals,
-    registry as default_registry,
+    registry as default_registry, ABIRegistry,
 )
 from eth_utils import to_tuple
 from trx_utils import (
@@ -378,6 +379,44 @@ class AcceptsHexStrMixin:
         super().validate_value(value)
 
 
+from eth_abi.base import parse_type_str
+from eth_abi.decoding import Fixed32ByteSizeDecoder
+from eth_abi.encoding import Fixed32ByteSizeEncoder
+
+from tronpytool.common.key import to_base58check_address, is_address, to_tvm_address
+
+
+class TronAddressDecoder(Fixed32ByteSizeDecoder):
+    value_bit_size = 20 * 8
+    is_big_endian = True
+    decoder_fn = staticmethod(to_base58check_address)
+
+    @parse_type_str("address")
+    def from_type_str(cls, abi_type, registry):
+        return cls()
+
+
+class TronAddressEncoder(Fixed32ByteSizeEncoder):
+    value_bit_size = 20 * 8
+    encode_fn = staticmethod(to_tvm_address)
+    is_big_endian = True
+
+    @classmethod
+    def validate_value(cls, value):
+        if not is_address(value):
+            cls.invalidate_value(value)
+
+    def validate(self):
+        super().validate()
+
+        if self.value_bit_size != 20 * 8:
+            raise ValueError("Addresses must be 160 bits in length")
+
+    @parse_type_str("address")
+    def from_type_str(cls, abi_type, registry):
+        return cls()
+
+
 # interface
 class ByteStringEncoder(AcceptsHexStrMixin, encoding.ByteStringEncoder):
     pass
@@ -401,36 +440,6 @@ class TextStringEncoder(encoding.TextStringEncoder):
                 )
 
         super().validate_value(value)
-
-
-# We make a copy here just to make sure that eth-abi's default registry is not
-# affected by our custom encoder subclasses
-registry = default_registry.copy()
-
-registry.unregister('address')
-registry.unregister('bytes<M>')
-registry.unregister('bytes')
-registry.unregister('string')
-
-registry.register(
-    BaseEquals('bytes', with_sub=True),
-    BytesEncoder, decoding.BytesDecoder,
-    label='bytes<M>',
-)
-
-registry.register(
-    BaseEquals('bytes', with_sub=False),
-    ByteStringEncoder, decoding.ByteStringDecoder,
-    label='bytes',
-)
-registry.register(
-    BaseEquals('string'),
-    TextStringEncoder, decoding.StringDecoder,
-    label='string',
-)
-
-codec = ABICodec(registry)
-is_encodable = codec.is_encodable
 
 
 def check_if_arguments_can_be_encoded(function_abi, args, kwargs):
@@ -646,3 +655,66 @@ def method_result_handler(r: dict) -> Tuple[bool, str, str]:
             return False, resultcode, r["result"]["message"]
         else:
             return True, resultcode, r["result"]["message"]
+
+
+# We make a copy here just to make sure that eth-abi's default registry is not
+# affected by our custom encoder subclasses
+registry = default_registry.copy()
+
+
+def tron_patch_ethereum_types(_registry: ABIRegistry):
+    _registry.register(
+        BaseEquals('address'),
+        TronAddressEncoder,
+        TronAddressDecoder,
+        label='address',
+    )
+
+    _registry.register(
+        BaseEquals('trcToken'),
+        eth_abi.encoding.UnsignedIntegerEncoder,
+        eth_abi.decoding.UnsignedIntegerDecoder,
+        label='trcToken',
+    )
+
+    _registry.register(
+        BaseEquals('trc20'),
+        eth_abi.encoding.UnsignedIntegerEncoder,
+        eth_abi.decoding.UnsignedIntegerDecoder,
+        label='trc20',
+    )
+
+    _registry.register(
+        BaseEquals('bytes', with_sub=True),
+        BytesEncoder,
+        decoding.BytesDecoder,
+        label='bytes<M>',
+    )
+
+    _registry.register(
+        BaseEquals('bytes', with_sub=False),
+        ByteStringEncoder,
+        decoding.ByteStringDecoder,
+        label='bytes',
+    )
+
+    _registry.register(
+        BaseEquals('string'),
+        TextStringEncoder,
+        decoding.StringDecoder,
+        label='string',
+    )
+
+
+registry.unregister('address')
+registry.unregister('bytes<M>')
+registry.unregister('bytes')
+registry.unregister('string')
+tron_patch_ethereum_types(registry)
+_codec = ABICodec(registry)
+encode_abi = _codec.encode_abi
+encode_single = _codec.encode_single
+decode_abi = _codec.decode_abi
+decode_single = _codec.decode_single
+is_encodable = _codec.is_encodable
+is_encodable_type = _codec.is_encodable_type

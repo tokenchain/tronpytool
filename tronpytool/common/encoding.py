@@ -3,14 +3,13 @@ import re
 from typing import Union
 
 from eth_account.datastructures import AttributeDict
-from hexbytes import HexBytes
-
 from eth_utils import (
     hexstr_if_str,
     to_hex,
     big_endian_to_int,
     int_to_big_endian
 )
+from hexbytes import HexBytes
 from trx_utils import (
     remove_0x_prefix,
     encode_hex,
@@ -33,18 +32,14 @@ from tronpytool.common.abi import (
     is_bytes_type,
     is_string_type
 )
-
-
+from tronpytool.common.toolz import (
+    curry
+)
+from tronpytool.common.validation import assert_one_val
 from tronpytool.common.validation import (
     validate_abi_type,
     validate_abi_value
 )
-
-from tronpytool.common.toolz import (
-    curry
-)
-
-from tronpytool.common.validation import assert_one_val
 
 
 def hex_encode_abi_type(abi_type, value, force_size=None):
