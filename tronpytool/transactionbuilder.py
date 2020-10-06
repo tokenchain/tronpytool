@@ -22,7 +22,6 @@ from trx_utils import (
 )
 
 from tronpytool.common.validation import is_valid_url
-from tronpytool.constants import handle_res
 from tronpytool.exceptions import (
     InvalidTronError,
     TronError,
@@ -34,8 +33,13 @@ START_DATE = int(DEFAULT_TIME.timestamp() * 1000)
 
 
 class TransactionBuilder(object):
+    debug = True
+
     def __init__(self, tron):
         self.tron = tron
+
+    def setDebug(self, b: bool) -> None:
+        self.debug = b
 
     def send_transaction(self, to, amount, account=None):
         """Creates a transaction of transfer.
@@ -564,8 +568,7 @@ class TransactionBuilder(object):
         else:
             parameters = []
 
-        print("==checking")
-        print(kv)
+        self.debug_input_kv(kv)
 
         data = {
             'contract_address': self.tron.address.to_hex(contract_address),
@@ -582,8 +585,7 @@ class TransactionBuilder(object):
         if token_id:
             data['token_id'] = int(token_id)
 
-        print("==data load")
-        print(data)
+        self.debug_url_req(data)
 
         return self.tron.manager.request('/wallet/triggerconstantcontract', kv)
 
@@ -670,25 +672,29 @@ class TransactionBuilder(object):
             'call_value': int(call_value),
             'parameter': parameters
         }
-        print("==checking")
-        print(kv)
 
-        #if parameters is '':
+        # if parameters is '':
         #    data.pop('parameter')
-
+        self.debug_input_kv(kv)
         if token_value:
             data['call_token_value'] = int(token_value)
 
         if token_id:
             data['token_id'] = int(token_id)
-
-        print("==data load")
-        print(data)
-
+        self.debug_url_req(data)
         return self.tron.manager.request('/wallet/triggersmartcontract', data)
 
-    def handle_ret(self, r: dict) -> any:
-        return handle_res(r)
+    def debug_url_req(self, data):
+        if self.debug:
+            print("==data load on request url")
+            print(data)
+            print("==end")
+
+    def debug_input_kv(self, data):
+        if self.debug:
+            print("==checking input data")
+            print(data)
+            print("==end")
 
     def create_trx_exchange(self,
                             token_name: str,

@@ -52,22 +52,6 @@ ALL = {
     "tronex": CONF_TRONEX
 }
 
-RES_CODE = dict(
-    SUCCESS=0,
-    SIGERROR=1,
-    CONTRACT_VALIDATE_ERROR=2,
-    CONTRACT_EXE_ERROR=3,
-    BANDWITH_ERROR=4,
-    DUP_TRANSACTION_ERROR=5,
-    TAPOS_ERROR=6,
-    TOO_BIG_TRANSACTION_ERROR=7,
-    TRANSACTION_EXPIRATION_ERROR=8,
-    SERVER_BUSY=9,
-    NO_CONNECTION=10,
-    NOT_ENOUGH_EFFECTIVE_CONNECTION=11,
-    OTHER_ERROR=20
-)
-
 
 def conf_for_name(name: str) -> dict:
     return ALL.get(name, None)
@@ -80,21 +64,3 @@ def to_providers_set(d: dict) -> dict:
         event_server=HttpProvider(d["event_server"])
     )
 
-
-def handle_res(r: dict) -> Tuple[bool, str, str]:
-    if "result" in r["result"]:
-        resultcode = r["result"]["result"]
-        if resultcode:
-            return True, r["constant_result"], r["transaction"]
-        else:
-            print("======")
-            print(r)
-            print("======")
-            return True, "", ""
-        
-    elif "code" in r["result"]:
-        resultcode = r["result"]["code"]
-        if RES_CODE.get(resultcode) > 0:
-            return False, resultcode, r["result"]["message"]
-        else:
-            return True, resultcode, r["result"]["message"]

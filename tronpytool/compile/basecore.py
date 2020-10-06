@@ -3,6 +3,7 @@
 
 from typing import Any, Union, Tuple
 
+from common.abi import method_result_handler
 from tronpytool import Tron
 from tronpytool.common.key import to_hex_address, keccak256, is_address
 from tronpytool.common.normalizers import to_checksum_address
@@ -100,14 +101,16 @@ class ContractMethod:
         print("=======end event report ========")
 
     def handle_ret(self, r: dict) -> any:
-        ok, key, message = self.transaction_builder.handle_ret(r)
+        ok, key, message = method_result_handler(r)
 
         if ok:
+            display = ""
             print("=======debug request result {}".format(key))
-            print(r)
-            print(message)
+            for result in key:
+                display = self.parse_output(result)
+                print(display)
             print("=======end event report ========")
-            return self.parse_output(message)
+            return display
         else:
             raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, message, self.parse_output(message)))
 
