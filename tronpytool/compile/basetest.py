@@ -140,11 +140,14 @@ class CoreDeploy:
         return os.path.join(self.sol_cont.workspace, self.ACTION_FOLDER,
                             "{}.json".format(self.COLLECTION_CONTRACTS))
 
-    def connect_deploy(self, rebuild=False, deploy=False) -> "CoreDeploy":
+    def is_deployment(self) -> bool:
+        return self.is_deploy
+
+    def connect_deploy_core(self, workspace: str, rebuild=False, deploy=False) -> None:
         if rebuild:
-            sol_contr = SolcWrap(ROOT).BuildRemote()
+            sol_contr = SolcWrap(workspace).BuildRemote()
         else:
-            sol_contr = SolcWrap(ROOT)
+            sol_contr = SolcWrap(workspace)
 
         self.is_deploy = deploy
         self.sol_cont = sol_contr
@@ -158,8 +161,6 @@ class CoreDeploy:
                 pass
             except TypeError as e:
                 print(e)
-
-        return self
 
     def complete_deployment(self) -> None:
         """store up the deployed contrcat addresses to the local file storage"""
