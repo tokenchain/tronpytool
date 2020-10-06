@@ -8,6 +8,7 @@ import subprocess
 import time
 
 from tronpytool import Tron
+from tronpytool.trx import Trx
 
 ROOT = os.path.join(os.path.dirname(__file__))
 
@@ -229,6 +230,9 @@ class WrapContract(object):
 
     def getClientTron(self) -> "Tron":
         return self.tron_client
+
+    def getTrxModule(self) -> "Trx":
+        return self._tron_module
 
     def setMasterKey(self, pub: str, pri: str) -> "WrapContract":
         self.tron_client.private_key = pri
