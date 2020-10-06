@@ -82,7 +82,7 @@ Smart Contract
 
 Documentation
 =============
-Read the library manual by the html/index.html
+Read the library manual by the `manual <docs/tronpytool/index.html>`__
 Documentation is available at `docs <https://tronpytool-for-python.readthedocs.io/en/latest/>`__.
 
 

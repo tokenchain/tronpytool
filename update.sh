@@ -31,6 +31,9 @@ fined() {
   rm -rf dist
   rm -rf html
   python3 -m pdoc --html tronpytool
+  mv html doc
+  mv doc/tronpytool docs/tronpytool
+  rm doc
   #python3 -m pip install --user --upgrade setuptools wheel
   python3 -m pip install --upgrade setuptools wheel
   python3 setup.py sdist bdist_wheel
