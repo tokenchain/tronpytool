@@ -82,8 +82,19 @@ def to_providers_set(d: dict) -> dict:
 
 
 def handle_res(r: dict) -> Tuple[bool, str, str]:
-    resultcode = r['result']['code']
-    if RES_CODE.get(resultcode) > 0:
-        return False, resultcode, r['result']['message']
-    else:
-        return True, resultcode, r['result']['message']
+    if "result" in r["result"]:
+        resultcode = r["result"]["result"]
+        if resultcode:
+            return True, r["constant_result"], r["transaction"]
+        else:
+            print("======")
+            print(r)
+            print("======")
+            return True, "", ""
+        
+    elif "code" in r["result"]:
+        resultcode = r["result"]["code"]
+        if RES_CODE.get(resultcode) > 0:
+            return False, resultcode, r["result"]["message"]
+        else:
+            return True, resultcode, r["result"]["message"]
