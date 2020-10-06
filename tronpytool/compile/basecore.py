@@ -106,11 +106,14 @@ class ContractMethod:
 
     def handle_url_response(self, r: dict) -> any:
         ok, key, message = method_result_handler(r)
-
         if ok:
-            display = self.parse_output(key)
-            self.debug_raw_io(key)
-            return display
+            print("transaction ID: {}".format(message))
+            if len(key) > 0:
+                display = self.parse_output(key)
+                self.debug_raw_io(key)
+                return display
+            else:
+                return ""
         else:
             raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, message, self.parse_output(message)))
 

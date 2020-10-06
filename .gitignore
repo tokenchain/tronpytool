@@ -105,4 +105,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-/examples/project_test
+/examples/project_test/

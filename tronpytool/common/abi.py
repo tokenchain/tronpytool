@@ -640,9 +640,13 @@ def strip_abi_type(elements):
 
 def method_result_handler(r: dict) -> Tuple[bool, str, str]:
     if "result" in r["result"]:
+        transID = r["transaction"]["txID"]
         resultcode = r["result"]["result"]
         if resultcode:
-            return True, r["constant_result"], r["transaction"]
+            if "constant_result" in r:
+                return True, r["constant_result"], transID
+            else:
+                return True, "", transID
         else:
             print("======")
             print(r)
