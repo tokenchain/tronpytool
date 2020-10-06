@@ -3,7 +3,7 @@
 
 from typing import Any, Union, Tuple
 
-from common.abi import method_result_handler
+from tronpytool.common.abi import method_result_handler
 from tronpytool import Tron
 from tronpytool.common.key import to_hex_address, keccak256, is_address
 from tronpytool.common.normalizers import to_checksum_address
