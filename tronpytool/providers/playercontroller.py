@@ -15,12 +15,18 @@ from tronpytool.trx import Trx
 
 INVITE = "invitecode"
 UPLINE = "upline"
+BAL = "balance"
+PRI = "privkey"
 
 
 class CoreSimulatePlayers:
-    """DEFI Contract deployment
-       the player with game
-        """
+    """Contract controller for players in game
+    features:
+    - binding invite code
+    - check against existing binded addresses
+    - holding private key and public key for internal testing
+    - keep track of tron client for each wallet player
+    """
     statement = 'End : {}, IO File {}'
     _contract_dict: dict
     _network: str
@@ -42,9 +48,19 @@ class CoreSimulatePlayers:
             self.preview_all_addresses()
             print("==== 🛄 End ==== ")
         except FileNotFoundError:
-            pass
+            print("==== 🛄 Setup new player list ==== ")
         except TypeError as e:
             print(e)
+
+    def SetupByKeyKeep(self, wallet_addresses: dict) -> "CoreSimulatePlayers":
+        if self.is_empty_data():
+            for t in wallet_addresses:
+                pub = t[0]
+                priv = t[1]
+                print("--> setup address for {}:".format(t))
+                self.AppendInitPlayer(pub, priv)
+            self.SaveMetaFile()
+        return self
 
     def _writeFile(self, content, filename: str) -> None:
         fo = open(filename, "w")
@@ -73,9 +89,22 @@ class CoreSimulatePlayers:
     def playermeta_data(self, path: str) -> None:
         self.COLLECTION_CONTRACTS = path
 
-    def getGroupByAddr(self, keyname: str) -> dict:
+    def getCachedBalance(self, addr: str) -> int:
         """example: TT67rPNwgmpeimvHUMVzFfKsjL9GZ1wGw8"""
-        return self._contract_dict.get(keyname)
+        if addr in self._contract_dict:
+            wallet_meta = self._contract_dict[addr]
+            print("===> meta {}".format(wallet_meta))
+            return int(wallet_meta[BAL])
+        return 0
+
+    def isAddressUnbinded(self, addr: str) -> bool:
+        if addr in self._contract_dict:
+            if INVITE in self._contract_dict[addr]:
+                if len(self._contract_dict[addr][INVITE]) == 0:
+                    return True
+                else:
+                    return False
+        return False
 
     def getAllAddress(self) -> dict:
         return self._contract_dict
@@ -92,21 +121,21 @@ class CoreSimulatePlayers:
 
     def SaveMetaFile(self) -> "CoreSimulatePlayers":
         self._storeTxDict(self._contract_dict, self.playerAddrsFilePath())
+        print("===✅ metafile saved. {}".format(self.playerAddrsFilePath()))
         return self
 
     def SyncBalances(self) -> "CoreSimulatePlayers":
         if len(self._contract_dict) > 0:
             for address in self._contract_dict:
                 amount = self.GetTronModule(address).get_balance(address, False)
-                self._contract_dict[address]["balance"] = amount
+                self._contract_dict[address][BAL] = amount
                 print("===✅ balance: {} trx --> {}".format(amount, address))
-
+            self.SaveMetaFile()
         return self
 
     def AppendInitPlayer(self, address_wallet: str, private_key: str) -> "CoreSimulatePlayers":
-        amount = self.GetTronModule(address_wallet).get_balance(address_wallet, False)
         self._contract_dict[address_wallet] = dict(
-            balance=amount,
+            balance=0,
             upline="",
             invitecode="",
             privkey=private_key,
@@ -117,12 +146,13 @@ class CoreSimulatePlayers:
         return self.GetTronByAddr(address).trx
 
     def GetTronByAddr(self, address: str) -> Tron:
-        if not address in self._tron_clients:
-            address_wallet = self._contract_dict[address]
-            privatekey = self._contract_dict[address]["privkey"]
-            tron = WrapContract(self._network).setMasterKey(address_wallet, privatekey).getClientTron()
-            self._tron_clients[address] = tron
-            print("===✅ Tron client initiated for --> {}".format(address))
+        if address not in self._tron_clients:
+            if address in self._contract_dict:
+                wallet_keep = self._contract_dict[address]
+                privatekey = wallet_keep[PRI]
+                tron = WrapContract(self._network).setMasterKey(address, privatekey).getClientTron()
+                self._tron_clients[address] = tron
+                print("===✅ Tron client initiated for --> {}".format(address))
 
         return self._tron_clients[address]
 
@@ -140,6 +170,7 @@ class CoreSimulatePlayers:
         self._set_invite_code(address, invite)
         self._set_upline_code(address, upline)
         print("==> new member with invite code: {}, and upline code: {}".format(invite, upline))
+        self.SaveMetaFile()
 
     def NewInviteCode(self) -> str:
         return ''.join(random.sample(string.ascii_uppercase, 5))
