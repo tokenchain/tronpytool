@@ -56,6 +56,7 @@ class ContractMethod:
         self.call_token_value = 0
         self.call_token_id = 0
         self.contract_address = contract_address
+        self._final_params = None
 
     def __str__(self):
         return self.function_type
@@ -64,16 +65,15 @@ class ContractMethod:
         self.debug = b
 
     @staticmethod
+    def trx(x) -> int:
+        return 1000000 * x
+
+    @staticmethod
     def validate_and_checksum_address(address: str):
         """Validate the given address, and return it's checksum address."""
         if not is_address(address):
             raise TypeError("Invalid address provided: {}".format(address))
         return to_checksum_address(address)
-
-    def normalize_tx_params(self, tx_params) -> dict:
-        """Normalize and return the given transaction parameters."""
-        params = dict()
-        return params
 
     def with_owner(self, addr: str) -> "ContractMethod":
         """Set the calling owner address.
@@ -93,10 +93,6 @@ class ContractMethod:
         self.call_token_value = amount
         self.call_token_id = token_id
         return self
-
-    def call(self, *args, **kwargs) -> "TransactionBuilder":
-        """Call the contract method."""
-        return self.__call__(*args, **kwargs)
 
     def trackEventReceipt(self, trnId: str):
         event = self._tron.get_event_transaction_id(trnId)
@@ -221,18 +217,11 @@ class ContractMethod:
             # parameter = encode_single(self.input_type, args).hex()
         else:
             raise TypeError("wrong number of arguments, require {}".format(len(self.inputs)))
-
-        paramdict = dict(
-            contract_address=self.contract_address,
-            function_selector=self.function_signature,
-            issuer_address=self._owner_address,
-            fee_limit=30000,
-            call_value=0
-        )
-
-        if len(parameters) > 0:
-            paramdict['parameters'] = parameters
-
+        if self.call_value > 0:
+            paramdict = self.normalize_send_token(self.call_value)
+        else:
+            paramdict = self.normalized_params()
+        paramdict = self.process_parameters(paramdict, parameters)
         if self._abi.get("stateMutability", None).lower() in ["view", "pure"]:
             # const call, contract ret
             ret = self.transaction_builder.trigger_smart_contract(paramdict)
@@ -240,6 +229,68 @@ class ContractMethod:
         else:
             ret = self.transaction_builder.trigger_smart_contract(paramdict)
             return self.handle_url_response(ret)
+
+    def sendTrx(self, amount_trx: int) -> None:
+        self.call_value = ContractMethod.trx(amount_trx)
+
+    def call(self, *args) -> any:
+        """Call the contract method."""
+
+        if self.call_value > 0:
+            paramdict = self.normalize_send_token(self.call_value)
+        else:
+            paramdict = self.normalized_params()
+
+        tx_params = self.process_parameters(paramdict, self.readargs(*args))
+        if self._abi.get("stateMutability", None).lower() in ["view", "pure"]:
+            # const call, contract ret
+            ret = self.transaction_builder.trigger_smart_contract(tx_params)
+            return self.handle_url_response(ret)
+        else:
+            ret = self.transaction_builder.trigger_smart_contract(tx_params)
+            return self.handle_url_response(ret)
+
+    def readargs(self, *args) -> list:
+        parameters = []
+        if len(args) != len(self.inputs):
+            raise TypeError("wrong number of arguments, require {} got {}".format(len(self.inputs), len(args)))
+        self.debug_input_io(self.input_type, args)
+        argpos = 0
+        # vals = encode_single(self.input_type, args).hex()
+        # self.debug_params(vals)
+        for type_label in self.input_type_list:
+            parameters.append(dict(
+                type=type_label,
+                value=args[argpos],
+            ))
+            argpos = argpos + 1
+        return parameters
+
+    def process_parameters(self, tx_params, listparams) -> dict:
+        if len(listparams) > 0:
+            tx_params['parameters'] = listparams
+        return tx_params
+
+    def normalized_params(self) -> dict:
+        paramdict = dict(
+            contract_address=self.contract_address,
+            function_selector=self.function_signature,
+            issuer_address=self._owner_address,
+            fee_limit=30000,
+            call_value=0
+        )
+        return paramdict
+
+    def normalize_send_token(self, trx_amount: int) -> dict:
+        """Normalize and return the given transaction parameters."""
+        params = dict(
+            contract_address=self.contract_address,
+            function_selector=self.function_signature,
+            issuer_address=self._owner_address,
+            fee_limit=30000,
+            call_value=trx_amount
+        )
+        return params
 
     @property
     def name(self) -> str:
