@@ -4,7 +4,6 @@ import codecs
 import json
 import os
 import subprocess
-
 import time
 
 from tronpytool import Tron
@@ -227,12 +226,20 @@ class WrapContract(object):
 
         self._tron_module = nn1.trx
         self._contract = None
+        self._network = _network
 
     def getClientTron(self) -> "Tron":
         return self.tron_client
 
     def getTrxModule(self) -> "Trx":
         return self._tron_module
+
+    def getNewTronClient(self, wallet_address: str, pri_key: str) -> "Tron":
+        client = Tron().setNetwork(self._network)
+        client.private_key = pri_key
+        client.default_address = wallet_address
+
+        return client
 
     def setMasterKey(self, pub: str, pri: str) -> "WrapContract":
         self.tron_client.private_key = pri
