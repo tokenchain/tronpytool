@@ -114,20 +114,22 @@ class ContractMethod:
             raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, message, self.parse_output(message)))
 
     def handle_call_send_response(self, r: dict) -> any:
-        ok, key, message = method_result_handler(r)
+        ok, key, transaction_id = method_result_handler(r)
         if ok:
             print("=========================================")
-            print("🦓 transaction ID: {}".format(message))
+            print("🦓 transaction ID: {}".format(transaction_id))
             offline_sign = self._client.sign(r)
             print("=========================================")
             print("🐝 sign transaction: {}".format(offline_sign))
             result = self._client.broadcast(offline_sign)
             print("=========================================")
             print("🐳 result transaction: {}".format(result))
+            transaction_info = self._client.get_transaction_info(transaction_id)
+            print("🐚 detail result for transaction: {}".format(transaction_info))
             print("=========================================")
-        else:
-            raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, message, self.parse_output(message)))
 
+        else:
+            raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, transaction_id, self.parse_output(transaction_id)))
 
     def parse_output(self, raw: any) -> any:
         if type(raw) is bytes:
