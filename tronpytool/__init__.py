@@ -11,7 +11,7 @@ from eth_account import Account  # noqa: E402
 
 # from tronpytool.compile.solwrap import SolcWrap
 from .main import Tron  # noqa: E402
-from .providers.playercontroller import CoreSimulatePlayers
+from .providers.simulateplayer import CoreSimulatePlayers
 from .providers.http import HttpProvider  # noqa: E402
 
 if sys.version_info < (3, 5):

@@ -2,9 +2,9 @@
 # coding: utf-8
 
 from attrdict import AttrDict
+from tronpytool.compile import abi
 
 from common.abi import method_result_handler
-from compile import abi
 from tronpytool import Tron
 
 tron = Tron().setNetwork('nile')

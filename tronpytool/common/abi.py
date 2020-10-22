@@ -648,9 +648,9 @@ def method_result_handler(r: dict) -> Tuple[bool, str, str]:
             else:
                 return True, "", transID
         else:
-            print("======")
+            print("🐱 ======")
             print(r)
-            print("======")
+            print("🐸 ======")
             return True, "", ""
 
     elif "code" in r["result"]:

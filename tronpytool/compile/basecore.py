@@ -113,6 +113,22 @@ class ContractMethod:
         else:
             raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, message, self.parse_output(message)))
 
+    def handle_call_send_response(self, r: dict) -> any:
+        ok, key, message = method_result_handler(r)
+        if ok:
+            print("=========================================")
+            print("🦓 transaction ID: {}".format(message))
+            offline_sign = self._client.sign(r)
+            print("=========================================")
+            print("🐝 sign transaction: {}".format(offline_sign))
+            result = self._client.broadcast(offline_sign)
+            print("=========================================")
+            print("🐳 result transaction: {}".format(result))
+            print("=========================================")
+        else:
+            raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, message, self.parse_output(message)))
+
+
     def parse_output(self, raw: any) -> any:
         if type(raw) is bytes:
             """Parse contract result as result."""
@@ -222,13 +238,14 @@ class ContractMethod:
         else:
             paramdict = self.normalized_params()
         paramdict = self.process_parameters(paramdict, parameters)
+
         if self._abi.get("stateMutability", None).lower() in ["view", "pure"]:
             # const call, contract ret
             ret = self.transaction_builder.trigger_smart_contract(paramdict)
             return self.handle_url_response(ret)
         else:
             ret = self.transaction_builder.trigger_smart_contract(paramdict)
-            return self.handle_url_response(ret)
+            return self.handle_call_send_response(ret)
 
     def sendTrx(self, amount_trx: int) -> None:
         self.call_value = ContractMethod.trx(amount_trx)
@@ -248,7 +265,7 @@ class ContractMethod:
             return self.handle_url_response(ret)
         else:
             ret = self.transaction_builder.trigger_smart_contract(tx_params)
-            return self.handle_url_response(ret)
+            return self.handle_call_send_response(ret)
 
     def readargs(self, *args) -> list:
         parameters = []

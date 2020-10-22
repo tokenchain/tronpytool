@@ -13,8 +13,6 @@ from tronpytool import Tron
 from tronpytool.compile.basetest import WrapContract
 from tronpytool.trx import Trx
 
-INVITE = "invitecode"
-UPLINE = "upline"
 BAL = "balance"
 PRI = "privkey"
 
@@ -62,6 +60,10 @@ class CoreSimulatePlayers:
             self.SaveMetaFile()
         return self
 
+    def WithWrapper(self, contract_wrapper: WrapContract) -> "CoreSimulatePlayers":
+        self.contract_wrapper = contract_wrapper
+        return self
+
     def _writeFile(self, content, filename: str) -> None:
         fo = open(filename, "w")
         fo.write(content)
@@ -99,8 +101,8 @@ class CoreSimulatePlayers:
 
     def isAddressUnbinded(self, addr: str) -> bool:
         if addr in self._contract_dict:
-            if INVITE in self._contract_dict[addr]:
-                if len(self._contract_dict[addr][INVITE]) == 0:
+            if "invitecode" in self._contract_dict[addr]:
+                if len(self._contract_dict[addr]["invitecode"]) == 0:
                     return True
                 else:
                     return False
@@ -143,34 +145,43 @@ class CoreSimulatePlayers:
         return self
 
     def GetTronModule(self, address: str) -> "Trx":
-        return self.GetTronByAddr(address).trx
+        return self.GetClientSelfTron(address).trx
 
-    def GetTronByAddr(self, address: str) -> Tron:
+    def GetClientSelfTron(self, address: str) -> "Tron":
+
+        if not self.contract_wrapper:
+            raise TypeError("contract wrapper is not found.. please use WithWrapper function")
+
         if address not in self._tron_clients:
             if address in self._contract_dict:
                 wallet_keep = self._contract_dict[address]
                 privatekey = wallet_keep[PRI]
-                tron = WrapContract(self._network).setMasterKey(address, privatekey).getClientTron()
-                self._tron_clients[address] = tron
+                self._tron_clients[address] = self.contract_wrapper.getNewTronClient(address, privatekey)
                 print("===✅ Tron client initiated for --> {}".format(address))
 
         return self._tron_clients[address]
 
-    def _set_upline_code(self, address: str, line: str) -> None:
+    def set_code(self, key: str, address: str, code: str) -> None:
         if len(self._contract_dict) > 0:
-            if UPLINE in self._contract_dict[address]:
-                self._contract_dict[address][UPLINE] = line
+            if address in self._contract_dict:
+                if key in self._contract_dict[address]:
+                    self._contract_dict[address][key] = code
+                    print("🦑 -> {} code for {} -> {}".format(key, address, code))
 
-    def _set_invite_code(self, address: str, invite: str) -> None:
+    def has_code(self, key: str, address: str) -> bool:
         if len(self._contract_dict) > 0:
-            if INVITE in self._contract_dict[address]:
-                self._contract_dict[address][INVITE] = invite
+            if address in self._contract_dict:
+                if key in self._contract_dict[address]:
+                    return len(self._contract_dict[address][key]) > 0
+        return False
 
     def NewMemberSetup(self, address: str, invite: str, upline: str) -> None:
-        self._set_invite_code(address, invite)
-        self._set_upline_code(address, upline)
-        print("==> new member with invite code: {}, and upline code: {}".format(invite, upline))
+        self.set_code("invitecode", address, invite)
+        self.set_code("upline", address, upline)
         self.SaveMetaFile()
+
+    def hasCode(self, address: str) -> bool:
+        return self.has_code("invitecode", address) or self.has_code("upline", address)
 
     def NewInviteCode(self) -> str:
         return ''.join(random.sample(string.ascii_uppercase, 5))
@@ -178,13 +189,11 @@ class CoreSimulatePlayers:
     def is_empty_data(self) -> bool:
         return not len(self._contract_dict) > 0
 
-    def GetUplineCode(self) -> str:
+    def GetMetaAddress(self, address: str) -> (str, str, str):
         if len(self._contract_dict) > 0:
-            for address in self._contract_dict:
-                uplinecode = self._contract_dict[address][UPLINE]
-                invitecode = self._contract_dict[address][INVITE]
-                if len(uplinecode) > 0 and len(invitecode) > 0:
-                    return invitecode
-            return self.GENESIS_INVITE_CODE
-        else:
-            return self.GENESIS_UPLINE_CODE
+            if address in self._contract_dict:
+                uplinecode = self._contract_dict[address]["upline"]
+                invitecode = self._contract_dict[address]["invitecode"]
+                balance = self._contract_dict[address]["balance"]
+                return invitecode, uplinecode, balance
+        raise ValueError("address in meta is not found..")

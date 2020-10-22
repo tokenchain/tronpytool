@@ -685,15 +685,15 @@ class TransactionBuilder(object):
 
     def debug_url_req(self, data):
         if self.debug:
-            print("==data load on request url")
+            print("=====> data load on request url")
             print(data)
-            print("==end")
+            print("=====> end")
 
     def debug_input_kv(self, data):
         if self.debug:
-            print("==checking input data")
+            print("=====> 🦋 Check Input data")
             print(data)
-            print("==end")
+            print("=====> 🦋  end")
 
     def create_trx_exchange(self,
                             token_name: str,

@@ -19,7 +19,6 @@
 import logging
 from collections import namedtuple
 from urllib.parse import urlparse
-
 from eth_utils import to_dict
 from requests import Session
 from requests.exceptions import (
