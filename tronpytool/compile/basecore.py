@@ -55,14 +55,40 @@ class ContractMethod:
         self.call_value = 0
         self.call_token_value = 0
         self.call_token_id = 0
+        """
+        The call fee limit is the amount of call_fee_limit / 10 sun
+        """
+        self.call_fee_limit = 400000
         self.contract_address = contract_address
         self._final_params = None
 
     def __str__(self):
         return self.function_type
 
-    def setDebug(self, b: bool) -> None:
+    def setContractDebug(self, b: bool) -> "ContractMethod":
         self.debug = b
+        return self
+
+    def setContractFee(self, amount: int) -> "ContractMethod":
+        self.call_fee_limit = amount
+        return self
+
+    def setContractTransfer(self, amount: int) -> "ContractMethod":
+        """Call a contract function with TRX transfer. ``amount`` in `SUN`."""
+        self.call_value = amount
+        return self
+
+    def sendTrx(self, amount_trx: int) -> "ContractMethod":
+        self.call_value = ContractMethod.trx(amount_trx)
+        return self
+
+    def setContractOwner(self, addr: str) -> "ContractMethod":
+        """Set the calling owner address.
+
+        Can also be changed through :meth:`TransactionBuilder.with_owner() <tronpy.tron.TransactionBuilder.with_owner>`.
+        """
+        self._owner_address = addr
+        return self
 
     @staticmethod
     def trx(x) -> int:
@@ -74,19 +100,6 @@ class ContractMethod:
         if not is_address(address):
             raise TypeError("Invalid address provided: {}".format(address))
         return to_checksum_address(address)
-
-    def with_owner(self, addr: str) -> "ContractMethod":
-        """Set the calling owner address.
-
-        Can also be changed through :meth:`TransactionBuilder.with_owner() <tronpy.tron.TransactionBuilder.with_owner>`.
-        """
-        self._owner_address = addr
-        return self
-
-    def with_transfer(self, amount: int) -> "ContractMethod":
-        """Call a contract function with TRX transfer. ``amount`` in `SUN`."""
-        self.call_value = amount
-        return self
 
     def with_asset_transfer(self, amount: int, token_id: int) -> "ContractMethod":
         """Call a contract function with TRC10 token transfer."""
@@ -129,7 +142,8 @@ class ContractMethod:
             print("=========================================")
 
         else:
-            raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, transaction_id, self.parse_output(transaction_id)))
+            raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, transaction_id,
+                                                                             self.parse_output(transaction_id)))
 
     def parse_output(self, raw: any) -> any:
         if type(raw) is bytes:
@@ -249,9 +263,6 @@ class ContractMethod:
             ret = self.transaction_builder.trigger_smart_contract(paramdict)
             return self.handle_call_send_response(ret)
 
-    def sendTrx(self, amount_trx: int) -> None:
-        self.call_value = ContractMethod.trx(amount_trx)
-
     def call(self, *args) -> any:
         """Call the contract method."""
 
@@ -295,7 +306,7 @@ class ContractMethod:
             contract_address=self.contract_address,
             function_selector=self.function_signature,
             issuer_address=self._owner_address,
-            fee_limit=30000,
+            fee_limit=self.call_fee_limit,
             call_value=0
         )
         return paramdict
@@ -306,7 +317,7 @@ class ContractMethod:
             contract_address=self.contract_address,
             function_selector=self.function_signature,
             issuer_address=self._owner_address,
-            fee_limit=30000,
+            fee_limit=self.call_fee_limit,
             call_value=trx_amount
         )
         return params
