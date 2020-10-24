@@ -8,7 +8,6 @@
 # Here you can specify links to sites of different types.
 # The default is verified links.
 # If you do not know what links are used for, it is recommended not to change
-from typing import Tuple
 
 from tronpytool.providers.http import HttpProvider
 
@@ -21,6 +20,7 @@ DEFAULT_NODES = {
 CONF_MAINNET = {
     "full_node": "https://api.trongrid.io",
     "event_server": "https://api.trongrid.io",
+    'solidity_node': 'https://api.trongrid.io',
 }
 
 # The long running, maintained by the tron-us community
@@ -28,6 +28,7 @@ CONF_SHASTA = {
     "full_node": "https://api.shasta.trongrid.io",
     "event_server": "https://api.shasta.trongrid.io",
     "faucet": "https://www.trongrid.io/faucet",
+    'solidity_node': 'https://api.shasta.trongrid.io',
 }
 
 # Maintained by the official team
@@ -42,10 +43,12 @@ CONF_NILE = {
 CONF_TRONEX = {
     "full_node": "https://testhttpapi.tronex.io",
     "event_server": "https://testapi.tronex.io",
+    'solidity_node': 'https://testapi.tronex.io',
     "faucet": "http://testnet.tronex.io/join/getJoinPage",
 }
 
 ALL = {
+    "default": CONF_MAINNET,
     "mainnet": CONF_MAINNET,
     "nile": CONF_NILE,
     "shasta": CONF_SHASTA,
@@ -63,4 +66,3 @@ def to_providers_set(d: dict) -> dict:
         solidity_node=HttpProvider(d["solidity_node"]),
         event_server=HttpProvider(d["event_server"])
     )
-
