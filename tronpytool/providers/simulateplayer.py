@@ -4,6 +4,7 @@
 
 import codecs
 import json
+import logging
 import os
 import random
 import string
@@ -197,3 +198,15 @@ class CoreSimulatePlayers:
                 balance = self._contract_dict[address]["balance"]
                 return invitecode, uplinecode, balance
         raise ValueError("address in meta is not found..")
+
+    def PrintNewAccount(self):
+        logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+        logger = logging.getLogger()
+        tron = Tron().setNetwork("nile")
+        account = tron.create_account()
+        logger.debug('Generated account: ')
+        logger.debug('- Private Key: ' + account.private_key)
+        logger.debug('- Public Key: ' + account.public_key)
+        logger.debug('- Address: ')
+        logger.debug('-- Base58: ' + account.address.base58)
+        logger.debug('-- Hex: ' + account.address.hex)
