@@ -34,7 +34,7 @@ from trx_utils import (
     to_hex
 )
 
-import constants
+from tronpytool import constants
 from .common.abi import map_abi_data
 from .common.account import Address, PrivateKey, Account
 from .common.encoding import (
