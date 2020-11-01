@@ -17,8 +17,8 @@
 """
 from trx_utils import is_string
 
-from tronpytool.constants import DEFAULT_NODES
-from tronpytool.providers.http import HttpProvider
+from .constants import DEFAULT_NODES
+from .providers.http import HttpProvider
 
 # In this variable, you can specify the base paths
 # to test the connection with the nodes.

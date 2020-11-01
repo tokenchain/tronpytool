@@ -22,16 +22,16 @@ from typing import Any
 from trx_utils import is_integer, is_hex
 from trx_utils.types import is_object, is_string, is_list
 
-from tronpytool.common import key
-from tronpytool.common.account import Account
-from tronpytool.common.blocks import select_method_for_block
-from tronpytool.common.toolz import (
+from .common import key
+from .common.account import Account
+from .common.blocks import select_method_for_block
+from .common.toolz import (
     assoc
 )
-from tronpytool.common.transactions import wait_for_transaction_id
-from tronpytool.contract import Contract
-from tronpytool.exceptions import InvalidTronError, TronError, TimeExhausted, AssetNotFound
-from tronpytool.module import Module
+from .common.transactions import wait_for_transaction_id
+from .contract import Contract
+from .exceptions import InvalidTronError, TronError, TimeExhausted, AssetNotFound
+from .module import Module
 
 TRX_MESSAGE_HEADER = '\x19TRON Signed Message:\n'
 ETH_MESSAGE_HEADER = '\x19Ethereum Signed Message:\n'

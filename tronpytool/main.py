@@ -34,25 +34,25 @@ from trx_utils import (
     to_hex
 )
 
-from tronpytool import constants
-from tronpytool.common.abi import map_abi_data
-from tronpytool.common.account import Address, PrivateKey, Account
-from tronpytool.common.encoding import (
+import constants
+from .common.abi import map_abi_data
+from .common.account import Address, PrivateKey, Account
+from .common.encoding import (
     to_bytes,
     to_int,
     to_text,
     to_json,
     hex_encode_abi_type
 )
-from tronpytool.common.key import PrivateKey as PrivateKeyFactory
-from tronpytool.common.normalizers import abi_resolver
-from tronpytool.exceptions import (
+from .common.key import PrivateKey as PrivateKeyFactory
+from .common.normalizers import abi_resolver
+from .exceptions import (
     InvalidTronError,
     TronError
 )
-from tronpytool.manager import TronManager
-from tronpytool.transactionbuilder import TransactionBuilder
-from tronpytool.trx import Trx
+from .manager import TronManager
+from .transactionbuilder import TransactionBuilder
+from .trx import Trx
 
 DEFAULT_MODULES = {
     'trx': Trx

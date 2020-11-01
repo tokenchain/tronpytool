@@ -21,8 +21,8 @@ from trx_utils import (
     encode_hex
 )
 
-from tronpytool.common.validation import is_valid_url
-from tronpytool.exceptions import (
+from .common.validation import is_valid_url
+from .exceptions import (
     InvalidTronError,
     TronError,
     InvalidAddress

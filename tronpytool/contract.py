@@ -22,7 +22,7 @@ from trx_utils import (
 )
 from trx_utils.typing import HexStr
 
-from tronpytool.common.abi import (
+from .common.abi import (
     filter_by_type,
     merge_args_and_kwargs,
     abi_to_signature,
@@ -30,20 +30,20 @@ from tronpytool.common.abi import (
     check_if_arguments_can_be_encoded,
     map_abi_data, filter_by_name
 )
-from tronpytool.common.contracts import (
+from .common.contracts import (
     find_matching_fn_abi,
     encode_abi,
     get_function_info,
     FallbackFn
 )
-from tronpytool.common.datatypes import PropertyCheckingFactory
-from tronpytool.common.encoding import to_4byte_hex
-from tronpytool.common.normalizers import (
+from .common.datatypes import PropertyCheckingFactory
+from .common.encoding import to_4byte_hex
+from .common.normalizers import (
     normalize_abi,
     normalize_bytecode,
     BASE_RETURN_NORMALIZERS
 )
-from tronpytool.exceptions import (
+from .exceptions import (
     NoABIFunctionsFound,
     MismatchedABI,
     FallbackNotFound

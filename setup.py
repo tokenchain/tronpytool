@@ -80,7 +80,6 @@ EXTRAS_REQUIRE['dev'] = (
 )
 
 install_requires = [
-#  "toolz>=0.9.0,<1.0.0;implementation_name=='pypy'",
     "cytoolz>=0.9.0,<1.0.0;implementation_name=='cpython'",
     "eth-abi>=2.0.0b6,<3.0.0",
     "eth-account==0.4.0",
