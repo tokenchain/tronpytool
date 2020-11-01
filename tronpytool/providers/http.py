@@ -19,6 +19,7 @@
 import logging
 from collections import namedtuple
 from urllib.parse import urlparse
+
 from eth_utils import to_dict
 from requests import Session
 from requests.exceptions import (
@@ -77,6 +78,8 @@ class HttpProvider(BaseProvider):
         """Header settings"""
         if 'headers' not in self._request_kwargs:
             yield 'headers', self._http_default_headers()
+        if 'verify' not in self._request_kwargs:
+            yield 'verify', False
         for key, value in self._request_kwargs.items():
             yield key, value
 
