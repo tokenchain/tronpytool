@@ -1,6 +1,6 @@
 import hashlib
 import random
-from collections.abc import ByteString, Hashable
+from collections import ByteString, Hashable
 from typing import Any, Union
 
 import base58

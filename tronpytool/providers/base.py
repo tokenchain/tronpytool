@@ -10,6 +10,9 @@ import tronpytool
 
 
 class BaseProvider(object):
+    """
+    just the base provider fo the page status
+    """
     _status_page = None
 
     @property
@@ -19,6 +22,9 @@ class BaseProvider(object):
 
     @status_page.setter
     def status_page(self, page):
+        """
+        the getting function
+        """
         self._status_page = page
 
     @staticmethod
