@@ -120,13 +120,18 @@ class Tron:
         modules = kwargs.setdefault('modules', DEFAULT_MODULES)
         for module_name, module_class in modules.items():
             module_class.attach(self, module_name)
-
+        self._network = ""
         self.transaction_builder = TransactionBuilder(self)
 
-    def setNetwork(self, networkname="nile"):
+    def setNetwork(self, networkname: str = "nile") -> "Tron":
         group = constants.conf_for_name(networkname)
         self.manager = TronManager(self, constants.to_providers_set(group))
+        self._network = networkname
         return self
+
+    @property
+    def network_name(self) -> str:
+        return self._network
 
     @property
     def default_block(self):
@@ -156,7 +161,6 @@ class Tron:
 
     def getKey(self) -> "PrivateKey":
         return self.private_key_class
-
 
     @private_key.setter
     def private_key(self, value: str) -> None:
