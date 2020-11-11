@@ -195,11 +195,25 @@ class CoreDeploy:
         return self
 
     def setKV(self, key: str, value: any) -> "CoreDeploy":
-        self._contract_dict["kv_{}".format(self.last_class)][key] = value
+        mark = "kv_{}".format(self.last_class)
+
+        if mark not in self._contract_dict:
+            self._contract_dict[mark] = dict()
+
+        self._contract_dict[mark][key] = value
         return self
 
     def getVal(self, key: str) -> any:
-        return self._contract_dict["kv_{}".format(self.last_class)][key]
+
+        mark = "kv_{}".format(self.last_class)
+
+        if mark not in self._contract_dict:
+            self._contract_dict[mark] = dict()
+
+        if key in self._contract_dict[mark]:
+            return self._contract_dict[mark][key]
+
+        return ""
 
     def SaveConfig(self) -> None:
         self.complete_deployment()
