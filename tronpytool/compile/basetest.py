@@ -164,7 +164,6 @@ class CoreDeploy:
         """store up the deployed contrcat addresses to the local file storage"""
         self.sol_cont.StoreTxResult(self._contract_dict, self.deployedAddrsFilePath)
 
-
     def deploy(self, sol_wrap: SolcWrap, classname: str, params: list = []) -> str:
         """This is using the faster way to deploy files by using the specific abi and bin files"""
         _abi, _bytecode = sol_wrap.GetCodeClass(classname)
@@ -198,6 +197,9 @@ class CoreDeploy:
     def setKV(self, key: str, value: any) -> "CoreDeploy":
         self._contract_dict["kv_{}".format(self.last_class)][key] = value
         return self
+
+    def getVal(self, key: str) -> any:
+        return self._contract_dict["kv_{}".format(self.last_class)][key]
 
     def SaveConfig(self) -> None:
         self.complete_deployment()
