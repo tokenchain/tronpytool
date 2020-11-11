@@ -95,6 +95,7 @@ class CoreDeploy:
 
     def __init__(self, tron: Tron):
         self.tron = tron
+        self.last_class = ""
         self._contract_dict = dict()
 
     @property
@@ -163,6 +164,7 @@ class CoreDeploy:
         """store up the deployed contrcat addresses to the local file storage"""
         self.sol_cont.StoreTxResult(self._contract_dict, self.deployedAddrsFilePath)
 
+
     def deploy(self, sol_wrap: SolcWrap, classname: str, params: list = []) -> str:
         """This is using the faster way to deploy files by using the specific abi and bin files"""
         _abi, _bytecode = sol_wrap.GetCodeClass(classname)
@@ -182,8 +184,23 @@ class CoreDeploy:
         sol_wrap.StoreTxResult(result, path)
         contract_address = self.tron.address.from_hex(result["transaction"]["contract_address"])
         self._contract_dict[classname] = contract_address
+        self._contract_dict["kv_{}".format(classname)] = dict(
+            uid=0,
+            canvagas=False
+        )
         print("======== address saved to ✅ {} -> {}".format(contract_address, classname))
         return contract_address
+
+    def setTargetClass(self, classname: str) -> "CoreDeploy":
+        self.last_class = classname
+        return self
+
+    def setKV(self, key: str, value: any) -> "CoreDeploy":
+        self._contract_dict["kv_{}".format(self.last_class)][key] = value
+        return self
+
+    def SaveConfig(self) -> None:
+        self.complete_deployment()
 
     def classic_deploy(self, sol_wrap: SolcWrap, path: str, classname: str, params: list = []) -> str:
         self.sol_cont.WrapModel()
