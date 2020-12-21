@@ -75,11 +75,14 @@ class HttpProvider(BaseProvider):
 
     @to_dict
     def get_request_kwargs(self):
-        """Header settings"""
+        """Header settings
+        fixed the verified requests
+        """
         if 'headers' not in self._request_kwargs:
             yield 'headers', self._http_default_headers()
         if 'verify' not in self._request_kwargs:
-            yield 'verify', False
+            # yield 'verify', False
+            yield 'verify', True
         for key, value in self._request_kwargs.items():
             yield key, value
 
