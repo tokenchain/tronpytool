@@ -181,6 +181,9 @@ class CoreDeploy:
         path = "{}/{}.json".format(self.ACTION_FOLDER, classname)
         print("======== Broadcast Result ✅ -> {}".format(path))
         sol_wrap.StoreTxResult(result, path)
+        if not hasattr(result, 'transaction'):
+            print("failed to deploy contract with this error result from this.", result)
+            return "Err"
         contract_address = self.tron.address.from_hex(result["transaction"]["contract_address"])
         self._contract_dict[classname] = contract_address
         self._contract_dict["kv_{}".format(classname)] = dict(
