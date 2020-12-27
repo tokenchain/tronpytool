@@ -11,7 +11,7 @@
 
     Tron: A Python API for interacting with Tron (TRX)
 
-    :copyright: © 2018 by the iEXBase.
+    :copyright: © 2018 by the iex-Base.
     :license: MIT License
 """
 
@@ -88,7 +88,7 @@ install_requires = [
     "trx-utils",
     "hexbytes>=0.1.0,<1.0.0",
     "requests=3.0.0",
-    "base58>=2.0.0,<3.0.0",
+    "base58>=2.0.0,<3.0.0"
 ]
 
 this_dir = os.path.dirname(__file__)
@@ -97,16 +97,15 @@ readme_filename = os.path.join(this_dir, 'README.rst')
 with open(readme_filename) as f:
     PACKAGE_LONG_DESCRIPTION = f.read()
 
-
 setup(
     name='tronpytool',
     version=PACKAGE_VERSION,
     description='A Python API for interacting with Tron (TRX)',
     long_description=PACKAGE_LONG_DESCRIPTION,
     long_description_content_type='text/x-rst',
-    keywords='tron tron-api tron-api-python iexbase cli sdk',
+    keywords='tron tron-api tron-api-python iex-base cli sdk',
     url='https://github.com/iexbase/tron-api-python',
-    author='Shamsudin Serderov & Heskemo',
+    author='Serderov & Heskemo',
     author_email='steein.shamsudin@gmail.com',
     license='MIT License',
     zip_safe=False,
