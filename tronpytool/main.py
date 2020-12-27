@@ -17,8 +17,7 @@
 """
 
 from urllib.parse import urlencode
-
-from eth_account.datastructures import AttributeDict
+from tronpytool.common.datastructures import AttributeDict
 from eth_utils import (
     apply_to_return_value,
     keccak as tron_keccak,
@@ -33,7 +32,6 @@ from trx_utils import (
     is_address,
     to_hex
 )
-
 from tronpytool import constants
 from .common.abi import map_abi_data
 from .common.account import Address, PrivateKey, Account
@@ -57,7 +55,6 @@ from .trx import Trx
 DEFAULT_MODULES = {
     'trx': Trx
 }
-
 
 class Tron:
     # Providers
