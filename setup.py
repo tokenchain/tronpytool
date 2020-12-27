@@ -82,8 +82,7 @@ EXTRAS_REQUIRE['dev'] = (
 install_requires = [
     "cytoolz>=0.9.0,<1.0.0;implementation_name=='cpython'",
     "eth-abi>=2.1.1,<3.0.0",
-    'base58>=2.0.0,<3.0.0',
-    'ecdsa>=0.15,<0.16',
+    "ecdsa>=0.15,<0.16",
     "eth-utils>=1.3.0,<2.0.0",
     "eth-hash[pycryptodome]>=0.2.0,<1.0.0",
     "trx-utils",
