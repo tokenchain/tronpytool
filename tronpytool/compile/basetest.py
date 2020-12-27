@@ -164,16 +164,17 @@ class CoreDeploy:
         """store up the deployed contrcat addresses to the local file storage"""
         self.sol_cont.StoreTxResult(self._contract_dict, self.deployedAddrsFilePath)
 
-    def deploy(self, sol_wrap: SolcWrap, classname: str, params: list = []) -> str:
+    def deploy(self, sol_wrap: SolcWrap, classname: str, params: list = [], fee: int = 10 ** 9,
+               percent: int = 1) -> str:
         """This is using the faster way to deploy files by using the specific abi and bin files"""
         _abi, _bytecode = sol_wrap.GetCodeClass(classname)
         contractwork = self.tron.trx.contract(abi=_abi, bytecode=_bytecode)
         contract = contractwork.constructor()
         tx_data = contract.transact(
-            fee_limit=10 ** 9,
+            fee_limit=fee,
             call_value=0,
             parameters=params,
-            consume_user_resource_percent=1)
+            consume_user_resource_percent=percent)
         print("======== TX Result ✅")
         sign = self.tron.trx.sign(tx_data)
         print("======== Signing {} ✅".format(classname))
