@@ -31,15 +31,15 @@ f.close()
 PACKAGE_VERSION = str(line)
 
 EXTRAS_REQUIRE = {
-    'tester': [
-        'coverage',
-        'pep8',
-        'pyflakes',
-        'pylint',
-        'pytest-cov'
+    "tester": [
+        "coverage",
+        "pep8",
+        "pyflakes",
+        "pylint",
+        "pytest-cov"
     ],
 
-    'docs': [
+    "docs": [
         "mock",
         "sphinx-better-theme>=0.1.4",
         "click>=5.1",
@@ -55,7 +55,7 @@ EXTRAS_REQUIRE = {
         "wheel >= 0.31.0"
     ],
 
-    'dev': [
+    "dev": [
         "bumpversion",
         "flaky>=3.3.0",
         "hypothesis>=3.31.2",
@@ -89,7 +89,6 @@ install_requires = [
     "hexbytes>=0.1.0,<1.0.0",
     "requests=3.0.0",
     "base58>=2.0.0,<3.0.0",
-    "ecdsa",
 ]
 
 this_dir = os.path.dirname(__file__)
