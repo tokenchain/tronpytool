@@ -17,7 +17,7 @@
 """
 
 from urllib.parse import urlencode
-from tronpytool.common.datastructures import AttributeDict
+from common.datastructures import AttributeDict
 from eth_utils import (
     apply_to_return_value,
     keccak as tron_keccak,

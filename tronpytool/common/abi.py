@@ -13,16 +13,21 @@ from typing import Tuple
 import binascii
 import eth_abi
 import itertools
+
 from eth_abi import (
     encoding,
     decoding
 )
+
 from eth_abi.codec import ABICodec
+
 from eth_abi.registry import (
     BaseEquals,
     registry as default_registry, ABIRegistry,
 )
+
 from eth_utils import to_tuple
+
 from trx_utils import (
     decode_hex,
     is_bytes,
@@ -31,11 +36,13 @@ from trx_utils import (
 )
 
 from tronpytool.common.formatters import recursive_map
+
 from tronpytool.common.toolz import (
     curry,
     partial,
     pipe,
 )
+
 from tronpytool.exceptions import FallbackNotFound
 
 DYNAMIC_TYPES = ['bytes', 'string']

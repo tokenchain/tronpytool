@@ -86,8 +86,10 @@ install_requires = [
     "eth-utils>=1.3.0,<2.0.0",
     "eth-hash[pycryptodome]>=0.2.0,<1.0.0",
     "trx-utils",
+    "eth-account==0.5.4"
     "hexbytes>=0.1.0,<1.0.0",
     "requests=3.0.0",
+    "six",
     "base58>=2.0.0,<3.0.0"
 ]
 
@@ -105,7 +107,7 @@ setup(
     long_description_content_type='text/x-rst',
     keywords='tron tron-api tron-api-python iex-base cli sdk',
     url='https://github.com/iexbase/tron-api-python',
-    author='Serderov & Heskemo',
+    author='Sederov & Heskemo',
     author_email='steein.shamsudin@gmail.com',
     license='MIT License',
     zip_safe=False,

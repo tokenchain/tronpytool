@@ -16,7 +16,6 @@ from trx_utils import is_hex, is_bytes
 from tronpytool.common.datastructures import AttributeDict
 from tronpytool.common.key import PrivateKey as PFactory
 
-
 class Account:
 
     def generate_address(self, priv_key=None) -> dict:
