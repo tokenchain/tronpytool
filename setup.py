@@ -88,7 +88,7 @@ install_requires = [
     "trx-utils",
     "eth-account==0.5.4"
     "hexbytes>=0.1.0,<1.0.0",
-    "requests=3.0.0",
+    "requests>=2.25.1",
     "six",
     "base58>=2.0.0,<3.0.0"
 ]
