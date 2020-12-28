@@ -86,9 +86,9 @@ install_requires = [
     "eth-utils>=1.3.0,<2.0.0",
     "eth-hash[pycryptodome]>=0.2.0,<1.0.0",
     "trx-utils",
-    "eth-account==0.5.4"
-    "hexbytes>=0.1.0,<1.0.0",
+    "eth-account<1.0.0"
     "requests>=2.25.1",
+    "hexbytes>=0.1.0",
     "six",
     "base58>=2.0.0,<3.0.0"
 ]
