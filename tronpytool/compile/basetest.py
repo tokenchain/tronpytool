@@ -183,7 +183,7 @@ class CoreDeploy:
         print("======== Broadcast Result ✅ -> {}".format(path))
         sol_wrap.StoreTxResult(result, path)
 
-        if "transaction" not in json.loads(result):
+        if "transaction" not in result:
             print("failed to deploy contract with this error result from this.", result)
             return "Err"
 
