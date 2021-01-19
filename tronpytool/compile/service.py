@@ -36,6 +36,47 @@ class Service:
         Service.LoopMemberGraceService(total_members, block_count, 5, False, callback)
 
     @staticmethod
+    def EventLoop(interval: int, callback=None) -> None:
+        while True:
+            try:
+                if callback is not None:
+                    callback()
+
+                time.sleep(interval)
+
+            except TypeError as e:
+                print(e)
+                break
+
+            except requests.exceptions.Timeout as eg:
+                # Maybe set up for a retry, or continue in a retry loop
+                print("☯︎ request time out", eg)
+                continue
+
+            except requests.exceptions.ConnectionError as ef:
+                # Maybe set up for a retry, or continue in a retry loop
+                print("☯︎ request time out", ef)
+                continue
+
+            except requests.exceptions.TooManyRedirects as ep:
+                # Tell the user their URL was bad and try a different one
+                print("☯︎ too many requests now", ep)
+                continue
+
+            except requests.exceptions.HTTPError as eh:
+                print("☯︎ http error is now", eh)
+                continue
+
+            except ReadTimeoutError as h:
+                print("☯︎ time out", h)
+                continue
+
+            except requests.exceptions.RequestException as ej:
+                # catastrophic error. bail.
+                print("☯︎ nothing but try again later", ej)
+                continue
+
+    @staticmethod
     def LoopMemberGraceService(total_members: int, block_count: int, interval_time_sec: int, once: bool, callback=None):
         last = 1
         (loops, left) = divmod(total_members, block_count)
