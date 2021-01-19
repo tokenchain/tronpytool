@@ -36,7 +36,7 @@ class Service:
         Service.LoopMemberGraceService(total_members, block_count, 5, False, callback)
 
     @staticmethod
-    def LoopMemberGraceService(total_members: int, block_count: int, interval_time_sec: int, once:bool, callback):
+    def LoopMemberGraceService(total_members: int, block_count: int, interval_time_sec: int, once: bool, callback=None):
         last = 1
         (loops, left) = divmod(total_members, block_count)
         while True:
@@ -45,16 +45,16 @@ class Service:
                     for x in range(loops):
                         a = x * block_count
                         b = a + block_count
-                        if a == 0:
-                            a = 1
-                        callback(a, b)
+                        if callback is not None:
+                            callback(a, b)
                         last = b
 
                 if left == 0 and once:
                     break
 
                 if left > 0:
-                    callback(last, left)
+                    if callback is not None:
+                        callback(last, left)
 
                 time.sleep(interval_time_sec)
 
