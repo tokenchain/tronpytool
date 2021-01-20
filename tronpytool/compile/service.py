@@ -1,3 +1,4 @@
+import asyncio
 import threading
 import time
 
@@ -40,9 +41,52 @@ class Service:
         while True:
             try:
                 if callback is not None:
-                    callback()
+                    if callback() is True:
+                        break
 
                 time.sleep(interval)
+
+            except TypeError as e:
+                print(e)
+                break
+
+            except requests.exceptions.Timeout as eg:
+                # Maybe set up for a retry, or continue in a retry loop
+                print("☯︎ request time out", eg)
+                continue
+
+            except requests.exceptions.ConnectionError as ef:
+                # Maybe set up for a retry, or continue in a retry loop
+                print("☯︎ request time out", ef)
+                continue
+
+            except requests.exceptions.TooManyRedirects as ep:
+                # Tell the user their URL was bad and try a different one
+                print("☯︎ too many requests now", ep)
+                continue
+
+            except requests.exceptions.HTTPError as eh:
+                print("☯︎ http error is now", eh)
+                continue
+
+            except ReadTimeoutError as h:
+                print("☯︎ time out", h)
+                continue
+
+            except requests.exceptions.RequestException as ej:
+                # catastrophic error. bail.
+                print("☯︎ nothing but try again later", ej)
+                continue
+
+    @staticmethod
+    async def EventLoopAsync(interval: int, callback=None) -> None:
+        while True:
+            try:
+                if callback is not None:
+                    if callback() is True:
+                        break
+
+                await asyncio.sleep(interval)
 
             except TypeError as e:
                 print(e)
@@ -95,7 +139,8 @@ class Service:
 
                 if left > 0:
                     if callback is not None:
-                        callback(last, left)
+                        l = last + left
+                        callback(last, l)
 
                 time.sleep(interval_time_sec)
 
