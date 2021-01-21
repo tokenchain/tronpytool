@@ -5,9 +5,7 @@
 # See License.txt in the project root for license information.
 # --------------------------------------------------------------------
 import platform
-
 import tronpytool
-
 
 class BaseProvider(object):
     """
