@@ -132,15 +132,15 @@ class Service:
                         b = a + block_count
                         if callback is not None:
                             callback(a, b)
-                        last = b
+                        last = b + 1
 
                 if left == 0 and once:
                     break
 
                 if left > 0:
                     if callback is not None:
-                        l = last + left
-                        callback(last, l)
+                        index_final = last + left - 1
+                        callback(last, index_final)
 
                 time.sleep(interval_time_sec)
 
