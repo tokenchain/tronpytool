@@ -122,7 +122,7 @@ class Service:
 
     @staticmethod
     def LoopMemberGraceService(total_members: int, block_count: int, interval_time_sec: int, once: bool, callback=None):
-        last = 1
+        last = 0
         (loops, left) = divmod(total_members, block_count)
         while True:
             try:
