@@ -131,15 +131,19 @@ class ContractMethod:
         if ok:
             print("=========================================")
             print("🦓 transaction ID: {}".format(transaction_id))
+
             offline_sign = self._client.sign(r)
             print("=========================================")
-            print("🐝 sign transaction: {}".format(offline_sign))
+            if self.debug:
+                print("🐝 sign transaction: {}".format(offline_sign))
             result = self._client.broadcast(offline_sign)
-            print("=========================================")
-            print("🐳 result transaction: {}".format(result))
+            if self.debug:
+                print("=========================================")
+                print("🐳 result transaction: {}".format(result))
             transaction_info = self._client.get_transaction_info(transaction_id)
-            print("🐚 detail result for transaction: {}".format(transaction_info))
-            print("=========================================")
+            if self.debug:
+                print("🐚 detail result for transaction: {}".format(transaction_info))
+                print("=========================================")
 
         else:
             raise KeyError('Request returns Error - {} msg:{} txt:{}'.format(key, transaction_id,
