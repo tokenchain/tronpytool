@@ -43,6 +43,13 @@ class NoABIFunctionsFound(AttributeError):
     pass
 
 
+class LoopError(Exception):
+    """
+    Error raised from service loop.
+    """
+    pass
+
+
 class ValidationError(Exception):
     """
     Raised when a supplied value is invalid.
@@ -158,9 +165,6 @@ class AssetNotFound(NotFoundError):
 
 
 class DoubleSpending(TransactionError):
-    pass
-
-class LoopError(Exception):
     pass
 
 

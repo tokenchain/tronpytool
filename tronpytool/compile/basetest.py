@@ -141,6 +141,18 @@ class CoreDeploy:
     def is_deployment(self) -> bool:
         return self.is_deploy
 
+    def ready_io(self, show_address: bool = False):
+        """try to load up the file from the existing path"""
+        try:
+            self._contract_dict = json.load(codecs.open(self.deployedAddrsFilePath, 'r', 'utf-8-sig'))
+            print("==== 🛄 data is prepared and it is ready now.. ")
+            if show_address:
+                self.preview_all_addresses()
+        except ValueError:
+            pass
+        except TypeError as e:
+            print(e)
+
     def connect_deploy_core(self, workspace: str, rebuild=False, deploy=False) -> None:
         if rebuild:
             sol_contr = SolcWrap(workspace).BuildRemote()
@@ -149,16 +161,9 @@ class CoreDeploy:
 
         self.is_deploy = deploy
         self.sol_cont = sol_contr
+
         if not deploy:
-            """try to load up the file from the existing path"""
-            try:
-                self._contract_dict = json.load(codecs.open(self.deployedAddrsFilePath, 'r', 'utf-8-sig'))
-                print("==== 🛄 data is prepared and it is ready now.. ")
-                self.preview_all_addresses()
-            except ValueError:
-                pass
-            except TypeError as e:
-                print(e)
+            self.ready_io(True)
 
     def complete_deployment(self) -> None:
         """store up the deployed contrcat addresses to the local file storage"""

@@ -5,7 +5,7 @@ import time
 import requests
 from urllib3.exceptions import ReadTimeoutError
 
-from exceptions import LoopError
+from tronpytool.exceptions import LoopError
 
 threadLock = threading.Lock()
 threads = []
@@ -131,7 +131,7 @@ class Service:
                 continue
 
     @staticmethod
-    def LoopMemberGraceService(total_members: int, block_count: int, interval_time_sec: int, once: bool, callback=None):
+    def LoopMemberGraceService(total_members: int, block_count: int, int_time_sec: int, once: bool, callback=None):
         last = 0
         (loops, left) = divmod(total_members, block_count)
         while True:
@@ -152,7 +152,7 @@ class Service:
                         index_final = last + left - 1
                         callback(last, index_final)
 
-                time.sleep(interval_time_sec)
+                time.sleep(int_time_sec)
 
                 if once:
                     break
