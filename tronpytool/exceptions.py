@@ -160,6 +160,9 @@ class AssetNotFound(NotFoundError):
 class DoubleSpending(TransactionError):
     pass
 
+class LoopError(Exception):
+    pass
+
 
 HTTP_EXCEPTIONS = {
     400: BadRequest,

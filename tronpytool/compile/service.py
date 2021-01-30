@@ -5,6 +5,8 @@ import time
 import requests
 from urllib3.exceptions import ReadTimeoutError
 
+from exceptions import LoopError
+
 threadLock = threading.Lock()
 threads = []
 
@@ -46,9 +48,13 @@ class Service:
 
                 time.sleep(interval)
 
-            except TypeError as e:
-                print(e)
-                break
+            except TypeError as te:
+                print("☯︎ ", te)
+                continue
+
+            except LoopError as r:
+                print("☯︎ try again -> ", r)
+                continue
 
             except requests.exceptions.Timeout as eg:
                 # Maybe set up for a retry, or continue in a retry loop
@@ -88,9 +94,13 @@ class Service:
 
                 await asyncio.sleep(interval)
 
-            except TypeError as e:
-                print(e)
-                break
+            except TypeError as te:
+                print("☯︎ ", te)
+                continue
+
+            except LoopError as r:
+                print("☯︎ try again -> ", r)
+                continue
 
             except requests.exceptions.Timeout as eg:
                 # Maybe set up for a retry, or continue in a retry loop
@@ -148,7 +158,11 @@ class Service:
                     break
 
             except TypeError as te:
-                print("☯︎ some type errors", te)
+                print("☯︎ ", te)
+                continue
+
+            except LoopError as r:
+                print("☯︎ try again -> ", r)
                 continue
 
             except requests.exceptions.Timeout as eg:
