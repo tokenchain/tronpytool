@@ -13,6 +13,7 @@ increment_version() {
     [ ${#new} -gt $len ] && carry=1 || carry=0
     [ $CNTR -gt 0 ] && part[CNTR]=${new: -len} || part[CNTR]=${new}
   done
+
   new="${part[*]}"
   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     echo -e "${new// /.}"
@@ -23,7 +24,7 @@ increment_version() {
     exit
   fi
 }
-fined() {
+clean_repo() {
   VERSION=$(cat version)
   increment_version $VERSION >version
   VERSION=$(cat version)
@@ -34,30 +35,33 @@ fined() {
   python3 -m pdoc --html tronpytool
   mv html/tronpytool docs/tronpytool
   rm html
-  #python3 -m pip install --user --upgrade setuptools wheel
-  #python3 -m pip install --upgrade setuptools wheel
+
+  # python3 -m pip install --user --upgrade setuptools wheel
+  # python3 -m pip install --upgrade setuptools wheel
+
   sudo python3 setup.py sdist bdist_wheel
-  #python3 -m pip install --user --upgrade twine
-  #python3 -m pip install --upgrade twine
-  #python3 -m twine upload --repository testpypi dist/*
+
+  # python3 -m pip install --user --upgrade twine
+  # python3 -m pip install --upgrade twine
+  # python3 -m twine upload --repository testpypi dist/*
+
   python3 -m twine upload dist/* --verbose
 
   echo "please update the package by using this command"
   echo "pip3 install tronpytool==$VERSION"
   echo "pi tronpytool==$VERSION"
-  echo "wait 30 seconds until it gets uploaded online... "
-  #sleep 30
-  #echo "ready and install it again.. "
-  #sudo pip3 install --proxy 127.0.0.1:1087 tronpytool==$VERSION
+  echo "pc tronpytool==$VERSION"
+  echo "wait 30 seconds until it gets uploaded online..."
+
+  # echo "ready and install it again.."
+  # sudo pip3 install --proxy 127.0.0.1:1087 tronpytool==$VERSION
 }
-git_update(){
+git_update() {
   git add .
   git remote add origin https://gitee.com/jjhoc/tronpytool.git
   git commit -m "package updates related items. please check in commit details"
   #git remote add origin https://gitee.com/jjhoc/b-explorer-settings.git
   git push
 }
-
-
-fined
+clean_repo
 git_update
