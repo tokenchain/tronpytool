@@ -89,5 +89,5 @@ Documentation is available at `docs <https://tronpytool-for-python.readthedocs.i
 Donations
 =============
 
-TRON: TRWBqiqoFZysoAeyR1J35ibuyc8EvhUAoY
+TRON: TWnb6wdmr4v7nKjEyCZvvCk4WqMDYRDVPf
 

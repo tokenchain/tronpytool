@@ -96,7 +96,16 @@ class CoreDeploy:
     def __init__(self, tron: Tron):
         self.tron = tron
         self.last_class = ""
+        self.list_type = "list_address"
         self._contract_dict = dict()
+
+    @property
+    def __list_key_label(self) -> str:
+        return "{}_{}".format(self.list_type, self.last_class)
+
+    @property
+    def __kv_label(self) -> str:
+        return "kv_{}".format(self.last_class)
 
     @property
     def subFix(self) -> str:
@@ -204,24 +213,70 @@ class CoreDeploy:
         self.last_class = classname
         return self
 
-    def setKV(self, key: str, value: any) -> "CoreDeploy":
-        mark = "kv_{}".format(self.last_class)
-
-        if mark not in self._contract_dict:
-            self._contract_dict[mark] = dict()
-
-        self._contract_dict[mark][key] = value
+    def setTargetListName(self, listname: str) -> "CoreDeploy":
+        self.list_type = listname
         return self
 
+    def setKV(self, key: str, value: any) -> "CoreDeploy":
+
+        if self.__kv_label not in self._contract_dict:
+            self._contract_dict[self.__kv_label] = dict()
+
+        self._contract_dict[self.__kv_label][key] = value
+        return self
+
+    def hasAddressInList(self, address: str) -> bool:
+        if self.__list_key_label not in self._contract_dict:
+            return False
+        try:
+            v = self._contract_dict[self.__list_key_label].index(address)
+            return True
+        except ValueError:
+            return False
+
+    def pushAddress(self, address: str) -> bool:
+        if self.__list_key_label not in self._contract_dict:
+            self._contract_dict[self.__list_key_label] = list()
+        self._contract_dict[self.__list_key_label].append(address)
+        return True
+
+    def removeAddress(self, address: str) -> bool:
+        if self.__list_key_label not in self._contract_dict:
+            return False
+        self._contract_dict[self.__list_key_label].remove(address)
+        return True
+
+    def iterList(self) -> iter:
+        if self.__list_key_label not in self._contract_dict:
+            raise Exception("there is no list in the map")
+        return iter(self._contract_dict[self.__list_key_label])
+
+    def hasList(self) -> bool:
+        if self.__list_key_label not in self._contract_dict:
+            return False
+        return len(self._contract_dict[self.__list_key_label]) > 0
+
+    def getString(self, key: str) -> str:
+        return str(self.getVal(key))
+
+    def getInt(self, key: str) -> int:
+        return int(self.getVal(key))
+
+    def getBytesArray(self, key: str) -> bytearray:
+        return bytearray(self.getVal(key))
+
+    def getBytes(self, key: str) -> bytes:
+        return bytes(self.getVal(key))
+
+    def getFloat(self, key: str) -> float:
+        return float(self.getVal(key))
+
     def getVal(self, key: str) -> any:
+        if self.__kv_label not in self._contract_dict:
+            self._contract_dict[self.__kv_label] = dict()
 
-        mark = "kv_{}".format(self.last_class)
-
-        if mark not in self._contract_dict:
-            self._contract_dict[mark] = dict()
-
-        if key in self._contract_dict[mark]:
-            return self._contract_dict[mark][key]
+        if key in self._contract_dict[self.__kv_label]:
+            return self._contract_dict[self.__kv_label][key]
 
         return ""
 

@@ -90,6 +90,7 @@ install_requires = [
     "requests>=2.25.1",
     "hexbytes>=0.1.0",
     "six",
+    "bs4",
     "base58>=2.0.0,<3.0.0"
 ]
 
@@ -102,10 +103,10 @@ with open(readme_filename) as f:
 setup(
     name='tronpytool',
     version=PACKAGE_VERSION,
-    description='A Python API for interacting with Tron (TRX)',
+    description='A Python API for interacting with Tron networks',
     long_description=PACKAGE_LONG_DESCRIPTION,
     long_description_content_type='text/x-rst',
-    keywords='tron tron-api tron-api-python iex-base cli sdk',
+    keywords='tron tron-api tron-api-python iex-base cli sdk pentest lovestories sexmachine',
     url='https://github.com/iexbase/tron-api-python',
     author='Sederov & Heskemo',
     author_email='steein.shamsudin@gmail.com',
@@ -120,6 +121,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     packages=find_packages(exclude=['examples']),
     include_package_data=True,
