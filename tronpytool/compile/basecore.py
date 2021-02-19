@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Base wrapper class for accessing ethereum smart contracts."""
-
+from datetime import datetime
 from typing import Any, Union, Tuple
 
 from tronpytool import Tron
@@ -19,7 +19,7 @@ class Validator:
 
     def __init__(
             self,
-            web3_or_provider: Tron,
+            web3_or_provider: any,
             contract_address: str,
     ):
         """Initialize the instance."""
@@ -34,6 +34,57 @@ class Validator:
             validated.
         :param argument_value: Value of argument to parameter to be validated.
         """
+
+
+class EventTracker:
+
+    def __init__(self, forceStart: any = False, debug: bool = False):
+        self.callback_event_found = None
+        self.debug = debug
+        self.since = 0
+        if isinstance(forceStart, bool):
+            if forceStart is False:
+                self.updateTracker()
+            else:
+                self.since = 0
+        elif isinstance(forceStart, int):
+            self.since = forceStart
+
+    def trackEvent(self, tron: any, event_name: str, address: str) -> list:
+        event_results = tron.get_event_result(
+            event_name=event_name,
+            since_timestamp=self.since,
+            contract_address=address,
+            only_confirmed=False,
+        )
+
+        if self.debug:
+            print(event_results)
+
+        self.updateTracker()
+
+        if len(event_results) > 0:
+            return event_results
+        else:
+            return list()
+
+    def setCallback(self, callback: any) -> "EventTracker":
+        self.callback_event_found = callback
+        return self
+
+    def isCallBackReady(self) -> bool:
+        return self.callback_event_found is not None
+
+    def setTimeSpecial(self, since: int) -> "EventTracker":
+        self.since = since
+        return self
+
+    def setDebug(self, enabled: bool) -> "EventTracker":
+        self.debug = enabled
+        return self
+
+    def updateTracker(self) -> None:
+        self.since = int(datetime.now().timestamp()) * 1000
 
 
 class ContractMethod:

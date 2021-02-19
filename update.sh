@@ -65,3 +65,4 @@ git_update() {
 }
 clean_repo
 git_update
+rm -rf dist

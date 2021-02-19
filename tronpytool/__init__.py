@@ -18,6 +18,7 @@ from .pen.eventtest import EventTestCase
 from .pen.membertest import MemberNetworkTestCase
 from .providers.gracefulinterrupter import GracefulInterruptHandler
 from .providers.http import HttpProvider  # noqa: E402
+from .compile.basecore import ContractMethod, EventTracker
 
 if sys.version_info < (3, 5):
     raise EnvironmentError("Python 3.5 or above is required")
