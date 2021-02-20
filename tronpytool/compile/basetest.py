@@ -234,11 +234,18 @@ class CoreDeploy:
         except ValueError:
             return False
 
-    def pushAddress(self, address: str) -> bool:
+    def pushAddress(self, address: str, unique: bool = True) -> bool:
         if self.__list_key_label not in self._contract_dict:
             self._contract_dict[self.__list_key_label] = list()
-        self._contract_dict[self.__list_key_label].append(address)
-        return True
+        if unique:
+            if self._contract_dict[self.__list_key_label].index(address) > 0:
+                return False
+            else:
+                self._contract_dict[self.__list_key_label].append(address)
+                return True
+        else:
+            self._contract_dict[self.__list_key_label].append(address)
+            return True
 
     def removeAddress(self, address: str) -> bool:
         if self.__list_key_label not in self._contract_dict:
