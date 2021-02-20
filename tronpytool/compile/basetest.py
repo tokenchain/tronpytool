@@ -237,15 +237,14 @@ class CoreDeploy:
     def pushAddress(self, address: str, unique: bool = True) -> bool:
         if self.__list_key_label not in self._contract_dict:
             self._contract_dict[self.__list_key_label] = list()
-        if unique:
 
+        if unique is True:
             try:
                 found_index = self._contract_dict[self.__list_key_label].index(address)
                 return False
             except IndexError:
                 self._contract_dict[self.__list_key_label].append(address)
                 return True
-
         else:
             self._contract_dict[self.__list_key_label].append(address)
             return True
