@@ -238,11 +238,14 @@ class CoreDeploy:
         if self.__list_key_label not in self._contract_dict:
             self._contract_dict[self.__list_key_label] = list()
         if unique:
-            if self._contract_dict[self.__list_key_label].index(address) > 0:
+
+            try:
+                found_index = self._contract_dict[self.__list_key_label].index(address)
                 return False
-            else:
+            except IndexError:
                 self._contract_dict[self.__list_key_label].append(address)
                 return True
+
         else:
             self._contract_dict[self.__list_key_label].append(address)
             return True
