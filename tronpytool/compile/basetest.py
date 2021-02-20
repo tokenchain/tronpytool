@@ -242,6 +242,9 @@ class CoreDeploy:
             try:
                 found_index = self._contract_dict[self.__list_key_label].index(address)
                 return False
+            except ValueError:
+                self._contract_dict[self.__list_key_label].append(address)
+                return True
             except IndexError:
                 self._contract_dict[self.__list_key_label].append(address)
                 return True
