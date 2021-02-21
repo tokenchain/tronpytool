@@ -42,6 +42,7 @@ class EventTracker:
         self.callback_event_found = None
         self.debug = debug
         self.since = 0
+        self.since_block_number = 0
         if isinstance(forceStart, bool):
             if forceStart is False:
                 self.updateTracker()
@@ -51,12 +52,20 @@ class EventTracker:
             self.since = forceStart
 
     def trackEvent(self, tron: any, event_name: str, address: str) -> list:
-        event_results = tron.get_event_result(
-            event_name=event_name,
-            since_timestamp=self.since,
-            contract_address=address,
-            only_confirmed=False,
-        )
+        if self.since_block_number == 0:
+            event_results = tron.get_event_result(
+                event_name=event_name,
+                since_timestamp=self.since,
+                contract_address=address,
+                only_confirmed=False,
+            )
+        else:
+            event_results = tron.get_event_result(
+                event_name=event_name,
+                block_number=self.since_block_number,
+                contract_address=address,
+                only_confirmed=False,
+            )
 
         if self.debug:
             print(event_results)
@@ -77,6 +86,10 @@ class EventTracker:
 
     def setTimeSpecial(self, since: int) -> "EventTracker":
         self.since = since
+        return self
+
+    def setBlockNumber(self, bn: int) -> "EventTracker":
+        self.since_block_number = bn
         return self
 
     def setDebug(self, enabled: bool) -> "EventTracker":
