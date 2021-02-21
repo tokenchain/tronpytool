@@ -268,6 +268,15 @@ class CoreDeploy:
             return False
         return len(self._contract_dict[self.__list_key_label]) > 0
 
+    def hasField(self, key: str) -> bool:
+        if self.__kv_label not in self._contract_dict:
+            self._contract_dict[self.__kv_label] = dict()
+
+        if key not in self._contract_dict[self.__kv_label]:
+            return False
+        else:
+            return True
+
     def getString(self, key: str) -> str:
         return str(self.getVal(key))
 
