@@ -36,7 +36,7 @@ clean_repo() {
   mv html/tronpytool docs/tronpytool
   rm html
 
-  # python3 -m pip install --user --upgrade setuptools wheel
+  python3 -m pip install --user --upgrade setuptools wheel
   # python3 -m pip install --upgrade setuptools wheel
 
   sudo python3 setup.py sdist bdist_wheel
@@ -65,4 +65,3 @@ git_update() {
 }
 clean_repo
 git_update
-sudo rm -rf dist
