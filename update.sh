@@ -29,7 +29,7 @@ clean_repo() {
   increment_version $VERSION >version
   VERSION=$(cat version)
 
-  rm -rf dist
+  sudo rm -rf dist
   rm -rf html
   rm -rf doc
   python3 -m pdoc --html tronpytool
@@ -65,4 +65,4 @@ git_update() {
 }
 clean_repo
 git_update
-rm -rf dist
+sudo rm -rf dist
