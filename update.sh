@@ -39,10 +39,9 @@ clean_repo() {
   python3 -m pip install --user --upgrade setuptools wheel
   # python3 -m pip install --upgrade setuptools wheel
 
-  sudo python3 setup.py sdist bdist_wheel
+  sudo python3 setup.py clean sdist bdist_wheel
 
   # python3 -m pip install --user --upgrade twine
-  # python3 -m pip install --upgrade twine
   # python3 -m twine upload --repository testpypi dist/*
 
   python3 -m twine upload dist/* --verbose
