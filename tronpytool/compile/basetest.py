@@ -188,7 +188,7 @@ class CoreDeploy:
         sign = self.tron.trx.sign(tx_data)
         print("======== Signing {} ✅".format(classname))
         result = self.tron.trx.broadcast(sign)
-        print("======== Broadcast Result ✅ -> {}".format(self.pathfinder.showCurrentDeployedClass(classname)))
+        print("======== Broadcast Result ✅ -> {}".format(Paths.showCurrentDeployedClass(classname)))
         sol_wrap.StoreTxResult(result, self.pathfinder.classObject(classname))
 
         if "transaction" not in result:
@@ -313,7 +313,7 @@ class CoreDeploy:
         print("======== Signing {} ✅".format(classname))
         result = self.tron.trx.broadcast(sign)
 
-        print("======== Broadcast Result ✅ -> {}".format(self.pathfinder.showCurrentDeployedClass(classname)))
+        print("======== Broadcast Result ✅ -> {}".format(Paths.showCurrentDeployedClass(classname)))
         sol_wrap.StoreTxResult(result, self.pathfinder.classObject(classname))
 
         contract_address = self.tron.address.from_hex(result["transaction"]["contract_address"])
