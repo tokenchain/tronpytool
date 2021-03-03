@@ -41,7 +41,7 @@ class Paths:
 
     @classmethod
     def showCurrentDeployedClass(cls, class_name: str) -> str:
-        return cls.NAME_FILE_EXX.format(class_name)
+        return cls.NAME_FILE_EXX.format(cls.ACTION_FOLDER, class_name)
 
     def setDefaultPath(self) -> "Paths":
         self.___current_deployment_path = os.path.join(self.___workspace, self.ACTION_FOLDER)
