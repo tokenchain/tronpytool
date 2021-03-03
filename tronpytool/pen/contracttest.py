@@ -8,7 +8,7 @@ import random
 import string
 import time
 
-from compile.basecore import Paths
+from tronpytool.compile.paths import Paths
 from tronpytool import Tron
 from tronpytool.compile.basetest import WrapContract
 from tronpytool.trx import Trx

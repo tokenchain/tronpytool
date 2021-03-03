@@ -6,7 +6,7 @@ import os
 import subprocess
 import time
 
-from compile.paths import Paths
+from tronpytool.compile.paths import Paths
 from tronpytool import Tron
 from tronpytool.trx import Trx
 
