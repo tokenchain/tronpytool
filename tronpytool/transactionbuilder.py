@@ -491,8 +491,7 @@ class TransactionBuilder(object):
         if not is_hex(kwargs.get('bytecode')):
             raise ValueError('Invalid bytecode provided')
 
-        if not is_integer(fee_limit) or fee_limit <= 0 or \
-                fee_limit > 1000000000:
+        if self.fee_range_limit_error(fee_limit):
             raise ValueError('Invalid fee limit provided')
 
         if not is_integer(call_value) or call_value < 0:
@@ -521,6 +520,9 @@ class TransactionBuilder(object):
 
         issuer_address = kv.setdefault('issuer_address', self.tron.default_address.hex)
         call_value = kv.setdefault('call_value', 0)
+        """
+        default set to 1000 TRX
+        """
         fee_limit = kv.setdefault('fee_limit', 1000000000)
         token_value = kv.setdefault('token_value', 0)
         token_id = kv.setdefault('token_id', 0)
@@ -540,7 +542,7 @@ class TransactionBuilder(object):
         if not is_integer(call_value) or call_value < 0:
             raise ValueError('Invalid call value provided')
 
-        if not is_integer(fee_limit) or fee_limit <= 0 or fee_limit > 1000000000:
+        if self.fee_range_limit_error(fee_limit):
             raise ValueError('Invalid fee limit provided')
 
         """remove all the spaces"""
@@ -637,7 +639,7 @@ class TransactionBuilder(object):
         if not is_integer(call_value) or call_value < 0:
             raise ValueError('Invalid call value provided')
 
-        if not is_integer(fee_limit) or fee_limit <= 0 or fee_limit > 100000000000:
+        if self.fee_range_limit_error(fee_limit):
             raise ValueError('Invalid fee limit provided')
 
         """remove all the spaces"""
@@ -1065,8 +1067,7 @@ class TransactionBuilder(object):
         if not self.tron.isAddress(contract_address):
             raise InvalidAddress('Invalid contractAddress provided')
 
-        if not is_integer(origin_energy_limit) or origin_energy_limit < 0 or \
-                origin_energy_limit > 10000000:
+        if self.fee_range_limit_error(origin_energy_limit):
             raise ValueError('Invalid originEnergyLimit  provided')
 
         return self.tron.manager.request('wallet/updateenergylimit', {
@@ -1137,3 +1138,11 @@ class TransactionBuilder(object):
                 data['actives'] = actives_permissions
 
         return self.tron.manager.request('wallet/accountpermissionupdate', data)
+
+    """
+    check the fee limit for the range
+    max fee limit is 100000 TRX
+    """
+
+    def fee_range_limit_error(self, fee_limit: int) -> bool:
+        return not is_integer(fee_limit) or fee_limit <= 0 or fee_limit > 100000000000
