@@ -637,7 +637,7 @@ class TransactionBuilder(object):
         if not is_integer(call_value) or call_value < 0:
             raise ValueError('Invalid call value provided')
 
-        if not is_integer(fee_limit) or fee_limit <= 0 or fee_limit > 1000000000:
+        if not is_integer(fee_limit) or fee_limit <= 0 or fee_limit > 100000000000:
             raise ValueError('Invalid fee limit provided')
 
         """remove all the spaces"""
