@@ -6,6 +6,7 @@ import os
 import subprocess
 import time
 
+from compile.paths import Paths
 from tronpytool import Tron
 from tronpytool.trx import Trx
 
@@ -88,16 +89,15 @@ class CoreDeploy:
     """DEFI Contract deployment
     with the right strategies
     """
-    _contract_dict: dict
-    SUB_FIX = ""
-    ACTION_FOLDER = "deploy_results"
-    FILE_NAME = "deploy_{}{}.json"
 
     def __init__(self, tron: Tron):
         self.tron = tron
         self.last_class = ""
         self.list_type = "list_address"
         self._contract_dict = dict()
+        self.is_deploy = False
+        self.sol_cont = None
+        self._pathfinder = None
 
     @property
     def __list_key_label(self) -> str:
@@ -106,24 +106,6 @@ class CoreDeploy:
     @property
     def __kv_label(self) -> str:
         return "kv_{}".format(self.last_class)
-
-    @property
-    def subFix(self) -> str:
-        """preview the file name"""
-        return self.SUB_FIX
-
-    @subFix.setter
-    def subFix(self, sub: str) -> None:
-        """the file name does not require extension name"""
-        self.SUB_FIX = sub
-
-    @property
-    def deployed_record(self) -> str:
-        return self.FILE_NAME.format(self.tron.network_name, self.SUB_FIX)
-
-    @property
-    def deployedAddrsFilePath(self) -> str:
-        return os.path.join(self.sol_cont.workspace, self.ACTION_FOLDER, self.deployed_record)
 
     def getAddr(self, keyname: str) -> str:
         """example: TT67rPNwgmpeimvHUMVzFfKsjL9GZ1wGw8"""
@@ -153,7 +135,7 @@ class CoreDeploy:
     def ready_io(self, show_address: bool = False):
         """try to load up the file from the existing path"""
         try:
-            self._contract_dict = json.load(codecs.open(self.deployedAddrsFilePath, 'r', 'utf-8-sig'))
+            self._contract_dict = self._pathfinder.LoadDeploymentFile()
             print("==== 🛄 data is prepared and it is ready now.. ")
             if show_address:
                 self.preview_all_addresses()
@@ -164,21 +146,34 @@ class CoreDeploy:
 
     def connect_deploy_core(self, workspace: str, rebuild=False, deploy=False) -> None:
         if rebuild:
-            sol_contr = SolcWrap(workspace).BuildRemote()
+            self.sol_cont = SolcWrap(workspace).BuildRemote()
         else:
-            sol_contr = SolcWrap(workspace)
-
+            self.sol_cont = SolcWrap(workspace)
+        self._pathfinder = Paths(workspace).setDefaultPath().network(self.tron.network_name)
         self.is_deploy = deploy
-        self.sol_cont = sol_contr
 
         if not deploy:
             self.ready_io(True)
 
+    def connect(self, workspace: str, history: any) -> None:
+        self.is_deploy = False
+
+        if history is False:
+            self._pathfinder = Paths(workspace).setDefaultPath().network(self.tron.network_name)
+        else:
+            self._pathfinder = Paths(workspace).setUseVersion(history).network(self.tron.network_name)
+
+        self.ready_io(True)
+
     def complete_deployment(self) -> None:
         """store up the deployed contrcat addresses to the local file storage"""
-        self.sol_cont.StoreTxResult(self._contract_dict, self.deployedAddrsFilePath)
+        self.sol_cont.StoreTxResult(self._contract_dict, self._pathfinder.__deploymentPath)
 
-    def deploy(self, sol_wrap: SolcWrap, classname: str, params: list = [], fee: int = 10 ** 9,
+    def deploy(self,
+               sol_wrap: SolcWrap,
+               classname: str,
+               params: list = [],
+               fee: int = 10 ** 9,
                percent: int = 1) -> str:
         """This is using the faster way to deploy files by using the specific abi and bin files"""
         _abi, _bytecode = sol_wrap.GetCodeClass(classname)
@@ -193,9 +188,8 @@ class CoreDeploy:
         sign = self.tron.trx.sign(tx_data)
         print("======== Signing {} ✅".format(classname))
         result = self.tron.trx.broadcast(sign)
-        path = "{}/{}.json".format(self.ACTION_FOLDER, classname)
-        print("======== Broadcast Result ✅ -> {}".format(path))
-        sol_wrap.StoreTxResult(result, path)
+        print("======== Broadcast Result ✅ -> {}".format(self._pathfinder.showCurrentDeployedClass(classname)))
+        sol_wrap.StoreTxResult(result, self._pathfinder.__classObject(classname))
 
         if "transaction" not in result:
             print("failed to deploy contract with this error result from this.", result)
@@ -318,9 +312,10 @@ class CoreDeploy:
         sign = self.tron.trx.sign(tx_data)
         print("======== Signing {} ✅".format(classname))
         result = self.tron.trx.broadcast(sign)
-        path = "{}/{}.json".format(self.ACTION_FOLDER, classname)
-        print("======== Broadcast Result ✅ -> {}".format(path))
-        sol_wrap.StoreTxResult(result, path)
+
+        print("======== Broadcast Result ✅ -> {}".format(self._pathfinder.showCurrentDeployedClass(classname)))
+        sol_wrap.StoreTxResult(result, self._pathfinder.__classObject(classname))
+
         contract_address = self.tron.address.from_hex(result["transaction"]["contract_address"])
         self._contract_dict[classname] = contract_address
         print("======== address saved to ✅ {} -> {}".format(contract_address, classname))

@@ -10,6 +10,7 @@ import sys
 import pkg_resources
 from eth_account import Account  # noqa: E402
 
+from compile.paths import Paths
 from .compile.service import Service, BackgroundRun
 from .main import Tron  # noqa: E402
 from .pen.collectfundscn import Collector
@@ -36,5 +37,6 @@ __all__ = [
     'EventTestCase',
     'Service',
     'GracefulInterruptHandler',
-    'BackgroundRun'
+    'BackgroundRun',
+    'Paths'
 ]

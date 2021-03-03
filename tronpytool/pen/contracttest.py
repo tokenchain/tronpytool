@@ -2,14 +2,13 @@
 # coding: utf-8
 
 
-import codecs
 import json
 import logging
-import os
 import random
 import string
 import time
 
+from compile.basecore import Paths
 from tronpytool import Tron
 from tronpytool.compile.basetest import WrapContract
 from tronpytool.trx import Trx
@@ -28,21 +27,18 @@ class CoreSimulatePlayers:
     """
     statement = 'End : {}, IO File {}'
     _contract_dict: dict
-    _network: str
+
     FILE_CONTRACT = "backedup"
-    ACTION_FOLDER = "deploy_results"
-    COLLECTION_CONTRACTS = "players"
     GENESIS_INVITE_CODE = "DPXUS"
     GENESIS_UPLINE_CODE = "OOOOO"
 
     def __init__(self, network: str, workspace: str):
         self._contract_dict = dict()
         self._tron_clients = dict()
-        self._workspace = workspace
-        self._network = network
+        self._pathfinder = Paths(workspace).network(network)
         """try to load up the file from the existing path"""
         try:
-            self._contract_dict = json.load(codecs.open(self.playerAddrsFilePath(), 'r', 'utf-8-sig'))
+            self._contract_dict = self._pathfinder.LoadPlayerFile()
             print("==== 🛄 data is prepared and the player metadata is now ready... ")
             self.preview_all_addresses()
             print("==== 🛄 End ==== ")
@@ -84,14 +80,6 @@ class CoreSimulatePlayers:
         """the file name does not require extension name"""
         self.FILE_CONTRACT = filename
 
-    @property
-    def playermeta_data(self) -> str:
-        return self.COLLECTION_CONTRACTS
-
-    @playermeta_data.setter
-    def playermeta_data(self, path: str) -> None:
-        self.COLLECTION_CONTRACTS = path
-
     def getCachedBalance(self, addr: str) -> int:
         """example: TT67rPNwgmpeimvHUMVzFfKsjL9GZ1wGw8"""
         if addr in self._contract_dict:
@@ -115,16 +103,12 @@ class CoreSimulatePlayers:
     def preview_all_addresses(self) -> None:
         print(self._contract_dict)
 
-    def playerAddrsFilePath(self) -> str:
-        return os.path.join(self._workspace, self.ACTION_FOLDER,
-                            "{}.json".format(self.COLLECTION_CONTRACTS))
-
     def GetMetadataByAddr(self, address: str) -> dict:
         return self._contract_dict[address]
 
     def SaveMetaFile(self) -> "CoreSimulatePlayers":
-        self._storeTxDict(self._contract_dict, self.playerAddrsFilePath())
-        print("===✅ metafile saved. {}".format(self.playerAddrsFilePath()))
+        self._storeTxDict(self._contract_dict, self._pathfinder.__playerAddrsFilePath)
+        print("===✅ metafile saved. {}".format(self._pathfinder.__playerAddrsFilePath))
         return self
 
     def SyncBalances(self) -> "CoreSimulatePlayers":
