@@ -43,6 +43,10 @@ class Paths:
     def showCurrentDeployedClass(cls, class_name: str) -> str:
         return cls.NAME_FILE_EXX.format(class_name)
 
+    def setDefaultPath(self) -> "Paths":
+        self.___current_deployment_path = os.path.join(self.___workspace, self.ACTION_FOLDER)
+        return self
+
     def __classObject(self, className: str) -> str:
         return os.path.join(self.___current_deployment_path, "{}.json".format(className))
 
@@ -54,9 +58,13 @@ class Paths:
     def __deploymentPath(self) -> str:
         return os.path.join(self.___current_deployment_path, self.DEPLOYMENT_FILE_NAME.format(self.___network_name, self.subFix))
 
-    def setDefaultPath(self) -> "Paths":
-        self.___current_deployment_path = os.path.join(self.___workspace, self.ACTION_FOLDER)
-        return self
+    @property
+    def saveDeployConfig(self) -> str:
+        return self.__deploymentPath
+
+    @property
+    def savePlayersList(self) -> str:
+        return self.__playerAddrsFilePath
 
     """
     config the network name
