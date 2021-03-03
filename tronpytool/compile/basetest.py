@@ -157,7 +157,7 @@ class CoreDeploy:
 
     def connect(self, workspace: str, history: any) -> None:
         self.is_deploy = False
-
+        self.sol_cont = SolcWrap(workspace)
         if history is False:
             self._pathfinder = Paths(workspace).setDefaultPath().network(self.tron.network_name)
         else:
