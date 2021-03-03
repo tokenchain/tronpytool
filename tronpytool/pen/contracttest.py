@@ -35,7 +35,7 @@ class CoreSimulatePlayers:
     def __init__(self, network: str, workspace: str):
         self._contract_dict = dict()
         self._tron_clients = dict()
-        self._pathfinder = Paths(workspace).network(network)
+        self._pathfinder = Paths(workspace).Network(network)
         """try to load up the file from the existing path"""
         try:
             self._contract_dict = self._pathfinder.LoadPlayerFile()

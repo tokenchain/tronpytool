@@ -47,7 +47,7 @@ class Paths:
         self.___current_deployment_path = os.path.join(self.___workspace, self.ACTION_FOLDER)
         return self
 
-    def __classObject(self, className: str) -> str:
+    def classObject(self, className: str) -> str:
         return os.path.join(self.___current_deployment_path, "{}.json".format(className))
 
     @property
@@ -59,28 +59,28 @@ class Paths:
         return os.path.join(self.___current_deployment_path, self.DEPLOYMENT_FILE_NAME.format(self.___network_name, self.subFix))
 
     @property
-    def saveDeployConfig(self) -> str:
+    def SaveDeployConfig(self) -> str:
         return self.__deploymentPath
 
     @property
-    def savePlayersList(self) -> str:
+    def SavePlayersList(self) -> str:
         return self.__playerAddrsFilePath
 
     """
     config the network name
     """
 
-    def network(self, name) -> "Paths":
+    def Network(self, name) -> "Paths":
         self.___network_name = name
         return self
 
-    def setUseHistory(self, history_path: str) -> "Paths":
+    def SetUseHistory(self, history_path: str) -> "Paths":
         self.___current_deployment_path = os.path.join(self.___workspace, self.HISTORY_FOLDER, history_path)
         return self
 
-    def setUseVersion(self, version_name: str) -> "Paths":
+    def SetUseVersion(self, version_name: str) -> "Paths":
         version = self.VERSION_NAME.format(version_name)
-        self.setUseHistory(version)
+        self.SetUseHistory(version)
         return self
 
     def LoadDeploymentFile(self) -> dict:
