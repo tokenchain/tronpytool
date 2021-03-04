@@ -107,8 +107,8 @@ class CoreSimulatePlayers:
         return self._contract_dict[address]
 
     def SaveMetaFile(self) -> "CoreSimulatePlayers":
-        self._storeTxDict(self._contract_dict, self._pathfinder.__playerAddrsFilePath)
-        print("===✅ metafile saved. {}".format(self._pathfinder.__playerAddrsFilePath))
+        self._storeTxDict(self._contract_dict, self._pathfinder.SavePlayersList)
+        print("===✅ metafile saved. {}".format(self._pathfinder.SavePlayersList))
         return self
 
     def SyncBalances(self) -> "CoreSimulatePlayers":

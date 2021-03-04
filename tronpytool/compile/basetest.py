@@ -321,6 +321,10 @@ class CoreDeploy:
         print("======== address saved to ✅ {} -> {}".format(contract_address, classname))
         return contract_address
 
+    def _balanceOf(self, address: str) -> int:
+        amount = self.tron.trx.get_balance(address, False)
+        return amount
+
 
 class WrapContract(object):
     """docstring for WrapContract The contract for this BOBA TEA"""
@@ -348,35 +352,9 @@ class WrapContract(object):
         client = Tron().setNetwork(self._network)
         client.private_key = pri_key
         client.default_address = wallet_address
-
         return client
 
     def setMasterKey(self, pub: str, pri: str) -> "WrapContract":
         self.tron_client.private_key = pri
         self.tron_client.default_address = pub
         return self
-
-    def initContract(self, contract_metadata) -> "WrapContract":
-        """
-        Load and initiate contract interface by using the deployed contract json metadata
-        try:
-        except FileNotFoundError as e:
-            print("Could not load the file ", e)
-        except Exception as e:
-            print("Problems from loading items from the file: ", e)
-        """
-        contractDict = json.load(codecs.open(contract_metadata, 'r', 'utf-8-sig'))
-        trn = contractDict["transaction"]
-        hex_address = trn["contract_address"]
-        self.transction_detail = contractDict
-        self.trc_address = self.tron_client.address.from_hex(hex_address)
-        print("@contract address {} from hex {}".format(self.trc_address, hex_address))
-        # self.init_internal_contract()
-        self.implcontract()
-        return self
-
-    def getTxID(self):
-        return self.transction_detail["txid"]
-
-    def implcontract(self):
-        pass
