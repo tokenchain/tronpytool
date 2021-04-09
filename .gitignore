@@ -108,4 +108,4 @@ venv.bak/
 /examples/project_test/
 /html/
 /examples/codec/*
-/examples/deploy_results/*
+/examples/deploy_results
