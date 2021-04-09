@@ -4,30 +4,25 @@
 # See License.txt in the project root for license information.
 # --------------------------------------------------------------------
 
+import binascii
+import itertools
 import re
 from collections import (
     namedtuple,
 )
 from typing import Tuple
 
-import binascii
 import eth_abi
-import itertools
-
 from eth_abi import (
     encoding,
     decoding
 )
-
 from eth_abi.codec import ABICodec
-
 from eth_abi.registry import (
     BaseEquals,
     registry as default_registry, ABIRegistry,
 )
-
 from eth_utils import to_tuple
-
 from trx_utils import (
     decode_hex,
     is_bytes,
@@ -36,13 +31,11 @@ from trx_utils import (
 )
 
 from tronpytool.common.formatters import recursive_map
-
 from tronpytool.common.toolz import (
     curry,
     partial,
     pipe,
 )
-
 from tronpytool.exceptions import FallbackNotFound
 
 DYNAMIC_TYPES = ['bytes', 'string']
@@ -723,6 +716,7 @@ registry.unregister('bytes')
 registry.unregister('string')
 tron_patch_ethereum_types(registry)
 _codec = ABICodec(registry)
+
 encode_abi = _codec.encode_abi
 encode_single = _codec.encode_single
 decode_abi = _codec.decode_abi

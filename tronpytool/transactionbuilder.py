@@ -12,7 +12,8 @@ from typing import (
     List
 )
 
-from eth_abi import encode_abi
+# from eth_abi import encode_abi
+from .common.abi import encode_abi
 from trx_utils import (
     is_string,
     is_integer,
