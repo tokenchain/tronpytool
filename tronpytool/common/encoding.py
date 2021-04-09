@@ -243,7 +243,7 @@ class FriendlyJsonSerialize:
 
 class TronJsonEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, AttributeDict):
+        if isinstance(obj, dict):
             return {k: v for k, v in obj.items()}
         if isinstance(obj, HexBytes):
             return obj.hex()

@@ -6,6 +6,7 @@ from typing import Any, Union
 import base58
 import ecdsa  # type: ignore
 from Crypto.Hash import keccak
+from eth_utils import to_canonical_address
 
 from tronpytool.exceptions import BadKey, BadSignature, BadAddress
 
@@ -76,10 +77,6 @@ def to_raw_address(raw_addr: Union[str, bytes]) -> bytes:
     return base58.b58decode_check(addr)
 
 
-def to_tvm_address(raw_addr: Union[str, bytes]) -> bytes:
-    return to_raw_address(raw_addr)[1:]
-
-
 def is_base58check_address(value: str) -> bool:
     return value[0] == "T" and len(base58.b58decode_check(value)) == 21
 
@@ -90,6 +87,10 @@ def is_hex_address(value: str) -> bool:
 
 def is_address(value: str) -> bool:
     return is_base58check_address(value) or is_hex_address(value)
+
+
+def to_tvm_address(raw_addr: Union[str, bytes]) -> bytes:
+    return to_raw_address(raw_addr)[1:]
 
 
 class BaseKey(ByteString, Hashable):

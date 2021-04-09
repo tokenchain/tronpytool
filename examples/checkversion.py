@@ -2,8 +2,9 @@
 # coding: utf-8
 import os
 
-from examples.codec.core.lib import WrapDeploy
+from examples.codec.core.lib import WrapDeploy, wallet_address
 from tronpytool import __version__
+from tronpytool.compile.bulkmanager import BulkManager
 
 print(__version__)
 caddress = "TGzXbPmnnRyknJbvx7BCJqpdg76uiZaE92"
@@ -11,32 +12,6 @@ caddress = "TGzXbPmnnRyknJbvx7BCJqpdg76uiZaE92"
 ROOT = os.path.join(os.path.dirname(__file__))
 # original owner address
 NETWORK = "nile"
-
-
-class BulkManager:
-    def __init__(self, dat, tron):
-        self.datlist = dat
-        self.tron = tron
-
-    def getSENDAddresses(self) -> list:
-        list_address = list()
-        for c in self.datlist:
-            list_address.append(c[0])
-        return list_address
-
-    def getSENDAmountBalances(self) -> list:
-        list_address = list()
-        for c in self.datlist:
-            list_address.append(c[1])
-
-        return list_address
-
-    def getSENDTotal(self) -> int:
-        total = 0
-        for c in self.datlist:
-            total += int(c[1])
-        return total
-
 
 test_data = [
     ["TPbUCNXm4qe2a8yN34SJ7L1rTo1v8dFQsw", 1000000],
@@ -59,3 +34,6 @@ if __name__ == '__main__':
         sendOb.getSENDAmountBalances(),
         sendOb.getSENDTotal()
     )
+
+    (amt,) = ws.getContactBS().getbalance(wallet_address)
+    print("balance for {} = {}".format(wallet_address, amt))

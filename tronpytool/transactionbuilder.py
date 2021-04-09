@@ -12,8 +12,6 @@ from typing import (
     List
 )
 
-# from eth_abi import encode_abi
-from .common.abi import encode_abi
 from trx_utils import (
     is_string,
     is_integer,
@@ -22,6 +20,8 @@ from trx_utils import (
     encode_hex
 )
 
+# from eth_abi import encode_abi
+from .common.abi import encode_abi
 from .common.validation import is_valid_url
 from .exceptions import (
     InvalidTronError,
@@ -655,6 +655,13 @@ class TransactionBuilder(object):
                     raise ValueError('Invalid parameter type provided: ' + abi['type'])
                 if abi['type'] == 'address':
                     abi['value'] = self.tron.address.to_hex(abi['value']).replace('41', '0x', 1)
+
+                if abi['type'] == 'address[]':
+                    addresshexlist = list()
+                    for a in abi['value']:
+                        addresshexlist.append(self.tron.address.to_hex(a).replace('41', '0x', 1))
+                    abi['value'] = addresshexlist
+
                 types.append(abi['type'])
                 values.append(abi['value'])
 

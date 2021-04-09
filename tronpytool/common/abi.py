@@ -12,7 +12,6 @@ from collections import (
 )
 from typing import Tuple
 
-import eth_abi
 from eth_abi import (
     encoding,
     decoding
@@ -381,9 +380,8 @@ class AcceptsHexStrMixin:
 
 from eth_abi.base import parse_type_str
 from eth_abi.decoding import Fixed32ByteSizeDecoder
-from eth_abi.encoding import Fixed32ByteSizeEncoder
-
-from tronpytool.common.key import to_base58check_address, is_address, to_tvm_address
+from eth_abi.encoding import AddressEncoder
+from tronpytool.common.key import to_base58check_address
 
 
 class TronAddressDecoder(Fixed32ByteSizeDecoder):
@@ -396,25 +394,8 @@ class TronAddressDecoder(Fixed32ByteSizeDecoder):
         return cls()
 
 
-class TronAddressEncoder(Fixed32ByteSizeEncoder):
-    value_bit_size = 20 * 8
-    encode_fn = staticmethod(to_tvm_address)
-    is_big_endian = True
-
-    @classmethod
-    def validate_value(cls, value):
-        if not is_address(value):
-            cls.invalidate_value(value)
-
-    def validate(self):
-        super().validate()
-
-        if self.value_bit_size != 20 * 8:
-            raise ValueError("Addresses must be 160 bits in length")
-
-    @parse_type_str("address")
-    def from_type_str(cls, abi_type, registry):
-        return cls()
+class TronAddressEncoderPass(AddressEncoder):
+    pass
 
 
 # interface
@@ -666,28 +647,36 @@ def method_result_handler(r: dict) -> Tuple[bool, str, str]:
 registry = default_registry.copy()
 
 
-def tron_patch_ethereum_types(_registry: ABIRegistry):
+def tron_patch(_registry: ABIRegistry):
+    """
+      _registry.register(
+          BaseEquals('trcToken'),
+          eth_abi.encoding.UnsignedIntegerEncoder,
+          eth_abi.decoding.UnsignedIntegerDecoder,
+          label='trcToken',
+      )
+
+      _registry.register(
+          BaseEquals('trc20'),
+          eth_abi.encoding.UnsignedIntegerEncoder,
+          eth_abi.decoding.UnsignedIntegerDecoder,
+          label='trc20',
+      )
+
+
+      """
+
+    registry.unregister('address')
+    registry.unregister('bytes<M>')
+    registry.unregister('bytes')
+    registry.unregister('string')
+
     _registry.register(
         BaseEquals('address'),
-        TronAddressEncoder,
+        TronAddressEncoderPass,
         TronAddressDecoder,
         label='address',
     )
-
-    _registry.register(
-        BaseEquals('trcToken'),
-        eth_abi.encoding.UnsignedIntegerEncoder,
-        eth_abi.decoding.UnsignedIntegerDecoder,
-        label='trcToken',
-    )
-
-    _registry.register(
-        BaseEquals('trc20'),
-        eth_abi.encoding.UnsignedIntegerEncoder,
-        eth_abi.decoding.UnsignedIntegerDecoder,
-        label='trc20',
-    )
-
     _registry.register(
         BaseEquals('bytes', with_sub=True),
         BytesEncoder,
@@ -710,11 +699,7 @@ def tron_patch_ethereum_types(_registry: ABIRegistry):
     )
 
 
-registry.unregister('address')
-registry.unregister('bytes<M>')
-registry.unregister('bytes')
-registry.unregister('string')
-tron_patch_ethereum_types(registry)
+tron_patch(registry)
 _codec = ABICodec(registry)
 
 encode_abi = _codec.encode_abi
