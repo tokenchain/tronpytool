@@ -15,9 +15,10 @@
     :license: MIT License
 """
 
+import codecs
 import os
 import platform
-import codecs
+
 from setuptools import (
     find_packages,
     setup,
@@ -25,10 +26,15 @@ from setuptools import (
 
 py_version = platform.python_version()
 
-f = codecs.open('version', 'r', 'utf-8-sig')
-line = f.readline()
-f.close()
-PACKAGE_VERSION = str(line)
+
+def find_version():
+    f = codecs.open('version', 'r', 'utf-8-sig')
+    line = f.readline()
+    f.close()
+    return line
+
+
+PACKAGE_VERSION = str(find_version())
 
 EXTRAS_REQUIRE = {
     "tester": [
@@ -86,7 +92,7 @@ install_requires = [
     "eth-utils>=1.3.0,<2.0.0",
     "eth-hash[pycryptodome]>=0.2.0,<1.0.0",
     "trx-utils",
-    #"eth-account<1.0.0"
+    # "eth-account<1.0.0"
     "eth-account>=0.5.3,<0.6.0",
     "requests>=2.25.1",
     "hexbytes>=0.1.0",

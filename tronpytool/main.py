@@ -17,7 +17,7 @@
 """
 
 from urllib.parse import urlencode
-from .common.datastructures import AttributeDict
+
 from eth_utils import (
     apply_to_return_value,
     keccak as tron_keccak,
@@ -32,9 +32,11 @@ from trx_utils import (
     is_address,
     to_hex
 )
+
 from tronpytool import constants
 from .common.abi import map_abi_data
 from .common.account import Address, PrivateKey, Account
+from .common.datastructures import AttributeDict
 from .common.encoding import (
     to_bytes,
     to_int,
@@ -55,6 +57,7 @@ from .trx import Trx
 DEFAULT_MODULES = {
     'trx': Trx
 }
+
 
 class Tron:
     # Providers
@@ -379,3 +382,7 @@ class Tron:
     def is_connected(self):
         """List of available providers"""
         return self.manager.is_connected()
+
+    @property
+    def Chain(self) -> "Trx":
+        return self.trx

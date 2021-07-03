@@ -77,7 +77,6 @@ Smart Contract
     # option 4
     tron_v4 = Tron().setNetwork('nile')
 
-..
 
 
 Documentation

@@ -40,15 +40,15 @@ ETH_MESSAGE_HEADER = '\x19Ethereum Signed Message:\n'
 class Trx(Module):
     default_contract_factory = Contract
 
-    def get_current_block(self):
+    def get_current_block(self) -> dict:
         """Query the latest block"""
         return self.tron.manager.request(url='/wallet/getnowblock')
 
-    def get_confirmed_current_block(self):
+    def get_confirmed_current_block(self) -> dict:
         """Query the confirmed latest block"""
         return self.tron.manager.request('/walletsolidity/getnowblock')
 
-    def get_block(self, block: Any = None):
+    def get_block(self, block: Any = None) -> dict:
         """Get block details using HashString or blockNumber
 
         Args:
@@ -78,6 +78,7 @@ class Trx(Module):
 
         if result:
             return result
+
         return ValueError("The call to {method['url']} did not return a value.")
 
     def get_transaction_count_by_blocknum(self, num: int):
@@ -93,7 +94,7 @@ class Trx(Module):
             'num': num
         })
 
-    def get_block_transaction_count(self, block: Any):
+    def get_block_transaction_count(self, block: Any) -> int:
         """Total number of transactions in a block
 
         Args:
@@ -106,7 +107,7 @@ class Trx(Module):
 
         return len(transaction)
 
-    def get_transaction_from_block(self, block: Any, index: int = 0):
+    def get_transaction_from_block(self, block: Any, index: int = 0) -> dict:
         """Get transaction details from Block
 
         Args:
@@ -125,8 +126,8 @@ class Trx(Module):
 
     def wait_for_transaction_id(self,
                                 transaction_hash: str,
-                                timeout=120,
-                                poll_latency=0.2):
+                                timeout: int = 120,
+                                poll_latency: float = 0.2):
         """
         Waits for the transaction specified by transaction_hash
         to be included in a block, then returns its transaction receipt.
@@ -155,8 +156,7 @@ class Trx(Module):
                 )
             )
 
-    def get_transaction(self, transaction_id: str,
-                        is_confirm: bool = False):
+    def get_transaction(self, transaction_id: str, is_confirm: bool = False) -> dict:
         """Query transaction based on id
 
         Args:
@@ -174,10 +174,10 @@ class Trx(Module):
 
         return response
 
-    def get_account_by_id(self, account_id: str, options: object):
+    def get_account_by_id(self, account_id: str, options: object) -> dict:
         return self.get_account_info_by_id(account_id, options)
 
-    def get_account_info_by_id(self, account_id: str, options: object):
+    def get_account_info_by_id(self, account_id: str, options: object) -> dict:
 
         if account_id.startswith('0x'):
             account_id = id[2:]
@@ -191,13 +191,13 @@ class Trx(Module):
             'account_id': self.tron.toHex(text=account_id)
         })
 
-    def get_unconfirmed_account_by_id(self, account_id: str):
+    def get_unconfirmed_account_by_id(self, account_id: str) -> dict:
 
         return self.get_account_info_by_id(account_id, {
             'confirmed': True
         })
 
-    def get_account_resource(self, address=None):
+    def get_account_resource(self, address=None) -> dict:
         """Query the resource information of the account
 
         Args:
@@ -218,7 +218,7 @@ class Trx(Module):
             'address': self.tron.address.to_hex(address)
         })
 
-    def get_account(self, address=None):
+    def get_account(self, address=None) -> dict:
         """Query information about an account
 
         Args:
@@ -236,7 +236,7 @@ class Trx(Module):
             'address': self.tron.address.to_hex(address)
         })
 
-    def get_balance(self, address=None, is_float=False):
+    def get_balance(self, address=None, is_float=False) -> int:
         """Getting a balance
 
         Args:
@@ -253,7 +253,7 @@ class Trx(Module):
 
         return response['balance']
 
-    def get_transactions_related(self, address, direction='all', limit=30, offset=0):
+    def get_transactions_related(self, address: str, direction='all', limit=30, offset=0) -> dict:
         """Getting data in the "from", "to" and "all" directions
 
         Args:
@@ -332,7 +332,7 @@ class Trx(Module):
         """
         return self.get_transactions_related(address, 'from', limit, offset)
 
-    def get_transaction_info(self, tx_id):
+    def get_transaction_info(self, tx_id: str) -> dict:
         """Query transaction fee based on id
 
         Args:
@@ -348,7 +348,23 @@ class Trx(Module):
 
         return response
 
-    def get_band_width(self, address=None):
+    def get_transaction_info_node(self, tx_id: str) -> dict:
+        """Query transaction fee based on id
+
+        Args:
+            tx_id (str): Transaction Id
+
+        Returns:
+            Transaction fee，block height and block creation time
+
+        """
+        response = self.tron.manager.request('/wallet/gettransactioninfobyid', {
+            'value': tx_id
+        })
+
+        return response
+
+    def get_band_width(self, address=None) -> int:
         """Query bandwidth information.
 
         Args:
@@ -385,7 +401,7 @@ class Trx(Module):
 
         return (free_net_limit - free_net_used) + (net_limit - net_used)
 
-    def get_transaction_count(self):
+    def get_transaction_count(self) -> int:
         """Count all transactions on the network
         Note: Possible delays
 
@@ -396,15 +412,15 @@ class Trx(Module):
         response = self.tron.manager.request('/wallet/totaltransaction')
         return response.get('num')
 
-    def send(self, to, amount, options=None):
+    def send(self, to: str, amount: int, options=None) -> dict:
         """Send funds to the Tron account (option 2)"""
         return self.send_transaction(to, amount, options)
 
-    def send_trx(self, to, amount, options=None):
+    def send_trx(self, to: str, amount: int, options=None) -> dict:
         """Send funds to the Tron account (option 3)"""
         return self.send_transaction(to, amount, options)
 
-    def send_transaction(self, to, amount, options=None):
+    def send_transaction(self, to: str, amount: int, options=None) -> dict:
         """Send an asset to another account.
         Will create and broadcast the transaction if a private key is provided.
 
@@ -436,7 +452,7 @@ class Trx(Module):
 
         return result
 
-    def send_token(self, to, amount, token_id=None, account=None):
+    def send_token(self, to: str, amount: int, token_id=None, account=None) -> dict:
         """Transfer Token
 
         Args:
@@ -463,7 +479,7 @@ class Trx(Module):
 
         return result
 
-    def freeze_balance(self, amount=0, duration=3, resource='BANDWIDTH', account=None):
+    def freeze_balance(self, amount: int = 0, duration: int = 3, resource='BANDWIDTH', account=None) -> dict:
         """
         Freezes an amount of TRX.
         Will give bandwidth OR Energy and TRON Power(voting rights)
