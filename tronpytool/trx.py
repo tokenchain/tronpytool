@@ -156,39 +156,55 @@ class Trx(Module):
                 )
             )
 
-    def get_transaction_note_confirmation(self, transaction_id: str) -> dict:
-        transaction = self.get_transaction(transaction_id)
-        _note = ""
-        _data = ""
-        _from = ""
-        if "raw_data" in transaction:
-            if "data" in transaction["raw_data"]:
-                dat = transaction["raw_data"]["data"]
-                decodedbytes = bytes.fromhex(dat)
-                # parse_res = abi.decode_single("", decodedbytes)
+    def get_transaction_note_confirmation(self, transaction_id: str) -> any:
+        _note = None
+        _data = None
+        _from = None
+        _to = None
+        _amount = 0
 
-                _note = decodedbytes.decode('UTF-8')
+        try:
+            transaction = self.get_transaction(transaction_id)
 
-            if "contract" in transaction["raw_data"]:
-                if len(transaction["raw_data"]["contract"]) > 0:
-                    dat = transaction["raw_data"]["contract"][0]
-                    if "parameter" in dat:
-                        if "value" in dat["parameter"]:
-                            if "data" in dat["parameter"]["value"]:
-                                hashdat = dat["parameter"]["value"]["data"]
-                                fe = bytes.fromhex(hashdat)
-                                _data = fe
+            if "raw_data" in transaction:
+                if "data" in transaction["raw_data"]:
+                    _note = transaction["raw_data"]["data"]
+                    _note = bytes.fromhex(_note)
+                    # parse_res = abi.decode_single("", decodedbytes)
+                    _note = _note.decode('UTF-8')
 
-                            if "owner_address" in dat["parameter"]["value"]:
-                                hashdat = dat["parameter"]["value"]["owner_address"]
-                                fe = self.tron.address.from_hex(hashdat)
-                                _from = fe
+                if "contract" in transaction["raw_data"]:
+                    if len(transaction["raw_data"]["contract"]) > 0:
+                        dat = transaction["raw_data"]["contract"][0]
+                        if "parameter" in dat:
+                            if "value" in dat["parameter"]:
+                                _valueslot = dat["parameter"]["value"]
+                                if "data" in _valueslot:
+                                    _data = _valueslot["data"]
+                                    _data = bytes.fromhex(_data)
 
-        return dict(
-            note=_note,
-            payer=_from,
-            data=_data
-        )
+                                if "owner_address" in _valueslot:
+                                    _from = _valueslot["owner_address"]
+                                    _from = self.tron.address.from_hex(_from)
+
+                                if "amount" in _valueslot:
+                                    _amount = _valueslot["amount"]
+
+                                if "to_address" in _valueslot:
+                                    _to = _valueslot["to_address"]
+                                    _to = self.tron.address.from_hex(_to)
+
+            return dict(
+                note=_note,
+                payer=_from,
+                receive=_to,
+                value=_amount,
+                contract_data=_data
+            )
+
+        except ValueError:
+            # the transaction id is not found in this network
+            return False
 
     def get_transaction(self, transaction_id: str, is_confirm: bool = False) -> dict:
         """Query transaction based on id

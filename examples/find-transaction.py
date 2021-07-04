@@ -5,9 +5,10 @@ import logging
 
 from tronpytool import Tron
 
-# tron = Tron().setNetwork('nile')
-tron = Tron().setNetwork('default')
-hash_tx_id = "5bad50ba5b1fecab40f8685a808865872310e635be7f5eaa3aea77dc9da209ce"
+tron = Tron().setNetwork('nile')
+# tron = Tron().setNetwork('default')
+# hash_tx_id = "5bad50ba5b1fecab40f8685a808865872310e635be7f5eaa3aea77dc9da209ce"
+hash_tx_id = "61b37c3716df76b3dc92f765f42d2a2a0c2427c9a427ec99d566e4b21766b69e"
 transaction = tron.Chain.get_transaction(hash_tx_id)
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
