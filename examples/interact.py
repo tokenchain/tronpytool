@@ -29,7 +29,7 @@ data = {'contract_address': 'TAgtKZmFtS8Mv94VVBKVFs72jjsCSJmXEi', 'function_sele
         'fee_limit': 30000, 'call_value': 0, 'token_value': 0, 'token_id': 0, 'parameters': []}
 
 if debug_health_contract:
-    collection = tron.trx.get_contract(contract)
+    collection = tron.Chain.get_contract(contract)
     print('Transaction: ')
     print(collection)
     print('-----------')

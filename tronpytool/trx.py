@@ -156,6 +156,40 @@ class Trx(Module):
                 )
             )
 
+    def get_transaction_note_confirmation(self, transaction_id: str) -> dict:
+        transaction = self.get_transaction(transaction_id)
+        _note = ""
+        _data = ""
+        _from = ""
+        if "raw_data" in transaction:
+            if "data" in transaction["raw_data"]:
+                dat = transaction["raw_data"]["data"]
+                decodedbytes = bytes.fromhex(dat)
+                # parse_res = abi.decode_single("", decodedbytes)
+
+                _note = decodedbytes.decode('UTF-8')
+
+            if "contract" in transaction["raw_data"]:
+                if len(transaction["raw_data"]["contract"]) > 0:
+                    dat = transaction["raw_data"]["contract"][0]
+                    if "parameter" in dat:
+                        if "value" in dat["parameter"]:
+                            if "data" in dat["parameter"]["value"]:
+                                hashdat = dat["parameter"]["value"]["data"]
+                                fe = bytes.fromhex(hashdat)
+                                _data = fe
+
+                            if "owner_address" in dat["parameter"]["value"]:
+                                hashdat = dat["parameter"]["value"]["owner_address"]
+                                fe = self.tron.address.from_hex(hashdat)
+                                _from = fe
+
+        return dict(
+            note=_note,
+            payer=_from,
+            data=_data
+        )
+
     def get_transaction(self, transaction_id: str, is_confirm: bool = False) -> dict:
         """Query transaction based on id
 

@@ -8,6 +8,6 @@ tron.private_key = 'private_key'
 tron.default_address = 'default address'
 
 # added message
-send = tron.trx.send_transaction('to', 1)
+send = tron.Chain.send_transaction('to', 1)
 
 print(send)
