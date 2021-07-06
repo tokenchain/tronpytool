@@ -2,10 +2,8 @@
 # coding: utf-8
 import os
 
-import common
-from examples.codec.core.lib import WrapDeploy, wallet_address
+from examples.codec.core.lib import WrapDeploy
 from tronpytool import __version__
-from tronpytool.compile.bulkmanager import BulkManager
 from tronpytool.common import trc20
 
 print(__version__)
@@ -26,16 +24,8 @@ test_data = [
 if __name__ == '__main__':
     ws = WrapDeploy(ROOT, NETWORK)
     ws.connect(ROOT, False)
-    ws.preMulti()
-    sendOb = BulkManager(test_data, ws.tron)
-    print("total {}".format(sendOb.getSENDTotal()))
-    # print("address {}".format(sendOb.getSENDAddresses()))
 
-    ws.getContactBS().bulk_send_trx(
-        sendOb.getSENDAddresses(),
-        sendOb.getSENDAmountBalances(),
-        sendOb.getSENDTotal()
-    )
+    contract = trc20.TokenLv(ws.tron, ws.getAddr("TokenTrc20"))
+    contract.burn(100000)
 
-    (amt,) = ws.getContactBS().getbalance(wallet_address)
-    print("balance for {} = {}".format(wallet_address, amt))
+

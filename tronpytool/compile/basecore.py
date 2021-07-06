@@ -3,11 +3,11 @@
 from datetime import datetime
 from typing import Any, Union, Tuple
 
-from common.threads import Timeout
 from tronpytool import Tron
 from tronpytool.common.abi import method_result_handler, decode_single
 from tronpytool.common.key import to_hex_address, keccak256, is_address
 from tronpytool.common.normalizers import to_checksum_address
+from tronpytool.common.threads import Timeout
 from tronpytool.contract import Contract
 from tronpytool.exceptions import DoubleSpending
 from tronpytool.transactionbuilder import TransactionBuilder
