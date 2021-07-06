@@ -2,9 +2,11 @@
 # coding: utf-8
 import os
 
+import common
 from examples.codec.core.lib import WrapDeploy, wallet_address
 from tronpytool import __version__
 from tronpytool.compile.bulkmanager import BulkManager
+from tronpytool.common import trc20
 
 print(__version__)
 caddress = "TGzXbPmnnRyknJbvx7BCJqpdg76uiZaE92"
@@ -37,3 +39,6 @@ if __name__ == '__main__':
 
     (amt,) = ws.getContactBS().getbalance(wallet_address)
     print("balance for {} = {}".format(wallet_address, amt))
+
+    contract = trc20.TokenLv(ws.tron, ws.TokenContract)
+    contract.burn(100000)

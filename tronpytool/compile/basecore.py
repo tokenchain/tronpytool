@@ -3,6 +3,7 @@
 from datetime import datetime
 from typing import Any, Union, Tuple
 
+from common.threads import Timeout
 from tronpytool import Tron
 from tronpytool.common.abi import method_result_handler, decode_single
 from tronpytool.common.key import to_hex_address, keccak256, is_address
@@ -125,6 +126,9 @@ class ContractMethod:
         self.call_fee_limit = 400000
         self.contract_address = contract_address
         self._final_params = None
+        self._result_id = None
+        self._transaction_info = None
+        self._offline_sign = None
 
     def __str__(self):
         return self.function_type
@@ -195,16 +199,18 @@ class ContractMethod:
         if ok:
             print("=========================================")
             print("🦓 transaction ID: {}".format(transaction_id))
-
+            self._result_id = transaction_id
             offline_sign = self._client.sign(r)
             print("=========================================")
             if self.debug:
                 print("🐝 sign transaction: {}".format(offline_sign))
             result = self._client.broadcast(offline_sign)
+            self._offline_sign = offline_sign
             if self.debug:
                 print("=========================================")
                 print("🐳 result transaction: {}".format(result))
             transaction_info = self._client.get_transaction_info(transaction_id)
+            self._transaction_info = transaction_info
             if self.debug:
                 print("🐚 detail result for transaction: {}".format(transaction_info))
                 print("=========================================")
@@ -439,6 +445,19 @@ class ContractMethod:
 
     def as_shielded_trc20(self, contractaddr: str) -> "ShieldedTRC20":
         return ShieldedTRC20(self._contract, self._tron, contractaddr)
+
+    def wait_for_transaction_id(self, timeout: int = 120, poll_latency: float = 0.1) -> str:
+        tx_detail_id = ""
+        with Timeout(timeout) as _timeout:
+            while True:
+                if self._result_id is not None:
+                    tx_detail_id = self._result_id
+                    break
+                _timeout.sleep(poll_latency)
+        return tx_detail_id
+
+    def waitGetId(self) -> str:
+        return self.wait_for_transaction_id()
 
 
 class ShieldedTRC20(object):

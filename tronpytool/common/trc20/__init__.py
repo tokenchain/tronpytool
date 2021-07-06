@@ -4,23 +4,11 @@
 """Generated wrapper for TokenLv Solidity contract."""
 
 # pylint: disable=too-many-arguments
-from datetime import datetime
 import json
-from typing import (  # pylint: disable=unused-import
-    Any,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
-from mypy_extensions import TypedDict  # pylint: disable=unused-import
-from hexbytes import HexBytes
-from tronpytool.contract import Contract
-from tronpytool.common.datastructures import AttributeDict
 
 from tronpytool import Tron
 from tronpytool.compile.basecore import ContractMethod, Validator, EventTracker
-
+from tronpytool.contract import Contract
 
 # Try to import a custom validator class definition; if there isn't one,
 # declare one that we can instantiate for the default argument to the
@@ -44,18 +32,12 @@ except ImportError:
     pass
 
 
-
-
-
-class AddMinterMethod(ContractMethod): # pylint: disable=invalid-name
+class AddMinterMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the addMinter method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, account: str) -> None:
         """Execute underlying contract method via __call__.
@@ -66,19 +48,13 @@ class AddMinterMethod(ContractMethod): # pylint: disable=invalid-name
         """
         super().__call__(account)
 
-
-
-
-
-    def send_call(self, account: str, trx = 0, fee=900000, debug=False) -> None:
+    def send_call(self, account: str, trx=0, fee=900000, debug=False) -> None:
         """Execute underlying contract method via eth_sendTransaction.
 
         :param tx_params: transaction parameters
         """
         super().setContractFee(fee).setContractDebug(debug).sendTrx(trx)
         return self.call(account)
-
-
 
     def validate_and_normalize_inputs(self, account: str):
         """Validate the inputs to the addMinter method."""
@@ -90,15 +66,13 @@ class AddMinterMethod(ContractMethod): # pylint: disable=invalid-name
         account = self.validate_and_checksum_address(account)
         return (account)
 
-class AllowanceMethod(ContractMethod): # pylint: disable=invalid-name
+
+class AllowanceMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the allowance method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, owner: str, spender: str) -> int:
         """Execute underlying contract method via __call__.
@@ -108,13 +82,7 @@ class AllowanceMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__(owner, spender)
 
-
         return returned
-
-
-
-
-
 
     def validate_and_normalize_inputs(self, owner: str, spender: str):
         """Validate the inputs to the allowance method."""
@@ -132,15 +100,13 @@ class AllowanceMethod(ContractMethod): # pylint: disable=invalid-name
         spender = self.validate_and_checksum_address(spender)
         return (owner, spender)
 
-class ApproveMethod(ContractMethod): # pylint: disable=invalid-name
+
+class ApproveMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the approve method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, spender: str, amount: int) -> bool:
         """Execute underlying contract method via __call__.
@@ -151,20 +117,15 @@ class ApproveMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__(spender, amount)
 
-
         return returned
 
-
-
-    def send_call(self, spender: str, amount: int, trx = 0, fee=900000, debug=False) -> bool:
+    def send_call(self, spender: str, amount: int, trx=0, fee=900000, debug=False) -> bool:
         """Execute underlying contract method via eth_sendTransaction.
 
         :param tx_params: transaction parameters
         """
         super().setContractFee(fee).setContractDebug(debug).sendTrx(trx)
         return self.call(spender, amount)
-
-
 
     def validate_and_normalize_inputs(self, spender: str, amount: int):
         """Validate the inputs to the approve method."""
@@ -183,15 +144,13 @@ class ApproveMethod(ContractMethod): # pylint: disable=invalid-name
         amount = int(amount)
         return (spender, amount)
 
-class BalanceOfMethod(ContractMethod): # pylint: disable=invalid-name
+
+class BalanceOfMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the balanceOf method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, account: str) -> int:
         """Execute underlying contract method via __call__.
@@ -201,13 +160,7 @@ class BalanceOfMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__(account)
 
-
         return returned
-
-
-
-
-
 
     def validate_and_normalize_inputs(self, account: str):
         """Validate the inputs to the balanceOf method."""
@@ -219,15 +172,13 @@ class BalanceOfMethod(ContractMethod): # pylint: disable=invalid-name
         account = self.validate_and_checksum_address(account)
         return (account)
 
-class BurnMethod(ContractMethod): # pylint: disable=invalid-name
+
+class BurnMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the burn method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, amount: int) -> None:
         """Execute underlying contract method via __call__.
@@ -238,19 +189,13 @@ class BurnMethod(ContractMethod): # pylint: disable=invalid-name
         """
         super().__call__(amount)
 
-
-
-
-
-    def send_call(self, amount: int, trx = 0, fee=900000, debug=False) -> None:
+    def send_call(self, amount: int, trx=0, fee=900000, debug=False) -> None:
         """Execute underlying contract method via eth_sendTransaction.
 
         :param tx_params: transaction parameters
         """
         super().setContractFee(fee).setContractDebug(debug).sendTrx(trx)
         return self.call(amount)
-
-
 
     def validate_and_normalize_inputs(self, amount: int):
         """Validate the inputs to the burn method."""
@@ -263,15 +208,13 @@ class BurnMethod(ContractMethod): # pylint: disable=invalid-name
         amount = int(amount)
         return (amount)
 
-class BurnFromMethod(ContractMethod): # pylint: disable=invalid-name
+
+class BurnFromMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the burnFrom method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, account: str, amount: int) -> None:
         """Execute underlying contract method via __call__.
@@ -282,19 +225,13 @@ class BurnFromMethod(ContractMethod): # pylint: disable=invalid-name
         """
         super().__call__(account, amount)
 
-
-
-
-
-    def send_call(self, account: str, amount: int, trx = 0, fee=900000, debug=False) -> None:
+    def send_call(self, account: str, amount: int, trx=0, fee=900000, debug=False) -> None:
         """Execute underlying contract method via eth_sendTransaction.
 
         :param tx_params: transaction parameters
         """
         super().setContractFee(fee).setContractDebug(debug).sendTrx(trx)
         return self.call(account, amount)
-
-
 
     def validate_and_normalize_inputs(self, account: str, amount: int):
         """Validate the inputs to the burnFrom method."""
@@ -313,15 +250,13 @@ class BurnFromMethod(ContractMethod): # pylint: disable=invalid-name
         amount = int(amount)
         return (account, amount)
 
-class CapMethod(ContractMethod): # pylint: disable=invalid-name
+
+class CapMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the cap method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address)
-
-
-
 
     def call(self) -> int:
         """Execute underlying contract method via __call__.
@@ -331,24 +266,15 @@ class CapMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__()
 
-
         return returned
 
 
-
-
-
-
-
-class DecimalsMethod(ContractMethod): # pylint: disable=invalid-name
+class DecimalsMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the decimals method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address)
-
-
-
 
     def call(self) -> int:
         """Execute underlying contract method via __call__.
@@ -358,24 +284,15 @@ class DecimalsMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__()
 
-
         return returned
 
 
-
-
-
-
-
-class DecreaseAllowanceMethod(ContractMethod): # pylint: disable=invalid-name
+class DecreaseAllowanceMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the decreaseAllowance method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, spender: str, subtracted_value: int) -> bool:
         """Execute underlying contract method via __call__.
@@ -386,20 +303,15 @@ class DecreaseAllowanceMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__(spender, subtracted_value)
 
-
         return returned
 
-
-
-    def send_call(self, spender: str, subtracted_value: int, trx = 0, fee=900000, debug=False) -> bool:
+    def send_call(self, spender: str, subtracted_value: int, trx=0, fee=900000, debug=False) -> bool:
         """Execute underlying contract method via eth_sendTransaction.
 
         :param tx_params: transaction parameters
         """
         super().setContractFee(fee).setContractDebug(debug).sendTrx(trx)
         return self.call(spender, subtracted_value)
-
-
 
     def validate_and_normalize_inputs(self, spender: str, subtracted_value: int):
         """Validate the inputs to the decreaseAllowance method."""
@@ -418,15 +330,13 @@ class DecreaseAllowanceMethod(ContractMethod): # pylint: disable=invalid-name
         subtracted_value = int(subtracted_value)
         return (spender, subtracted_value)
 
-class GetDecimalsMethod(ContractMethod): # pylint: disable=invalid-name
+
+class GetDecimalsMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the getDecimals method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address)
-
-
-
 
     def call(self) -> int:
         """Execute underlying contract method via __call__.
@@ -436,24 +346,15 @@ class GetDecimalsMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__()
 
-
         return returned
 
 
-
-
-
-
-
-class IncreaseAllowanceMethod(ContractMethod): # pylint: disable=invalid-name
+class IncreaseAllowanceMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the increaseAllowance method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, spender: str, added_value: int) -> bool:
         """Execute underlying contract method via __call__.
@@ -464,20 +365,15 @@ class IncreaseAllowanceMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__(spender, added_value)
 
-
         return returned
 
-
-
-    def send_call(self, spender: str, added_value: int, trx = 0, fee=900000, debug=False) -> bool:
+    def send_call(self, spender: str, added_value: int, trx=0, fee=900000, debug=False) -> bool:
         """Execute underlying contract method via eth_sendTransaction.
 
         :param tx_params: transaction parameters
         """
         super().setContractFee(fee).setContractDebug(debug).sendTrx(trx)
         return self.call(spender, added_value)
-
-
 
     def validate_and_normalize_inputs(self, spender: str, added_value: int):
         """Validate the inputs to the increaseAllowance method."""
@@ -496,15 +392,13 @@ class IncreaseAllowanceMethod(ContractMethod): # pylint: disable=invalid-name
         added_value = int(added_value)
         return (spender, added_value)
 
-class IsMinterMethod(ContractMethod): # pylint: disable=invalid-name
+
+class IsMinterMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the isMinter method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, account: str) -> bool:
         """Execute underlying contract method via __call__.
@@ -514,13 +408,7 @@ class IsMinterMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__(account)
 
-
         return returned
-
-
-
-
-
 
     def validate_and_normalize_inputs(self, account: str):
         """Validate the inputs to the isMinter method."""
@@ -532,15 +420,13 @@ class IsMinterMethod(ContractMethod): # pylint: disable=invalid-name
         account = self.validate_and_checksum_address(account)
         return (account)
 
-class MintMethod(ContractMethod): # pylint: disable=invalid-name
+
+class MintMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the mint method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, account: str, amount: int) -> bool:
         """Execute underlying contract method via __call__.
@@ -551,20 +437,15 @@ class MintMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__(account, amount)
 
-
         return returned
 
-
-
-    def send_call(self, account: str, amount: int, trx = 0, fee=900000, debug=False) -> bool:
+    def send_call(self, account: str, amount: int, trx=0, fee=900000, debug=False) -> bool:
         """Execute underlying contract method via eth_sendTransaction.
 
         :param tx_params: transaction parameters
         """
         super().setContractFee(fee).setContractDebug(debug).sendTrx(trx)
         return self.call(account, amount)
-
-
 
     def validate_and_normalize_inputs(self, account: str, amount: int):
         """Validate the inputs to the mint method."""
@@ -583,15 +464,13 @@ class MintMethod(ContractMethod): # pylint: disable=invalid-name
         amount = int(amount)
         return (account, amount)
 
-class NameMethod(ContractMethod): # pylint: disable=invalid-name
+
+class NameMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the name method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address)
-
-
-
 
     def call(self) -> str:
         """Execute underlying contract method via __call__.
@@ -601,24 +480,15 @@ class NameMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__()
 
-
         return returned
 
 
-
-
-
-
-
-class RenounceMinterMethod(ContractMethod): # pylint: disable=invalid-name
+class RenounceMinterMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the renounceMinter method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address)
-
-
-
 
     def call(self) -> None:
         """Execute underlying contract method via __call__.
@@ -629,11 +499,7 @@ class RenounceMinterMethod(ContractMethod): # pylint: disable=invalid-name
         """
         super().__call__()
 
-
-
-
-
-    def send_call(self, trx = 0, fee=900000, debug=False) -> None:
+    def send_call(self, trx=0, fee=900000, debug=False) -> None:
         """Execute underlying contract method via eth_sendTransaction.
 
         :param tx_params: transaction parameters
@@ -642,17 +508,12 @@ class RenounceMinterMethod(ContractMethod): # pylint: disable=invalid-name
         return self.call()
 
 
-
-
-class SymbolMethod(ContractMethod): # pylint: disable=invalid-name
+class SymbolMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the symbol method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address)
-
-
-
 
     def call(self) -> str:
         """Execute underlying contract method via __call__.
@@ -662,24 +523,15 @@ class SymbolMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__()
 
-
         return returned
 
 
-
-
-
-
-
-class TokenNameMethod(ContractMethod): # pylint: disable=invalid-name
+class TokenNameMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the tokenName method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address)
-
-
-
 
     def call(self) -> str:
         """Execute underlying contract method via __call__.
@@ -689,24 +541,15 @@ class TokenNameMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__()
 
-
         return returned
 
 
-
-
-
-
-
-class TokenSymbolMethod(ContractMethod): # pylint: disable=invalid-name
+class TokenSymbolMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the tokenSymbol method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address)
-
-
-
 
     def call(self) -> str:
         """Execute underlying contract method via __call__.
@@ -716,24 +559,15 @@ class TokenSymbolMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__()
 
-
         return returned
 
 
-
-
-
-
-
-class TotalSupplyMethod(ContractMethod): # pylint: disable=invalid-name
+class TotalSupplyMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the totalSupply method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address)
-
-
-
 
     def call(self) -> int:
         """Execute underlying contract method via __call__.
@@ -743,24 +577,15 @@ class TotalSupplyMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__()
 
-
         return returned
 
 
-
-
-
-
-
-class TransferMethod(ContractMethod): # pylint: disable=invalid-name
+class TransferMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the transfer method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, recipient: str, amount: int) -> bool:
         """Execute underlying contract method via __call__.
@@ -771,20 +596,15 @@ class TransferMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__(recipient, amount)
 
-
         return returned
 
-
-
-    def send_call(self, recipient: str, amount: int, trx = 0, fee=900000, debug=False) -> bool:
+    def send_call(self, recipient: str, amount: int, trx=0, fee=900000, debug=False) -> bool:
         """Execute underlying contract method via eth_sendTransaction.
 
         :param tx_params: transaction parameters
         """
         super().setContractFee(fee).setContractDebug(debug).sendTrx(trx)
         return self.call(recipient, amount)
-
-
 
     def validate_and_normalize_inputs(self, recipient: str, amount: int):
         """Validate the inputs to the transfer method."""
@@ -803,15 +623,13 @@ class TransferMethod(ContractMethod): # pylint: disable=invalid-name
         amount = int(amount)
         return (recipient, amount)
 
-class TransferFromMethod(ContractMethod): # pylint: disable=invalid-name
+
+class TransferFromMethod(ContractMethod):  # pylint: disable=invalid-name
     """Various interfaces to the transferFrom method."""
 
-    def __init__(self, abi: dict, contract: Contract,  owner_address: str, contract_address: str, validator: Validator=None):
+    def __init__(self, abi: dict, contract: Contract, owner_address: str, contract_address: str, validator: Validator = None):
         """Persist instance data."""
         super().__init__(abi, contract, owner_address, contract_address, validator)
-
-
-
 
     def call(self, sender: str, recipient: str, amount: int) -> bool:
         """Execute underlying contract method via __call__.
@@ -822,20 +640,15 @@ class TransferFromMethod(ContractMethod): # pylint: disable=invalid-name
         """
         returned = super().__call__(sender, recipient, amount)
 
-
         return returned
 
-
-
-    def send_call(self, sender: str, recipient: str, amount: int, trx = 0, fee=900000, debug=False) -> bool:
+    def send_call(self, sender: str, recipient: str, amount: int, trx=0, fee=900000, debug=False) -> bool:
         """Execute underlying contract method via eth_sendTransaction.
 
         :param tx_params: transaction parameters
         """
         super().setContractFee(fee).setContractDebug(debug).sendTrx(trx)
         return self.call(sender, recipient, amount)
-
-
 
     def validate_and_normalize_inputs(self, sender: str, recipient: str, amount: int):
         """Validate the inputs to the transferFrom method."""
@@ -860,7 +673,8 @@ class TransferFromMethod(ContractMethod): # pylint: disable=invalid-name
         amount = int(amount)
         return (sender, recipient, amount)
 
-class ApprovalTracker(EventTracker): # pylint: disable=invalid-name
+
+class ApprovalTracker(EventTracker):  # pylint: disable=invalid-name
 
     def __init__(self, forceStart: any = False, debug: bool = False):
         """Persist instance data."""
@@ -877,9 +691,10 @@ class ApprovalTracker(EventTracker): # pylint: disable=invalid-name
         if len(events) > 0:
             for c in events:
                 if "transaction_id" in c and "result" in c and self.isCallBackReady():
-                    self.callback_event_found(c["result"]["owner"],c["result"]["spender"],c["result"]["value"],c["block_number"],c["block_timestamp"])
+                    self.callback_event_found(c["result"]["owner"], c["result"]["spender"], c["result"]["value"], c["block_number"], c["block_timestamp"])
 
-class MinterAddedTracker(EventTracker): # pylint: disable=invalid-name
+
+class MinterAddedTracker(EventTracker):  # pylint: disable=invalid-name
 
     def __init__(self, forceStart: any = False, debug: bool = False):
         """Persist instance data."""
@@ -896,9 +711,10 @@ class MinterAddedTracker(EventTracker): # pylint: disable=invalid-name
         if len(events) > 0:
             for c in events:
                 if "transaction_id" in c and "result" in c and self.isCallBackReady():
-                    self.callback_event_found(c["result"]["account"],c["block_number"],c["block_timestamp"])
+                    self.callback_event_found(c["result"]["account"], c["block_number"], c["block_timestamp"])
 
-class MinterRemovedTracker(EventTracker): # pylint: disable=invalid-name
+
+class MinterRemovedTracker(EventTracker):  # pylint: disable=invalid-name
 
     def __init__(self, forceStart: any = False, debug: bool = False):
         """Persist instance data."""
@@ -915,9 +731,10 @@ class MinterRemovedTracker(EventTracker): # pylint: disable=invalid-name
         if len(events) > 0:
             for c in events:
                 if "transaction_id" in c and "result" in c and self.isCallBackReady():
-                    self.callback_event_found(c["result"]["account"],c["block_number"],c["block_timestamp"])
+                    self.callback_event_found(c["result"]["account"], c["block_number"], c["block_timestamp"])
 
-class TransferTracker(EventTracker): # pylint: disable=invalid-name
+
+class TransferTracker(EventTracker):  # pylint: disable=invalid-name
 
     def __init__(self, forceStart: any = False, debug: bool = False):
         """Persist instance data."""
@@ -934,8 +751,7 @@ class TransferTracker(EventTracker): # pylint: disable=invalid-name
         if len(events) > 0:
             for c in events:
                 if "transaction_id" in c and "result" in c and self.isCallBackReady():
-                    self.callback_event_found(c["result"]["from"],c["result"]["to"],c["result"]["value"],c["block_number"],c["block_timestamp"])
-
+                    self.callback_event_found(c["result"]["from"], c["result"]["to"], c["result"]["value"], c["block_number"], c["block_timestamp"])
 
 
 # pylint: disable=too-many-public-methods,too-many-instance-attributes
@@ -1043,16 +859,15 @@ class TokenLv:
     :class:`TransferTracker`.
     """
 
-    call_contract_fee_amount:int
+    call_contract_fee_amount: int
 
-    call_contract_debug_flag:bool
-
+    call_contract_debug_flag: bool
 
     def __init__(
-        self,
-        tron_provider: Tron,
-        contract_address: str,
-        validator: TokenLvValidator = None,
+            self,
+            tron_provider: Tron,
+            contract_address: str,
+            validator: TokenLvValidator = None,
     ):
         """Get an instance of wrapper for smart contract.
 
@@ -1104,198 +919,221 @@ class TokenLv:
         self._fn_total_supply = TotalSupplyMethod(fn.get_abi_by_name('totalSupply'), contract, owner, contract_address)
         self._fn_transfer = TransferMethod(fn.get_abi_by_name('transfer'), contract, owner, contract_address, validator)
         self._fn_transfer_from = TransferFromMethod(fn.get_abi_by_name('transferFrom'), contract, owner, contract_address, validator)
-        self._ev_approval = ApprovalTracker(False,False)
-        self._ev_minter_added = MinterAddedTracker(False,False)
-        self._ev_minter_removed = MinterRemovedTracker(False,False)
-        self._ev_transfer = TransferTracker(False,False)
-
+        self._ev_approval = ApprovalTracker(False, False)
+        self._ev_minter_added = MinterAddedTracker(False, False)
+        self._ev_minter_removed = MinterRemovedTracker(False, False)
+        self._ev_transfer = TransferTracker(False, False)
 
     """
     Implementation of event approval in contract TokenLv
     Get log entry for Approval event.
             :param tx_hash: hash of transaction emitting Approval event
     """
-    
+
     def event_approval(self) -> "ApprovalTracker":
         self._ev_approval.setTronInstance(self._tron_trx.tron, self.contract_address)
         return self._ev_approval
+
     """
     Implementation of event minter_added in contract TokenLv
     Get log entry for MinterAdded event.
             :param tx_hash: hash of transaction emitting MinterAdded event
     """
-    
+
     def event_minter_added(self) -> "MinterAddedTracker":
         self._ev_minter_added.setTronInstance(self._tron_trx.tron, self.contract_address)
         return self._ev_minter_added
+
     """
     Implementation of event minter_removed in contract TokenLv
     Get log entry for MinterRemoved event.
             :param tx_hash: hash of transaction emitting MinterRemoved event
     """
-    
+
     def event_minter_removed(self) -> "MinterRemovedTracker":
         self._ev_minter_removed.setTronInstance(self._tron_trx.tron, self.contract_address)
         return self._ev_minter_removed
+
     """
     Implementation of event transfer in contract TokenLv
     Get log entry for Transfer event.
             :param tx_hash: hash of transaction emitting Transfer event
     """
-    
+
     def event_transfer(self) -> "TransferTracker":
         self._ev_transfer.setTronInstance(self._tron_trx.tron, self.contract_address)
         return self._ev_transfer
 
-    
     """
     implementation of add_minter in contract TokenLv
     
     """
-    
-    def add_minter(self,account: str) -> None:
-        return self._fn_add_minter.send_call(account, 0,self.call_contract_fee_amount,self.call_contract_debug_flag)    
+
+    def add_minter(self, account: str) -> None:
+        return self._fn_add_minter.send_call(account, 0, self.call_contract_fee_amount, self.call_contract_debug_flag)
+
     """
     implementation of allowance in contract TokenLv
     
     """
-    
-    def allowance(self,owner: str, spender: str) -> int:
-        return self._fn_allowance.call(owner, spender)    
+
+    def allowance(self, owner: str, spender: str) -> int:
+        return self._fn_allowance.call(owner, spender)
+
     """
     implementation of approve in contract TokenLv
     
     """
-    
-    def approve(self,spender: str, amount: int) -> bool:
-        return self._fn_approve.send_call(spender, amount, 0,self.call_contract_fee_amount,self.call_contract_debug_flag)    
+
+    def approve(self, spender: str, amount: int) -> bool:
+        return self._fn_approve.send_call(spender, amount, 0, self.call_contract_fee_amount, self.call_contract_debug_flag)
+
     """
     implementation of balance_of in contract TokenLv
     
     """
-    
-    def balance_of(self,account: str) -> int:
-        return self._fn_balance_of.call(account)    
+
+    def balance_of(self, account: str) -> int:
+        return self._fn_balance_of.call(account)
+
     """
     implementation of burn in contract TokenLv
     
     """
-    
-    def burn(self,amount: int) -> None:
-        return self._fn_burn.send_call(amount, 0,self.call_contract_fee_amount,self.call_contract_debug_flag)    
+
+    def burn(self, amount: int) -> BurnMethod:
+        self._fn_burn.send_call(amount, 0, self.call_contract_fee_amount, self.call_contract_debug_flag)
+        return self._fn_burn
+
     """
     implementation of burn_from in contract TokenLv
     
     """
-    
-    def burn_from(self,account: str, amount: int) -> None:
-        return self._fn_burn_from.send_call(account, amount, 0,self.call_contract_fee_amount,self.call_contract_debug_flag)    
+
+    def burn_from(self, account: str, amount: int) -> None:
+        return self._fn_burn_from.send_call(account, amount, 0, self.call_contract_fee_amount, self.call_contract_debug_flag)
+
     """
     implementation of cap in contract TokenLv
     
     """
-    
+
     def cap(self) -> int:
-        return self._fn_cap.call()    
+        return self._fn_cap.call()
+
     """
     implementation of decimals in contract TokenLv
     
     """
-    
+
     def decimals(self) -> int:
-        return self._fn_decimals.call()    
+        return self._fn_decimals.call()
+
     """
     implementation of decrease_allowance in contract TokenLv
     
     """
-    
-    def decrease_allowance(self,spender: str, subtracted_value: int) -> bool:
-        return self._fn_decrease_allowance.send_call(spender, subtracted_value, 0,self.call_contract_fee_amount,self.call_contract_debug_flag)    
+
+    def decrease_allowance(self, spender: str, subtracted_value: int) -> bool:
+        return self._fn_decrease_allowance.send_call(spender, subtracted_value, 0, self.call_contract_fee_amount, self.call_contract_debug_flag)
+
     """
     implementation of get_decimals in contract TokenLv
     
     """
-    
+
     def get_decimals(self) -> int:
-        return self._fn_get_decimals.call()    
+        return self._fn_get_decimals.call()
+
     """
     implementation of increase_allowance in contract TokenLv
     
     """
-    
-    def increase_allowance(self,spender: str, added_value: int) -> bool:
-        return self._fn_increase_allowance.send_call(spender, added_value, 0,self.call_contract_fee_amount,self.call_contract_debug_flag)    
+
+    def increase_allowance(self, spender: str, added_value: int) -> bool:
+        return self._fn_increase_allowance.send_call(spender, added_value, 0, self.call_contract_fee_amount, self.call_contract_debug_flag)
+
     """
     implementation of is_minter in contract TokenLv
     
     """
-    
-    def is_minter(self,account: str) -> bool:
-        return self._fn_is_minter.call(account)    
+
+    def is_minter(self, account: str) -> bool:
+        return self._fn_is_minter.call(account)
+
     """
     implementation of mint in contract TokenLv
     
     """
-    
-    def mint(self,account: str, amount: int) -> bool:
-        return self._fn_mint.send_call(account, amount, 0,self.call_contract_fee_amount,self.call_contract_debug_flag)    
+
+    def mint(self, account: str, amount: int) -> bool:
+        return self._fn_mint.send_call(account, amount, 0, self.call_contract_fee_amount, self.call_contract_debug_flag)
+
     """
     implementation of name in contract TokenLv
     
     """
-    
+
     def name(self) -> str:
-        return self._fn_name.call()    
+        return self._fn_name.call()
+
     """
     implementation of renounce_minter in contract TokenLv
     
     """
-    
+
     def renounce_minter(self) -> None:
-        return self._fn_renounce_minter.send_call(0,self.call_contract_fee_amount,self.call_contract_debug_flag)    
+        return self._fn_renounce_minter.send_call(0, self.call_contract_fee_amount, self.call_contract_debug_flag)
+
     """
     implementation of symbol in contract TokenLv
     
     """
-    
+
     def symbol(self) -> str:
-        return self._fn_symbol.call()    
+        return self._fn_symbol.call()
+
     """
     implementation of token_name in contract TokenLv
     
     """
-    
+
     def token_name(self) -> str:
-        return self._fn_token_name.call()    
+        return self._fn_token_name.call()
+
     """
     implementation of token_symbol in contract TokenLv
     
     """
-    
+
     def token_symbol(self) -> str:
-        return self._fn_token_symbol.call()    
+        return self._fn_token_symbol.call()
+
     """
     implementation of total_supply in contract TokenLv
     
     """
-    
+
     def total_supply(self) -> int:
-        return self._fn_total_supply.call()    
+        return self._fn_total_supply.call()
+
     """
     implementation of transfer in contract TokenLv
     
     """
-    
-    def transfer(self,recipient: str, amount: int) -> bool:
-        return self._fn_transfer.send_call(recipient, amount, 0,self.call_contract_fee_amount,self.call_contract_debug_flag)    
+
+    def transfer(self, recipient: str, amount: int) -> bool:
+        return self._fn_transfer.send_call(recipient, amount, 0, self.call_contract_fee_amount, self.call_contract_debug_flag)
+
     """
     implementation of transfer_from in contract TokenLv
     
     """
-    
-    def transfer_from(self,sender: str, recipient: str, amount: int) -> bool:
-        return self._fn_transfer_from.send_call(sender, recipient, amount, 0,self.call_contract_fee_amount,self.call_contract_debug_flag)
-    def CallContractFee(self, amount:int)-> "TokenLv":
+
+    def transfer_from(self, sender: str, recipient: str, amount: int) -> bool:
+        return self._fn_transfer_from.send_call(sender, recipient, amount, 0, self.call_contract_fee_amount, self.call_contract_debug_flag)
+
+    def CallContractFee(self, amount: int) -> "TokenLv":
         self.call_contract_fee_amount = amount
         return self
 
@@ -1307,7 +1145,8 @@ class TokenLv:
     def abi() -> dict:
         """Return the ABI to the underlying contract."""
         return json.loads(
-            '[{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"}],"name":"MinterAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"}],"name":"MinterRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"constant":false,"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"addMinter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burn","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burnFrom","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"cap","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getDecimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"isMinter","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"renounceMinter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"tokenName","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"tokenSymbol","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"}]'  # noqa: E501 (line-too-long)
+            '[{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"}],"name":"MinterAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"}],"name":"MinterRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"constant":false,"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"addMinter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burn","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burnFrom","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"cap","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getDecimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"isMinter","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"renounceMinter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"tokenName","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"tokenSymbol","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"}]'
+            # noqa: E501 (line-too-long)
         )
 
 # pylint: disable=too-many-lines

@@ -45,7 +45,7 @@ class Collector:
         tronc = work_space.getNewTronClient(address, priv)
 
         try:
-            tronc.trx.send_trx(self.home_add, self.DEMO_AMOUNT)
+            tronc.Chain.send_trx(self.home_add, self.DEMO_AMOUNT)
             print("processed address {} at {}".format(address, k))
 
         except ValueError as e:

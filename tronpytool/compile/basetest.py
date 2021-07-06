@@ -177,7 +177,7 @@ class CoreDeploy:
                percent: int = 1) -> str:
         """This is using the faster way to deploy files by using the specific abi and bin files"""
         _abi, _bytecode = sol_wrap.GetCodeClass(classname)
-        contractwork = self.tron.trx.contract(abi=_abi, bytecode=_bytecode)
+        contractwork = self.tron.Chain.contract(abi=_abi, bytecode=_bytecode)
         contract = contractwork.constructor()
         tx_data = contract.transact(
             fee_limit=fee,
@@ -185,9 +185,9 @@ class CoreDeploy:
             parameters=params,
             consume_user_resource_percent=percent)
         print("======== TX Result ✅")
-        sign = self.tron.trx.sign(tx_data)
+        sign = self.tron.Chain.sign(tx_data)
         print("======== Signing {} ✅".format(classname))
-        result = self.tron.trx.broadcast(sign)
+        result = self.tron.Chain.broadcast(sign)
         print("======== Broadcast Result ✅ -> {}".format(Paths.showCurrentDeployedClass(classname)))
         sol_wrap.StoreTxResult(result, self.pathfinder.classObject(classname))
 
@@ -301,7 +301,7 @@ class CoreDeploy:
     def classic_deploy(self, sol_wrap: SolcWrap, path: str, classname: str, params: list = []) -> str:
         self.sol_cont.WrapModel()
         _abi, _bytecode = sol_wrap.GetCode(path, classname)
-        contractwork = self.tron.trx.contract(abi=_abi, bytecode=_bytecode)
+        contractwork = self.tron.Chain.contract(abi=_abi, bytecode=_bytecode)
         contract = contractwork.constructor()
         tx_data = contract.transact(
             fee_limit=10 ** 9,
@@ -309,9 +309,9 @@ class CoreDeploy:
             parameters=params,
             consume_user_resource_percent=1)
         print("======== TX Result ✅")
-        sign = self.tron.trx.sign(tx_data)
+        sign = self.tron.Chain.sign(tx_data)
         print("======== Signing {} ✅".format(classname))
-        result = self.tron.trx.broadcast(sign)
+        result = self.tron.Chain.broadcast(sign)
 
         print("======== Broadcast Result ✅ -> {}".format(Paths.showCurrentDeployedClass(classname)))
         sol_wrap.StoreTxResult(result, self.pathfinder.classObject(classname))
@@ -322,7 +322,7 @@ class CoreDeploy:
         return contract_address
 
     def _balanceOf(self, address: str) -> int:
-        amount = self.tron.trx.get_balance(address, False)
+        amount = self.tron.Chain.get_balance(address, False)
         return amount
 
 
