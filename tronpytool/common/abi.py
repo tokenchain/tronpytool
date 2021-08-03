@@ -191,7 +191,7 @@ def filter_by_type(_type, contract_abi) -> list:
 def filter_by_name(name, contract_abi) -> list:
     return [
         abi for abi in contract_abi
-        if (hasattr(abi, 'type') and hasattr(abi, 'name') and abi['type'] not in ('fallback', 'constructor') and abi['name'] == name)
+        if ('type' in abi and 'name' in abi and abi['type'] not in ('fallback', 'constructor') and abi['name'] == name)
     ]
 
 
