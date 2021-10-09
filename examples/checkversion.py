@@ -2,11 +2,9 @@
 # coding: utf-8
 import os
 
-import common
 from examples.codec.core.lib import WrapDeploy, wallet_address
 from tronpytool import __version__
-from tronpytool.compile.bulkmanager import BulkManager
-from tronpytool.common import trc20
+from extern.bulkmanager import BulkManager
 
 print(__version__)
 caddress = "TGzXbPmnnRyknJbvx7BCJqpdg76uiZaE92"
