@@ -6,8 +6,8 @@ import os
 import subprocess
 import time
 
-from .. import Tron, Evm
 from .compile import BuildRemoteLinuxCommand, BuildLang
+from .. import Tron, Evm
 from ..compile.paths import Paths
 from ..trx import Trx
 
@@ -251,12 +251,14 @@ class CoreDeploy(CoreBase):
             contract = contractwork.constructor()
 
         # contract = contractwork.constructor()
-
+        default_gas = self.gas
+        userSrcPercent = self.userSrcPercent
+        # user source percentage
         tx_data = contract.transact(
-            fee_limit=self.gas if fee == 0 else fee,
+            fee_limit=default_gas if fee == 0 else fee,
             call_value=0,
             parameters=params,
-            consume_user_resource_percent=self.userSrcPercent if percent == 0 else percent)
+            consume_user_resource_percent=userSrcPercent if percent == 0 else percent)
 
         print("========TX Pre-Result ✅")
         sign = self.tron.Chain.sign(tx_data)
