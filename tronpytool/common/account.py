@@ -11,6 +11,7 @@ import base58
 import ecdsa
 from eth_account import Account as ETHAccount
 from eth_keys import KeyAPI
+from eth_utils import keccak
 from trx_utils import is_hex, is_bytes
 
 from tronpytool.common.datastructures import AttributeDict
@@ -69,7 +70,6 @@ class Address:
         """Helper function that will convert a generic value to hex"""
         if is_hex(address):
             return address.lower().replace('0x', '41', 2)
-
         return base58.b58decode_check(address).hex().upper()
 
     @staticmethod
@@ -78,6 +78,40 @@ class Address:
         if is_hex(address):
             return address
         return '0x' + base58.b58decode_check(address).hex().upper()[2:]
+
+    @staticmethod
+    def to_hex_check_sum(address) -> str:
+        """Helper function that will convert a generic value to hex"""
+        if is_hex(address):
+            return address
+        step1 = base58.b58decode_check(address).hex().lower()[2:]
+        print(address)
+        print(step1)
+        return Address.checksum_encode(step1)
+
+    @staticmethod
+    def checksum_encode(hex_addr: str) -> str:  # Takes a 20-byte binary address as input
+        # hex_addr = addr.hex()
+        checksummed_buffer = ""
+        # Treat the hex address as ascii/utf-8 for keccak256 hashing
+        hashed_address = keccak(text=hex_addr).hex()
+
+        # Iterate over each character in the hex address
+        for nibble_index, character in enumerate(hex_addr):
+            if character in "0123456789":
+                # We can't upper-case the decimal digits
+                checksummed_buffer += character
+            elif character in "abcdef":
+                # Check if the corresponding hex digit (nibble) in the hash is 8 or higher
+                hashed_address_nibble = int(hashed_address[nibble_index], 16)
+                if hashed_address_nibble > 7:
+                    checksummed_buffer += character.upper()
+                else:
+                    checksummed_buffer += character
+            else:
+                raise TypeError(f"Unrecognized hex character {character!r} at position {nibble_index}")
+        print("----- now up", checksummed_buffer)
+        return "0x" + checksummed_buffer
 
     @staticmethod
     def to_hex_0x_41(address) -> str:

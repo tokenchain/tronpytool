@@ -624,7 +624,7 @@ class TransactionBuilder(object):
                     raise ValueError("Invalid parameter type provided: " + abi_pair["type"])
                 value = vlList[c]
                 if abi_pair["type"] == "address":
-                    value = self.tron.address.to_hex(value).replace("41", "0x", 1)
+                    value = self.tron.address.to_hex_check_sum(value)
 
                 types.append(abi_pair["type"])
                 values.append(value)
@@ -646,7 +646,7 @@ class TransactionBuilder(object):
                 raise InvalidTronError(s)
         else:
             encoded_parameter = ""
-
+        # exit(0)
         return encoded_parameter
 
     def trigger_smart_contract(self, kv: dict):

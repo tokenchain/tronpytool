@@ -477,3 +477,16 @@ class WrapContract(object):
         self.tron_client.private_key = pri
         self.tron_client.default_address = pub
         return self
+
+
+class ContractTool(CoreDeploy):
+    def __init__(self, root: str, network: str, pub: str, pri: str):
+        _workSpace1 = WrapContract(network).setMasterKey(pub, pri)
+        _tron = _workSpace1.getClientTron()
+        super().__init__(_tron)
+        self.connect(root, False)
+        print("-----> root for contract base")
+        print(root)
+
+
+

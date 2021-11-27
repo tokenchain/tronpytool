@@ -2,7 +2,6 @@ import json
 import re
 from typing import Union
 
-from tronpytool.common.datastructures import AttributeDict
 from eth_utils import (
     hexstr_if_str,
     to_hex,
