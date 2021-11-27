@@ -98,6 +98,7 @@ class CoreBase:
     _sol_link: list = None
     sol_wrap: SolcWrap = None
     pathfinder: Paths = None
+    is_debug: bool = False
     EVM_VERSION = Evm.BERLIN
 
 
@@ -110,6 +111,9 @@ class CoreDeploy(CoreBase):
         self.tron = tron
         self.last_class = ""
         self.is_deploy = False
+
+    def debug(self):
+        self.is_debug = True
 
     def OverrideGasConfig(self, _gas: int, _percent: int) -> None:
         """
@@ -282,7 +286,9 @@ class CoreDeploy(CoreBase):
             consume_user_resource_percent=h2)
 
         print("========TX Pre-Result ✅")
-        print(tx_data)
+        if self.is_debug is True:
+            print(tx_data)
+
         sign = self.tron.Chain.sign(tx_data)
         print("======== Signing {} ✅".format(classname))
         print(f"========🖍 Signing {classname}, ...")

@@ -634,11 +634,12 @@ class TransactionBuilder(object):
                     "value": value,
                 })
 
-                print("------", value)
+                # print("------", value)
                 c += 1
 
             try:
                 encoded_parameter = encode_hex(encode_abi(types, values)).replace('0x', '', 2)
+                print("🉐 === deployment constructor bytecode")
                 print(encoded_parameter)
 
             except ValueError as s:
