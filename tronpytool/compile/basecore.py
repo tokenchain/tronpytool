@@ -3,14 +3,14 @@
 from datetime import datetime
 from typing import Any, Union, Tuple
 
-from tronpytool import Tron
-from tronpytool.common.abi import method_result_handler, decode_single
-from tronpytool.common.key import to_hex_address, keccak256, is_address
-from tronpytool.common.normalizers import to_checksum_address
-from tronpytool.common.threads import Timeout
-from tronpytool.contract import Contract
-from tronpytool.exceptions import DoubleSpending
-from tronpytool.transactionbuilder import TransactionBuilder
+from .. import Tron
+from ..common.abi import method_result_handler, decode_single
+from ..common.key import to_hex_address, keccak256, is_address
+from ..common.normalizers import to_checksum_address
+from ..common.threads import Timeout
+from ..contract import Contract
+from ..exceptions import DoubleSpending
+from ..transactionbuilder import TransactionBuilder
 
 
 # from trx import is_list, is_object

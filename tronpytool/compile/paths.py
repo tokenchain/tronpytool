@@ -6,7 +6,7 @@ import os
 
 # from datetime import datetime
 # from typing import Any, Union, Tuple
-from tronpytool import Evm
+from .. import Evm
 
 
 class Paths:

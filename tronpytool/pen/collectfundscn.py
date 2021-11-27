@@ -3,7 +3,7 @@ import codecs
 import requests
 from bs4 import BeautifulSoup
 
-from tronpytool.compile.basetest import WrapContract
+from ..compile.basetest import WrapContract
 
 
 class Collector:

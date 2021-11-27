@@ -26,9 +26,9 @@ from requests.exceptions import (
     ConnectionError as TrxConnectionError
 )
 
-from tronpytool.common.encoding import to_text
-from tronpytool.exceptions import HTTP_EXCEPTIONS, TransportError
-from tronpytool.providers.base import BaseProvider
+from ..common.encoding import to_text
+from ..exceptions import HTTP_EXCEPTIONS, TransportError
+from ..providers.base import BaseProvider
 
 HTTP_SCHEMES = {'http', 'https'}
 HttpResponse = namedtuple('HttpResponse', ('status_code', 'headers', 'data'))

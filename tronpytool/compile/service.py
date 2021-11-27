@@ -5,7 +5,7 @@ import time
 import requests
 from urllib3.exceptions import ReadTimeoutError
 
-from tronpytool.exceptions import LoopError
+from ..exceptions import LoopError
 
 threadLock = threading.Lock()
 threads = []

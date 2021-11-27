@@ -8,10 +8,10 @@ import random
 import string
 import time
 
-from tronpytool.compile.paths import Paths
-from tronpytool import Tron
-from tronpytool.compile.basetest import WrapContract
-from tronpytool.trx import Trx
+from ..compile.paths import Paths
+from .. import Tron
+from ..compile.basetest import WrapContract
+from ..trx import Trx
 
 BAL = "balance"
 PRI = "privkey"
