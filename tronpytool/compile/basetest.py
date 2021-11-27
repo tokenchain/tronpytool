@@ -131,14 +131,6 @@ class CoreDeploy(CoreBase):
         self.one = one
 
     @property
-    def gas(self) -> int:
-        return self.gas
-
-    @property
-    def userSrcPercent(self) -> int:
-        return self.userSrcPercent
-
-    @property
     def one(self) -> int:
         """
         ONE platform coin will be decoded to be...
