@@ -9,6 +9,7 @@ import time
 from .compile import BuildRemoteLinuxCommand, BuildLang
 from .. import Tron, Evm
 from ..compile.paths import Paths
+from ..exceptions import ValidationError
 from ..trx import Trx
 
 ROOT = os.path.join(os.path.dirname(__file__))
@@ -224,6 +225,35 @@ class CoreDeploy(CoreBase):
         """store up the deployed contrcat addresses to the local file storage"""
         self.sol_wrap.StoreTxResult(self._contract_dict, self.pathfinder.SaveDeployConfig)
 
+    def _checkErrorForTxReceipt(self, receipt: any, class_name: str) -> str:
+        if "transaction" not in receipt:
+            print("⚠️ Failed to deploy contract with this error result from this.", receipt)
+            raise ValidationError
+
+        tx = receipt["transaction"]
+
+        if "contract_address" not in tx:
+            print(f"⚠️ Contract address is not found for deployment - {class_name}.")
+            raise ValidationError
+
+        contract_address_hex = tx["contract_address"]
+        txID = tx["txID"]
+        contract_address = self.tron.address.from_hex(contract_address_hex)
+        self._contract_dict[class_name] = contract_address
+        self._contract_dict["kv_{}".format(class_name)] = dict(
+            owner=self.tron.default_address.base58,
+        )
+        print(txID)
+        self.hashLink(txID)
+        print("📦 Address saved to ✅ {} -> {}".format(contract_address, class_name))
+        return contract_address
+
+    def hashLink(self, hash: str):
+        if self.tron.network_name == "nile":
+            print(f"https://nile.tronscan.org/#/transaction/{hash}")
+        if self.tron.network_name == "default":
+            print(f"https://tronscan.org/#/transaction/{hash}")
+
     def deploy(self,
                classname: str,
                params: list = [],
@@ -236,17 +266,14 @@ class CoreDeploy(CoreBase):
         """This is using the faster way to deploy files by using the specific abi and bin files"""
         _abi, _bytecode = self.sol_wrap.GetCodeClass(classname)
         contractwork = self.tron.Chain.contract(abi=_abi, bytecode=_bytecode)
-
-        if len(params) > 0:
-            contract = contractwork.constructor(*params)
-        else:
-            contract = contractwork.constructor()
+        contract = contractwork.constructor()
 
         # contract = contractwork.constructor()
         default_gas = self.gas
         userSrcPercent = self.userSrcPercent
         h1 = default_gas if fee == 0 else fee
         h2 = userSrcPercent if percent == 0 else percent
+
         # user source percentage
         tx_data = contract.transact(
             fee_limit=h1,
@@ -261,17 +288,9 @@ class CoreDeploy(CoreBase):
         result = self.tron.Chain.broadcast(sign)
         print("======== Broadcast Result ✅ -> {}".format(Paths.showCurrentDeployedClass(classname)))
         self.sol_wrap.StoreTxResult(result, self.pathfinder.classObject(classname))
-        if "transaction" not in result:
-            print("failed to deploy contract with this error result from this.", result)
-            return "Err"
-        contract_address = self.tron.address.from_hex(result["transaction"]["contract_address"])
-        self._contract_dict[classname] = contract_address
-        self._contract_dict["kv_{}".format(classname)] = dict(
-            owner="",
-        )
-        print("📦 Address saved to ✅ {} -> {}".format(contract_address, classname))
-
-        return contract_address
+        address = self._checkErrorForTxReceipt(result, classname)
+        self.complete_deployment()
+        return address
 
     def setTargetClass(self, classname: str) -> "CoreDeploy":
         self.last_class = classname

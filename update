@@ -57,10 +57,25 @@ clean_repo() {
 }
 git_update() {
   git add .
-  git remote add origin https://gitee.com/jjhoc/tronpytool.git
+  # git remote add origin https://gitee.com/jjhoc/tronpytool.git
   git commit -m "package updates related items. please check in commit details"
   #git remote add origin https://gitee.com/jjhoc/b-explorer-settings.git
-  git push
+  git push origin
+  git push github
 }
-clean_repo
+
+
+swap_src(){
+  local DEV_SRC=$HOME/Documents/b95/devtron/tronpytool
+  local DEPLOY_SRC=$HOME/Documents/piplines/tron-tool-py/tronpytool
+  if [[ -d "$DEV_SRC" ]]; then
+    echo "now swapping the source code"
+    rm -rf tronpytool
+    cp -R $DEV_SRC $DEPLOY_SRC
+  fi
+}
+
+
+swap_src
+# clean_repo
 git_update
