@@ -245,12 +245,14 @@ class CoreDeploy(CoreBase):
         # contract = contractwork.constructor()
         default_gas = self.gas
         userSrcPercent = self.userSrcPercent
+        h1 = default_gas if fee == 0 else fee
+        h2 = userSrcPercent if percent == 0 else percent
         # user source percentage
         tx_data = contract.transact(
-            fee_limit=default_gas if fee == 0 else fee,
+            fee_limit=h1,
             call_value=0,
             parameters=params,
-            consume_user_resource_percent=userSrcPercent if percent == 0 else percent)
+            consume_user_resource_percent=h2)
 
         print("========TX Pre-Result ✅")
         sign = self.tron.Chain.sign(tx_data)
