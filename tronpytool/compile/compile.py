@@ -1,8 +1,8 @@
 import os
+import re
 
 from tronpytool import Paths
-import re
-from . import REC, ITEM, ITEMLINK, ITEM_CP_LOCAL, TRANS_LOCAL, ITEM_TRANSPILE_PYTHON, ITEM_TRANSPILE_TS
+from . import REC, ITEM, ITEMLINK, ITEM_CP_LOCAL, TRANS_LOCAL, ITEM_TRANSPILE_PYTHON, ITEM_TRANSPILE_TS, PRE_HEAD
 
 
 def compileItem1(tar: Paths, k0: str) -> str:
@@ -33,21 +33,6 @@ def compileItem2(tar: Paths, k0: str, link_lib_conf: str) -> str:
         SOLCPATH=tar.SOLCPATH,
         COMPILE_COIN=k0,
         FILES_CONFIG=link_lib_conf,
-        SOLVER=tar.SOLC_VER,
-    )
-
-
-def wrapContent(tar: Paths, compile_list: list) -> str:
-    """
-    wrap content
-    :param tar:
-    :param compile_list:
-    :return:
-    """
-    return REC.format(
-        LISTP="\n".join(compile_list),
-        TARGET_LOC=tar.TARGET_LOC,
-        COMPRESSED_NAME=tar.COMPRESSED_NAME,
         SOLVER=tar.SOLC_VER,
     )
 
@@ -90,7 +75,7 @@ def BuildRemoteLinuxCommand(p: Paths, list_files: list = None, linked: dict = No
                 k.append(compileItem2(p, compile_file, library_link_cmd))
     # ==================================================
     with open(p.workspaceFilename("remotesolc"), 'w') as f:
-        f.write(wrapContent(p, k))
+        f.write(wrapContentCompile(p, k))
         f.close()
     # ==================================================
 
@@ -140,7 +125,7 @@ def buildCmdTs(p: Paths, pathName: str) -> str:
     )
 
 
-def wrapContent(tar: Paths, compile_list: list) -> str:
+def wrapContentTranspile(tar: Paths, compile_list: list) -> str:
     """
     wrap content
     :param tar:
@@ -152,6 +137,22 @@ def wrapContent(tar: Paths, compile_list: list) -> str:
         TARGET_LOC=tar.TARGET_LOC,
         COMPRESSED_NAME=tar.COMPRESSED_NAME,
         SOLVER=tar.SOLC_VER,
+        PRE_HEAD=PRE_HEAD
+    )
+
+
+def wrapContentCompile(tar: Paths, compile_list: list) -> str:
+    """
+    wrap content
+    :param tar:
+    :param compile_list:
+    :return:
+    """
+    return REC.format(
+        LISTP="\n".join(compile_list),
+        TARGET_LOC=tar.TARGET_LOC,
+        COMPRESSED_NAME=tar.COMPRESSED_NAME,
+        SOLVER=tar.SOLC_VER
     )
 
 
@@ -170,5 +171,5 @@ def BuildLang(p: Paths, list_class_names: list) -> None:
         k.append(buildCmdTsUpdate(p, v))
     # ==================================================
     with open(p.workspaceFilename("localpile"), 'w') as f:
-        f.write(wrapContent(p, k))
+        f.write(wrapContentTranspile(p, k))
         f.close()

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 REC = """#!/bin/bash
+
 if [[ ! -f {TARGET_LOC} ]]; then
     mkdir -p {TARGET_LOC}/vault
 fi
@@ -28,10 +29,7 @@ exit
 TRANS_LOCAL = """#!/bin/bash
 
 # -----------------------------------------------
-if ! command -v abi-gen-uni &>/dev/null; then
-    echo "abi-gen-uni could not be found. please check the official source from: https://www.npmjs.com/package/easy-abi-gen"
-    cnpm i -g easy-abi-gen
-fi
+{PRE_HEAD}
 
 {LISTP}
 
@@ -92,4 +90,13 @@ fi
 abigen --abi "$BUILDPATH/build/$CLASSNAME.abi" --pkg $CLASSNAME --out "$GO_CONTRACT_SRC_PATH/$CLASSNAME/init.go"
 
 echo "==> compile abi to golang 🚸✅"
+"""
+
+PRE_HEAD = """
+
+if ! command -v abi-gen-uni &>/dev/null; then
+    echo "abi-gen-uni could not be found"
+    cnpm i -g easy-abi-gen
+fi
+
 """
