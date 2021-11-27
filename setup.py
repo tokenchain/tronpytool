@@ -115,7 +115,7 @@ setup(
     long_description_content_type='text/x-rst',
     keywords='tron tron-api tron-api-python iex-base cli sdk pentest lovestories sexmachine',
     url='https://github.com/iexbase/tron-api-python',
-    author='Sederov & Heskemo',
+    author='Sederov & Heskemo & Morgan',
     author_email='steein.shamsudin@gmail.com',
     license='MIT License',
     zip_safe=False,

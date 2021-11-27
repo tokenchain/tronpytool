@@ -6,7 +6,7 @@ import os
 import subprocess
 import time
 
-from tronpytool import Tron
+from tronpytool import Tron, Evm
 from tronpytool.compile.paths import Paths
 from tronpytool.trx import Trx
 
@@ -85,7 +85,19 @@ class SolcWrap(object):
         self.writeFile(json.dumps(tx_result_data, ensure_ascii=False), filepath)
 
 
-class CoreDeploy:
+class CoreBase:
+    gas: int = 10 ** 9
+    userSrcPercent: int = 1
+    one: int = 0
+    wait_time: int = 0
+    list_type: str = "list_address"
+    _contract_dict: dict = dict()
+    sol_cont: SolcWrap = None
+    pathfinder: Paths = None
+    EVM_VERSION = Evm.BERLIN
+
+
+class CoreDeploy(CoreBase):
     """DEFI Contract deployment
     with the right strategies
     """
@@ -93,11 +105,47 @@ class CoreDeploy:
     def __init__(self, tron: Tron):
         self.tron = tron
         self.last_class = ""
-        self.list_type = "list_address"
-        self._contract_dict = dict()
         self.is_deploy = False
-        self.sol_cont = None
-        self.pathfinder = None
+
+    def OverrideGasConfig(self, _gas: int, _percent: int) -> None:
+        """
+        the override the configuration for the gas amount and the gas price
+        :param _gas: int
+        :param _gas_price: int
+        :return: NONE
+        """
+        self.gas = _gas
+        self.userSrcPercent = _percent
+
+    def OverrideChainConfig(self, one: int, wait: int) -> None:
+        """
+        Lets have the configuration done now.
+        :param one: ONE coin to measure
+        :param wait: the waiting time from each block confirmation
+        :return:
+        """
+        self.wait_time = wait
+        self.one = one
+
+    @property
+    def gas(self) -> int:
+        return self.gas
+
+    @property
+    def userSrcPercent(self) -> int:
+        return self.userSrcPercent
+
+    @property
+    def one(self) -> int:
+        """
+        ONE platform coin will be decoded to be...
+        :return: int
+        """
+        return self.one
+
+    @property
+    def waitSec(self) -> int:
+        return self.wait_time
 
     @property
     def __list_key_label(self) -> str:
@@ -165,42 +213,65 @@ class CoreDeploy:
 
         self.ready_io(True)
 
+    def SetupContract(self):
+        pass
+
+    def after_deployment_initialize_settings(self):
+        """
+        setup contract starting params
+        setup the starting time using bang
+        setup the first member
+        :return:
+        """
+        pass
+
     def complete_deployment(self) -> None:
         """store up the deployed contrcat addresses to the local file storage"""
         self.sol_cont.StoreTxResult(self._contract_dict, self.pathfinder.SaveDeployConfig)
 
     def deploy(self,
-               sol_wrap: SolcWrap,
                classname: str,
                params: list = [],
-               fee: int = 10 ** 9,
-               percent: int = 1) -> str:
+               fee: int = 0,
+               percent: int = 0) -> str:
+
+        if self.sol_cont is None:
+            print("⚠️ The wrapper solc is not init.")
+
         """This is using the faster way to deploy files by using the specific abi and bin files"""
-        _abi, _bytecode = sol_wrap.GetCodeClass(classname)
+        _abi, _bytecode = self.sol_wrap.GetCodeClass(classname)
         contractwork = self.tron.Chain.contract(abi=_abi, bytecode=_bytecode)
-        contract = contractwork.constructor()
+
+        if len(params) > 0:
+            contract = contractwork.constructor(*params)
+        else:
+            contract = contractwork.constructor()
+
+        # contract = contractwork.constructor()
+
         tx_data = contract.transact(
-            fee_limit=fee,
+            fee_limit=self.gas if fee == 0 else fee,
             call_value=0,
             parameters=params,
-            consume_user_resource_percent=percent)
-        print("======== TX Result ✅")
+            consume_user_resource_percent=self.userSrcPercent if percent == 0 else percent)
+
+        print("========TX Pre-Result ✅")
         sign = self.tron.Chain.sign(tx_data)
         print("======== Signing {} ✅".format(classname))
+        print(f"========🖍 Signing {classname}, fee:{tx_data['fee_limit']}, percent:{tx_data['consume_user_resource_percent']} ...")
         result = self.tron.Chain.broadcast(sign)
         print("======== Broadcast Result ✅ -> {}".format(Paths.showCurrentDeployedClass(classname)))
-        sol_wrap.StoreTxResult(result, self.pathfinder.classObject(classname))
-
+        self.sol_wrap.StoreTxResult(result, self.pathfinder.classObject(classname))
         if "transaction" not in result:
             print("failed to deploy contract with this error result from this.", result)
             return "Err"
-
         contract_address = self.tron.address.from_hex(result["transaction"]["contract_address"])
         self._contract_dict[classname] = contract_address
         self._contract_dict["kv_{}".format(classname)] = dict(
             owner="",
         )
-        print("======== address saved to ✅ {} -> {}".format(contract_address, classname))
+        print("📦 Address saved to ✅ {} -> {}".format(contract_address, classname))
+
         return contract_address
 
     def setTargetClass(self, classname: str) -> "CoreDeploy":
@@ -299,6 +370,9 @@ class CoreDeploy:
         self.complete_deployment()
 
     def classic_deploy(self, sol_wrap: SolcWrap, path: str, classname: str, params: list = []) -> str:
+        """
+        This is the depreciated class and please check the class from deploy
+        """
         self.sol_cont.WrapModel()
         _abi, _bytecode = sol_wrap.GetCode(path, classname)
         contractwork = self.tron.Chain.contract(abi=_abi, bytecode=_bytecode)
@@ -338,7 +412,7 @@ class WrapContract(object):
                 "client v1 is not connected. please check the internet connection or the service is down! network: {}".format(
                     _network))
 
-        self._tron_module = nn1.trx
+        self._tron_module = nn1.Chain
         self._contract = None
         self._network = _network
 

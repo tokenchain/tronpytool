@@ -4,9 +4,9 @@ import codecs
 import json
 import os
 
-
 # from datetime import datetime
 # from typing import Any, Union, Tuple
+from tronpytool import Evm
 
 
 class Paths:
@@ -32,6 +32,7 @@ class Paths:
     SOLCPATH = "/root/contracts/vault"
     BUILDPATH = ""
     WEB_DAPP_SRC = "app"
+    EVM_VERSION = Evm.ISTANBUL
 
     def __init__(self, root_path_as_workspace):
         self.___workspace = root_path_as_workspace
@@ -61,6 +62,10 @@ class Paths:
 
     def setSolVersion(self, version: str) -> "Paths":
         self.SOLC_VER = version
+        return self
+    
+    def setEvm(self, ver: str) -> "Paths":
+        self.EVM_VERSION = ver
         return self
 
     def setDefaultPath(self) -> "Paths":

@@ -10,6 +10,7 @@ import sys
 import pkg_resources
 from eth_account import Account  # noqa: E402
 
+from .constants import Evm, Bolors
 from .compile.paths import Paths
 from .compile.service import Service, BackgroundRun
 from .main import Tron  # noqa: E402
@@ -19,7 +20,7 @@ from .pen.eventtest import EventTestCase
 from .pen.membertest import MemberNetworkTestCase
 from .providers.gracefulinterrupter import GracefulInterruptHandler
 from .providers.http import HttpProvider  # noqa: E402
-from .compile.basecore import ContractMethod, EventTracker
+
 
 if sys.version_info < (3, 5):
     raise EnvironmentError("Python 3.5 or above is required")
@@ -38,5 +39,7 @@ __all__ = [
     'Service',
     'GracefulInterruptHandler',
     'BackgroundRun',
-    'Paths'
+    'Paths',
+    'Evm',
+    'Bolors'
 ]

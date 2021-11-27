@@ -12,9 +12,7 @@ cd {TARGET_LOC}
 echo "🍜 changed permission to root"
 SOLC_VERSION={SOLVER} solc --version
 
-
 echo "and then the compiler version should be... "
-
 
 {LISTP}
 
@@ -34,16 +32,13 @@ if ! command -v abi-gen-uni &>/dev/null; then
     echo "abi-gen-uni could not be found. please check the official source from: https://www.npmjs.com/package/easy-abi-gen"
     cnpm i -g easy-abi-gen
 fi
-if ! command -v poa-solidity-flattener &>/dev/null; then
-    echo "poa-solidity-flattener could not be found, now it needs to install"
-    cnpm i -g poa-solidity-flattener
-fi
+
 {LISTP}
 
 """
 ITEM = """
 echo "🍯 Compiling from {COMPILE_COIN} 🧀"
-SOLC_VERSION={SOLVER} solc --allow-paths {SOLCPATH} -o build --bin --bin-runtime --abi --optimize --metadata --overwrite {COMPILE_COIN}
+SOLC_VERSION={SOLVER} solc --evm-version {EVMVERSION} --allow-paths {SOLCPATH} -o build --bin --bin-runtime --abi --optimize --metadata --overwrite {COMPILE_COIN}
 echo "=> 🍺🍺🍺 {COMPILE_COIN}"
 """
 
@@ -65,8 +60,8 @@ if [[ ! -f {outputfolder} ]]; then
 fi
 echo "==> 🚸 compile abi to python: {target_abi} / {outputfolder}"
 abi-gen-uni --abibins {target_abi} --out "{outputfolder}" \
-    --partials "{BUILDPATH}/factoryabi/PythonEthernum/partials/*.handlebars" \
-    --template "{BUILDPATH}/factoryabi/PythonEthernum/contract.handlebars" \
+    --partials "{BUILDPATH}/factoryabi/PythonTron/partials/*.handlebars" \
+    --template "{BUILDPATH}/factoryabi/PythonTron/contract.handlebars" \
     --language "Python"
 echo "==> compile abi to python 🚸✅"
 """
@@ -78,9 +73,9 @@ if [[ ! -f {outputfolder} ]]; then
 fi
 
 abi-gen-uni --abibins "{target_abi}" --out "{outputfolder}" \
-    --partials "{BUILDPATH}/factoryabi/TypeScriptEthernum/partials/*.handlebars" \
-    --template "{BUILDPATH}/factoryabi/TypeScriptEthernum/contract.handlebars" \
-    --backend "web3" \
+    --partials "{BUILDPATH}/factoryabi/TypeScriptTron/partials/*.handlebars" \
+    --template "{BUILDPATH}/factoryabi/TypeScriptTron/contract.handlebars" \
+    --backend "webtron" \
     --language "TypeScript"
 
 echo "==> compile abi to typescript 🚸✅"
