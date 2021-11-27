@@ -257,7 +257,7 @@ class CoreDeploy(CoreBase):
         print("========TX Pre-Result ✅")
         sign = self.tron.Chain.sign(tx_data)
         print("======== Signing {} ✅".format(classname))
-        print(f"========🖍 Signing {classname}, fee:{tx_data['fee_limit']}, percent:{tx_data['consume_user_resource_percent']} ...")
+        print(f"========🖍 Signing {classname}, ...")
         result = self.tron.Chain.broadcast(sign)
         print("======== Broadcast Result ✅ -> {}".format(Paths.showCurrentDeployedClass(classname)))
         self.sol_wrap.StoreTxResult(result, self.pathfinder.classObject(classname))
