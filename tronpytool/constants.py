@@ -111,6 +111,7 @@ class Evm:
     The block’s base fee (EIP-3198 and EIP-1559) can be accessed via the global block.basefee or basefee() in inline assembly.
     """
 
+
 def conf_for_name(name: str) -> dict:
     return ALL.get(name, None)
 

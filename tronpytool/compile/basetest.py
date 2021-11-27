@@ -6,10 +6,10 @@ import os
 import subprocess
 import time
 
-from compile.compile import BuildRemoteLinuxCommand, BuildLang
-from tronpytool import Tron, Evm
-from tronpytool.compile.paths import Paths
-from tronpytool.trx import Trx
+from .. import Tron, Evm
+from .compile import BuildRemoteLinuxCommand, BuildLang
+from ..compile.paths import Paths
+from ..trx import Trx
 
 ROOT = os.path.join(os.path.dirname(__file__))
 
@@ -312,10 +312,8 @@ class CoreDeploy(CoreBase):
         return self
 
     def setKV(self, key: str, value: any) -> "CoreDeploy":
-
         if self.__kv_label not in self._contract_dict:
             self._contract_dict[self.__kv_label] = dict()
-
         self._contract_dict[self.__kv_label][key] = value
         return self
 
@@ -415,10 +413,8 @@ class CoreDeploy(CoreBase):
         sign = self.tron.Chain.sign(tx_data)
         print("======== Signing {} ✅".format(classname))
         result = self.tron.Chain.broadcast(sign)
-
         print("======== Broadcast Result ✅ -> {}".format(Paths.showCurrentDeployedClass(classname)))
         sol_wrap.StoreTxResult(result, self.pathfinder.classObject(classname))
-
         contract_address = self.tron.address.from_hex(result["transaction"]["contract_address"])
         self._contract_dict[classname] = contract_address
         print("======== address saved to ✅ {} -> {}".format(contract_address, classname))
@@ -437,10 +433,8 @@ class WrapContract(object):
         if nn1.is_connected():
             self.tron_client = nn1
         else:
-            print(
-                "client v1 is not connected. please check the internet connection or the service is down! network: {}".format(
-                    _network))
-
+            print("client v1 is not connected. please check the internet connection or the service is down! network: {}".format(
+                _network))
         self._tron_module = nn1.Chain
         self._contract = None
         self._network = _network

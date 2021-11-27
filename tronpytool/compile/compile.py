@@ -1,3 +1,5 @@
+import os
+
 from tronpytool import Paths
 import re
 from . import REC, ITEM, ITEMLINK, ITEM_CP_LOCAL, TRANS_LOCAL, ITEM_TRANSPILE_PYTHON, ITEM_TRANSPILE_TS
