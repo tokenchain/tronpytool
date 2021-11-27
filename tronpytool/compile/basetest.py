@@ -6,6 +6,7 @@ import os
 import subprocess
 import time
 
+from compile.compile import BuildRemoteLinuxCommand, BuildLang
 from tronpytool import Tron, Evm
 from tronpytool.compile.paths import Paths
 from tronpytool.trx import Trx
@@ -92,6 +93,8 @@ class CoreBase:
     wait_time: int = 0
     list_type: str = "list_address"
     _contract_dict: dict = dict()
+    _sol_list: list = []
+    _sol_link: list = None
     sol_cont: SolcWrap = None
     pathfinder: Paths = None
     EVM_VERSION = Evm.BERLIN
@@ -280,6 +283,32 @@ class CoreDeploy(CoreBase):
 
     def setTargetListName(self, listname: str) -> "CoreDeploy":
         self.list_type = listname
+        return self
+
+    def setClassSolNames(self, to_compile_contract_list: list) -> "CoreDeploy":
+        self._sol_list = to_compile_contract_list
+        return self
+
+    def setClassSolLinks(self, compile_links: list) -> "CoreDeploy":
+        self._sol_link = compile_links
+        return self
+
+    def setEvm(self, verc: str) -> "CoreDeploy":
+        self.EVM_VERSION = verc
+        return self
+
+    def remoteCompile(self, ver: str) -> "CoreDeploy":
+        if ver == "":
+            print("there is no solidity version specified")
+            exit(0)
+        self.pathfinder.setSolVersion(ver)
+        self.pathfinder.setEvm(self.EVM_VERSION)
+        BuildRemoteLinuxCommand(self.pathfinder, self._sol_list, self._sol_link)
+        return self
+
+    def localTranspile(self, dapp_folder: str = "app") -> "CoreDeploy":
+        self.pathfinder.updateTargetDappFolder(dapp_folder)
+        BuildLang(self.pathfinder, self._sol_list)
         return self
 
     def setKV(self, key: str, value: any) -> "CoreDeploy":
