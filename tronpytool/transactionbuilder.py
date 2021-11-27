@@ -481,7 +481,6 @@ class TransactionBuilder(object):
         # in the process of excution or creation of the contract,
         # is an integer which should be greater than 0.
         origin_energy_limit = kwargs.setdefault('origin_energy_limit', 10000000)
-
         parameters = kwargs.setdefault('parameters', [])
         # parameters = kwargs.setdefault('visible', []).append()
         # parameters = kwargs.setdefault('permission_id', []).append()
@@ -516,7 +515,7 @@ class TransactionBuilder(object):
             # print(constructorabi)
 
             if constructorabi == "constructor":
-                parameters = self._parameter_converts(transaction["abi"][0], parameters)
+                parameters = self._parameter_encoder(transaction["abi"][0], parameters)
                 # print(parameters)
 
             transaction.setdefault('owner_address', self.tron.address.to_hex(owner_address))
@@ -606,11 +605,10 @@ class TransactionBuilder(object):
 
         return self.tron.manager.request('/wallet/triggerconstantcontract', kv)
 
-    def _parameter_converts(self, abi: dict, vlList: list) -> str:
+    def _parameter_encoder(self, abi: dict, vlList: list) -> str:
         if len(abi["inputs"]) > 0:
-            print("ok now, it has inputs")
+            print("🉐 === deployment constructor parameters abi")
             print(abi["inputs"])
-            print(vlList)
         else:
             return ""
         _new_param = []
