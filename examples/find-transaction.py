@@ -25,7 +25,6 @@ if "raw_data" in transaction:
         decodedbytes = bytes.fromhex(dat)
         # parse_res = abi.decode_single("", decodedbytes)
         logger.debug(str(decodedbytes))
-
     if "contract" in transaction["raw_data"]:
         if len(transaction["raw_data"]["contract"]) > 0:
             dat = transaction["raw_data"]["contract"][0]
@@ -39,8 +38,6 @@ if "raw_data" in transaction:
                         hashdat = dat["parameter"]["value"]["owner_address"]
                         fe = tron.address.from_hex(hashdat)
                         logger.debug(str(fe))
-
-
     result = tron.Chain.get_transaction_info(hash_tx_id)
     # 111111331
     note = result["log"][0]["data"]

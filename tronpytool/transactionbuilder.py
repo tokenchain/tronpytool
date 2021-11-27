@@ -482,7 +482,7 @@ class TransactionBuilder(object):
         # is an integer which should be greater than 0.
         origin_energy_limit = kwargs.setdefault('origin_energy_limit', 10000000)
 
-        # parameters = kwargs.setdefault('parameters', []).append()
+        parameters = kwargs.setdefault('parameters', [])
         # parameters = kwargs.setdefault('visible', []).append()
         # parameters = kwargs.setdefault('permission_id', []).append()
 
@@ -510,8 +510,22 @@ class TransactionBuilder(object):
 
         # We write all the results in one object
         transaction = dict(**kwargs)
-        transaction.setdefault('owner_address', self.tron.address.to_hex(owner_address))
+        if len(parameters) > 0:
 
+            constructorabi = transaction["abi"][0]["type"]
+            # print(constructorabi)
+
+            if constructorabi == "constructor":
+                parameters = self._parameter_converts(transaction["abi"][0], parameters)
+                # print(parameters)
+
+            transaction.setdefault('owner_address', self.tron.address.to_hex(owner_address))
+            if len(parameters) > 0:
+                transaction["parameter"] = parameters
+
+            # print(transaction)
+
+        # exit(0)
         return self.tron.manager.request('/wallet/deploycontract', transaction)
 
     def trigger_smart_contract_constant(self, kv: dict):
@@ -565,8 +579,8 @@ class TransactionBuilder(object):
 
             try:
                 parameters = encode_hex(encode_abi(types, values)).replace('0x', '', 2)
-            except ValueError as ex:
-                print(ex)
+            except ValueError as s:
+                raise InvalidTronError(s)
 
         else:
             parameters = []
@@ -591,6 +605,50 @@ class TransactionBuilder(object):
         self.debug_url_req(data)
 
         return self.tron.manager.request('/wallet/triggerconstantcontract', kv)
+
+    def _parameter_converts(self, abi: dict, vlList: list) -> str:
+        if len(abi["inputs"]) > 0:
+            print("ok now, it has inputs")
+            print(abi["inputs"])
+            print(vlList)
+        else:
+            return ""
+        _new_param = []
+
+        if len(vlList) > 0:
+            types = []
+            values = []
+
+            c = 0
+            for abi_pair in abi["inputs"]:
+
+                if "type" not in abi_pair or not is_string(abi_pair["type"]):
+                    raise ValueError("Invalid parameter type provided: " + abi_pair["type"])
+                value = vlList[c]
+                if abi_pair["type"] == "address":
+                    value = self.tron.address.to_hex(value).replace("41", "0x", 1)
+
+                types.append(abi_pair["type"])
+                values.append(value)
+
+                _new_param.append({
+                    "type": abi_pair["type"],
+                    "value": value,
+                })
+
+                print("------", value)
+                c += 1
+
+            try:
+                encoded_parameter = encode_hex(encode_abi(types, values)).replace('0x', '', 2)
+                print(encoded_parameter)
+
+            except ValueError as s:
+                raise InvalidTronError(s)
+        else:
+            encoded_parameter = ""
+
+        return encoded_parameter
 
     def trigger_smart_contract(self, kv: dict):
 
