@@ -95,7 +95,7 @@ class CoreBase:
     _contract_dict: dict = dict()
     _sol_list: list = []
     _sol_link: list = None
-    sol_cont: SolcWrap = None
+    sol_wrap: SolcWrap = None
     pathfinder: Paths = None
     EVM_VERSION = Evm.BERLIN
 
@@ -197,9 +197,9 @@ class CoreDeploy(CoreBase):
 
     def connect_deploy_core(self, workspace: str, rebuild=False, deploy=False) -> None:
         if rebuild:
-            self.sol_cont = SolcWrap(workspace).BuildRemote()
+            self.sol_wrap = SolcWrap(workspace).BuildRemote()
         else:
-            self.sol_cont = SolcWrap(workspace)
+            self.sol_wrap = SolcWrap(workspace)
         self.pathfinder = Paths(workspace).setDefaultPath().Network(self.tron.network_name)
         self.is_deploy = deploy
 
@@ -208,7 +208,7 @@ class CoreDeploy(CoreBase):
 
     def connect(self, workspace: str, history: any) -> None:
         self.is_deploy = False
-        self.sol_cont = SolcWrap(workspace)
+        self.sol_wrap = SolcWrap(workspace)
         if history is False:
             self.pathfinder = Paths(workspace).setDefaultPath().Network(self.tron.network_name)
         else:
@@ -230,7 +230,7 @@ class CoreDeploy(CoreBase):
 
     def complete_deployment(self) -> None:
         """store up the deployed contrcat addresses to the local file storage"""
-        self.sol_cont.StoreTxResult(self._contract_dict, self.pathfinder.SaveDeployConfig)
+        self.sol_wrap.StoreTxResult(self._contract_dict, self.pathfinder.SaveDeployConfig)
 
     def deploy(self,
                classname: str,
@@ -238,7 +238,7 @@ class CoreDeploy(CoreBase):
                fee: int = 0,
                percent: int = 0) -> str:
 
-        if self.sol_cont is None:
+        if self.sol_wrap is None:
             print("⚠️ The wrapper solc is not init.")
 
         """This is using the faster way to deploy files by using the specific abi and bin files"""
@@ -400,7 +400,7 @@ class CoreDeploy(CoreBase):
         """
         This is the depreciated class and please check the class from deploy
         """
-        self.sol_cont.WrapModel()
+        self.sol_wrap.WrapModel()
         _abi, _bytecode = sol_wrap.GetCode(path, classname)
         contractwork = self.tron.Chain.contract(abi=_abi, bytecode=_bytecode)
         contract = contractwork.constructor()
