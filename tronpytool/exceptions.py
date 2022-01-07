@@ -168,6 +168,12 @@ class DoubleSpending(TransactionError):
     pass
 
 
+class NoWalletError(NotFoundError):
+    """
+    Raised when a supplied value is invalid.
+    """
+    pass
+
 HTTP_EXCEPTIONS = {
     400: BadRequest,
     404: NotFoundError,

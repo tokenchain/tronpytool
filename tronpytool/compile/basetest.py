@@ -5,11 +5,12 @@ import json
 import os
 import subprocess
 import time
+from typing import Tuple
 
 from .compile import BuildRemoteLinuxCommand, BuildLang
 from .. import Tron, Evm
 from ..compile.paths import Paths
-from ..exceptions import ValidationError
+from ..exceptions import ValidationError, NoWalletError
 from ..trx import Trx
 
 ROOT = os.path.join(os.path.dirname(__file__))
@@ -461,6 +462,9 @@ class WrapContract(object):
         self._contract = None
         self._network = _network
 
+    def getNetwork(self) -> str:
+        return self._network
+
     def getClientTron(self) -> "Tron":
         return self.tron_client
 
@@ -487,6 +491,24 @@ class ContractTool(CoreDeploy):
         self.connect(root, False)
         print("-----> root for contract base")
         print(root)
+        self.wallet_collections = None
 
+    def auth(self, w_index: int) -> Tuple[str, str]:
+        if self.wallet_collections is None:
+            raise NoWalletError("there is no wallet found..")
 
+        return self.wallet_collections[w_index][0], self.wallet_collections[w_index][1]
 
+    def setWallets(self, wallet_dict: dict) -> "ContractTool":
+        self.wallet_collections = wallet_dict
+        return self
+
+    def SlaveClient(self, pub: str, private: str) -> Tron:
+        _wrapclient = WrapContract(self.tron.network_name).setMasterKey(pub, private)
+        return _wrapclient.getNewTronClient(pub, private)
+
+    def SwitchWalletInit(self, w_index: int) -> "ContractTool":
+        (a, c) = self.auth(w_index)
+        self.tron = self.SlaveClient(a, c)
+        print(f"You are now using {a}")
+        return self

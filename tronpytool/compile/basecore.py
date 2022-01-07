@@ -467,7 +467,7 @@ class ShieldedTRC20(object):
         self.shielded = address
         """The shielded TRC20 contract."""
         self._client = client
-        self._trx_module = client.trx
+        self._trx_module = client.Chain
         self._contract = contract
         # lazy properties
         self._trc20 = None
