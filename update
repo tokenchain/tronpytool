@@ -24,7 +24,7 @@ increment_version() {
     exit
   fi
 }
-clean_repo() {
+clean_publish_pypi() {
   VERSION=$(cat version)
   increment_version $VERSION >version
   VERSION=$(cat version)
@@ -77,5 +77,5 @@ swap_src(){
 
 
 swap_src
-#clean_repo
+clean_publish_pypi
 git_update
