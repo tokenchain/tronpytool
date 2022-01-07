@@ -657,8 +657,6 @@ def tron_patch(_registry: ABIRegistry):
           eth_abi.decoding.UnsignedIntegerDecoder,
           label='trc20',
       )
-
-
       """
 
     registry.unregister('address')
@@ -678,14 +676,12 @@ def tron_patch(_registry: ABIRegistry):
         decoding.BytesDecoder,
         label='bytes<M>',
     )
-
     _registry.register(
         BaseEquals('bytes', with_sub=False),
         ByteStringEncoder,
         decoding.ByteStringDecoder,
         label='bytes',
     )
-
     _registry.register(
         BaseEquals('string'),
         TextStringEncoder,

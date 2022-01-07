@@ -510,13 +510,10 @@ class TransactionBuilder(object):
         # We write all the results in one object
         transaction = dict(**kwargs)
         if len(parameters) > 0:
+            abi_header_json = transaction["abi"][0]
 
-            constructorabi = transaction["abi"][0]["type"]
-            # print(constructorabi)
-
-            if constructorabi == "constructor":
-                parameters = self._parameter_encoder(transaction["abi"][0], parameters)
-                # print(parameters)
+            if abi_header_json["type"] == "constructor":
+                parameters = self._parameter_encoder(abi_header_json, parameters)
 
             transaction.setdefault('owner_address', self.tron.address.to_hex(owner_address))
             if len(parameters) > 0:
@@ -623,8 +620,19 @@ class TransactionBuilder(object):
                 if "type" not in abi_pair or not is_string(abi_pair["type"]):
                     raise ValueError("Invalid parameter type provided: " + abi_pair["type"])
                 value = vlList[c]
+
                 if abi_pair["type"] == "address":
                     value = self.tron.address.to_hex_check_sum(value)
+
+                if abi_pair["type"] == "address[]":
+                    value = []
+
+                    for address_val in vlList[c]:
+                        value_item = self.tron.address.to_hex_check_sum(address_val)
+                        value.append(value_item)
+
+                    # print(f"this is the array of address in here. {vlList[c]}")
+                    # value = self.tron.address.to_hex_check_sum(value)
 
                 types.append(abi_pair["type"])
                 values.append(value)
@@ -639,7 +647,7 @@ class TransactionBuilder(object):
 
             try:
                 encoded_parameter = encode_hex(encode_abi(types, values)).replace('0x', '', 2)
-                print("🉐 === deployment constructor bytecode")
+                print("🉐 === deployment constructor bytecode, save this part of the code for verifications.")
                 print(encoded_parameter)
 
             except ValueError as s:
