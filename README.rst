@@ -87,6 +87,3 @@ Documentation is available at `docs <https://tronpytool-for-python.readthedocs.i
 
 Donations
 =============
-
-TRON: TWnb6wdmr4v7nKjEyCZvvCk4WqMDYRDVPf
-

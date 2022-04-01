@@ -64,8 +64,7 @@ git_update() {
   git push github
 }
 
-
-swap_src(){
+swap_src() {
   local DEV_SRC=$HOME/Documents/b95/devtron/tronpytool
   local DEPLOY_SRC=$HOME/Documents/piplines/tron-tool-py/tronpytool
   if [[ -d "$DEV_SRC" ]]; then
@@ -75,7 +74,6 @@ swap_src(){
   fi
 }
 
-
-swap_src
-clean_publish_pypi
+#swap_src
+#clean_publish_pypi
 git_update
