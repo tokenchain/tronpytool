@@ -45,6 +45,7 @@ It is a all-in-one package with zero setup and configurations that works for mul
 - golang module compile support
 - python module compile support
 - typescript module compile support
+- tron payment usdt support with simple operation
 
 ### Examples:
 
