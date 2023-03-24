@@ -32,19 +32,15 @@ clean_publish_pypi() {
   sudo rm -rf dist
   rm -rf html
   rm -rf doc
-  python3 -m pdoc --html tronpytool
+  # python3.9 -m pdoc ./tronpytool
   mv html/tronpytool docs/tronpytool
   rm html
 
-  python3 -m pip install --user --upgrade setuptools wheel
+  python3.9 -m pip install --user --upgrade setuptools wheel
   # python3 -m pip install --upgrade setuptools wheel
 
-  sudo python3 setup.py clean sdist bdist_wheel
-
-  # python3 -m pip install --user --upgrade twine
-  # python3 -m twine upload --repository testpypi dist/*
-
-  python3 -m twine upload dist/* --verbose
+  sudo python3.9 setup.py clean sdist bdist_wheel
+  python3.9 -m twine upload dist/* --verbose
 
   echo "please update the package by using this command"
   echo "pip3 install tronpytool==$VERSION"
@@ -74,6 +70,6 @@ swap_src() {
   fi
 }
 
-swap_src
-clean_publish_pypi
+#swap_src
+#clean_publish_pypi
 git_update
