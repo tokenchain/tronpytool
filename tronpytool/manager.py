@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # --------------------------------------------------------------------
-# Copyright (c) iEXBase. All rights reserved.
+# Copyright (c) fInvention.c. All rights reserved.
 # Licensed under the MIT License.
 # See License.txt in the project root for license information.
 # --------------------------------------------------------------------
@@ -12,7 +12,7 @@
     This class is designed to configure and
     define nodes for different types.
 
-    :copyright: © 2019 by the iEXBase.
+    :copyright: © 2019 by the fInvention.c.
     :license: MIT License
 """
 from trx_utils import is_string

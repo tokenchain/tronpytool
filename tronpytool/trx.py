@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # --------------------------------------------------------------------
-# Copyright (c) iEXBase. All rights reserved.
+# Copyright (c) fInvention.c. All rights reserved.
 # Licensed under the MIT License.
 # See License.txt in the project root for license information.
 # --------------------------------------------------------------------
@@ -12,7 +12,7 @@
 
     Work with basic methods
 
-    :copyright: © 2018 by the iEXBase.
+    :copyright: © 2018 by the fInvention.c.
     :license: MIT License
 """
 
@@ -155,7 +155,9 @@ class Trx(Module):
                     timeout,
                 )
             )
-
+    """
+    This is the part that only allow to use for TRX transfer and contract related transfer will not work on notes
+    """
     def get_transaction_note_confirmation(self, transaction_id: str) -> any:
         _note = None
         _data = None

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # --------------------------------------------------------------------
-# Copyright (c) iEXBase. All rights reserved.
+# Copyright (c) fInvention.c. All rights reserved.
 # Licensed under the MIT License.
 # See License.txt in the project root for license information.
 # --------------------------------------------------------------------
@@ -13,7 +13,7 @@
 
     Class for configuring http providers
 
-    :copyright: © 2018 by the iEXBase.
+    :copyright: © 2018 by the fInvention.c.
     :license: MIT License
 """
 import logging

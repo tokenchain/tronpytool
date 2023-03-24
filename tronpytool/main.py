@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # --------------------------------------------------------------------
-# Copyright (c) iEXBase. All rights reserved.
+# Copyright (c) fInvention.c. All rights reserved.
 # Licensed under the MIT License.
 # See License.txt in the project root for license information.
 # --------------------------------------------------------------------
@@ -12,7 +12,7 @@
 
     Connect to the Tron network.
 
-    :copyright: © 2019 by the iEXBase.
+    :copyright: © 2019 by the fInvention.c.
     :license: MIT License
 """
 
