@@ -91,7 +91,7 @@ import os
 
 ```
 
-#### Code compile
+#### Code Compile
 Integration of forge that can work perfectly with latest version with ONE LINE code. In order to use this feature, the required package will need to be installed to the system. Otherwise the error message will show.
 
 - factoryabi (source transpiler for ts and python)
@@ -125,18 +125,41 @@ TronBrew(ROOT, FACTORY).setClassSolNames(solidity_files).setEvm(Evm.ISTANBUL).us
 ```
 
 
+### Deployment of Contract
 
+Showing some example for the deployment of the source code
+
+##### Examples:
+
+```
+
+
+def getTronReady() -> ContractTool:
+    # ========================== Of course
+    wallet_address = "..."
+    private_key = "..."
+    # ============== wrapping the contract
+    logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+    logger = logging.getLogger()
+    tron_x = ContractTool(ROOT, "mainnet", wallet_address, private_key)
+    return tron_x
+
+
+if __name__ == "__main__":
+    c = getTronReady()
+    c.deploy("ClassNameFile", [])
+
+```
 
 Documentation is ready [here](https://htmlpreview.github.io/?https://github.com/tokenchain/tronpytool/blob/master/docs/tronpytool/index.html)
 
 Also there is a brother library for those who works with [EVM](https://github.com/tokenchain/moodyeth) network.
 
-# 📦 Showcase your project with this SDK
+## 📦 Showcase your project with this SDK
 PR your link or your github repo here.
 
 
 
 
-### Donations
-
+## Donations are welcome
 Welcome for donation for the good works!
