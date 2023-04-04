@@ -634,6 +634,10 @@ class ContractTool(CoreDeploy):
         print(root)
         self.wallet_collections = None
 
+    def withForge(self) -> "ContractTool":
+        self.is_forge = True
+        return self
+
     def auth(self, w_index: int) -> Tuple[str, str]:
         if self.wallet_collections is None:
             raise NoWalletError("there is no wallet found..")
