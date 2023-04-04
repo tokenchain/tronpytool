@@ -73,6 +73,6 @@ swap_src() {
   fi
 }
 
-# swap_src
-# clean_publish_pypi
+swap_src
+clean_publish_pypi
 git_update

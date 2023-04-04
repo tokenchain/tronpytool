@@ -111,14 +111,14 @@ cp -R {FACTORY} {BUILDPATH}/factoryabi 2>/dev/null
 
 """
 
-SUB_FOOTER="""
+SUB_FOOTER = """
 
 rm buildforgebin
 rm localpile
 rm -rf factoryabi
 
 """
-FORGE_BUILD="""#!/bin/bash
+FORGE_BUILD = """#!/bin/bash
 
 if ! command -v forge &>/dev/null; then
     echo "forge in command is not install. Please visit: https://github.com/foundry-rs/foundry"

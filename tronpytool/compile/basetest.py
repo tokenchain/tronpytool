@@ -134,8 +134,21 @@ class SolcWrap(object):
         return self
 
     def GetCodeClass(self, classname: str) -> [any, any]:
+        """
+        class name is now on
+        """
         p1bin = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, f"{classname}.bin")
         p2abi = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, f"{classname}.abi")
+        bin = codecs.open(p1bin, 'r', 'utf-8-sig').read()
+        abi = json.load(codecs.open(p2abi, 'r', 'utf-8-sig'))
+        return abi, bin
+
+    def GetForgeCodeBin(self, classname: str) -> [any, any]:
+        """
+        class name is now on
+        """
+        p1bin = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, f"{classname}.sol", f"{classname}.bin")
+        p2abi = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, f"{classname}.sol", f"{classname}.abi")
         bin = codecs.open(p1bin, 'r', 'utf-8-sig').read()
         abi = json.load(codecs.open(p2abi, 'r', 'utf-8-sig'))
         return abi, bin
@@ -291,24 +304,23 @@ class CoreDeploy(CoreBase):
             pass
 
     def connect_deploy_core(self, workspace: str, rebuild=False, deploy=False) -> None:
+        self.sol_wrap = SolcWrap(workspace)
         if rebuild:
-            self.sol_wrap = SolcWrap(workspace).BuildRemote()
-        else:
-            self.sol_wrap = SolcWrap(workspace)
+            self.sol_wrap.BuildRemote()
         self.pathfinder = Paths(workspace).setDefaultPath().Network(self.tron.network_name)
         self.is_deploy = deploy
-
         if not deploy:
             self.ready_io(True)
 
     def connect(self, workspace: str, history: any) -> None:
         self.is_deploy = False
         self.sol_wrap = SolcWrap(workspace)
+        self.pathfinder = Paths(workspace)
         if history is False:
-            self.pathfinder = Paths(workspace).setDefaultPath().Network(self.tron.network_name)
+            self.pathfinder.setDefaultPath()
         else:
-            self.pathfinder = Paths(workspace).SetUseVersion(history).Network(self.tron.network_name)
-
+            self.pathfinder.SetUseVersion(history)
+        self.pathfinder.Network(self.tron.network_name)
         self.ready_io(True)
 
     def SetupContract(self):
@@ -366,11 +378,14 @@ class CoreDeploy(CoreBase):
             print("⚠️ The wrapper solc is not init.")
 
         """This is using the faster way to deploy files by using the specific abi and bin files"""
-        _abi, _bytecode = self.sol_wrap.GetCodeClass(classname)
+
+        if self.is_forge:
+            _abi, _bytecode = self.sol_wrap.GetForgeCodeBin(classname)
+        else:
+            _abi, _bytecode = self.sol_wrap.GetCodeClass(classname)
+
         contractwork = self.tron.Chain.contract(abi=_abi, bytecode=_bytecode)
         contract = contractwork.constructor()
-
-        # contract = contractwork.constructor()
         default_gas = self.gas
         userSrcPercent = self.userSrcPercent
         h1 = default_gas if fee == 0 else fee
