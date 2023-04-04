@@ -7,13 +7,27 @@ import subprocess
 import time
 from typing import Tuple
 
-from .compile import BuildRemoteLinuxCommand, BuildLang
-from .. import Tron, Evm
+from .compile import BuildRemoteLinuxCommand, BuildLang, BuildForgeLinuxBuildCommand, BuildLangForge
+from .. import Tron, Evm, Bolors
 from ..compile.paths import Paths
 from ..exceptions import ValidationError, NoWalletError
 from ..trx import Trx
 
 ROOT = os.path.join(os.path.dirname(__file__))
+
+statement = 'End : {}, IO File {}'
+
+
+def writeFile(content, filename):
+    fo = open(filename, "w")
+    fo.write(content)
+    fo.close()
+    print(statement.format(time.ctime(), filename))
+
+
+def message_exit(msg: str, code: int):
+    print(f"{Bolors.FAIL}{msg}{Bolors.RESET}")
+    exit(code)
 
 
 class SolcWrap(object):
@@ -23,30 +37,93 @@ class SolcWrap(object):
     solfolder = ""
     file_name = "xxx.sol"
     prefixname = ""
-    statement = 'End : {}, IO File {}'
 
     def __init__(self, workspace):
         """param workspace: this is the local path for the file set"""
         self.WORKSPACE_PATH = workspace
         super(SolcWrap, self).__init__()
 
-    def SetOutput(self, path):
+    def SplitForgeBuild(self, class_name: str) -> "SolcWrap":
+
+        uncutjson = dict()
+        combinedjson = os.path.join(
+            self.WORKSPACE_PATH,
+            self.OUTPUT_BUILD,
+            f"{class_name}.sol",
+            f"{class_name}.json")
+        try:
+            uncutjson = json.load(codecs.open(combinedjson, 'r', 'utf-8-sig'))
+        except FileNotFoundError:
+            message_exit(f"The build json file in forge are not found for class {class_name}", 3)
+
+        abifile = os.path.join(
+            self.WORKSPACE_PATH,
+            self.OUTPUT_BUILD,
+            f"{class_name}.sol",
+            f"{class_name}.abi"
+
+        )
+        binfile = os.path.join(
+            self.WORKSPACE_PATH,
+            self.OUTPUT_BUILD,
+            f"{class_name}.sol",
+            f"{class_name}.bin"
+        )
+
+        if "abi" in uncutjson:
+            predum = uncutjson["abi"]
+            writeFile(json.dumps(predum, ensure_ascii=False), abifile)
+
+        if "bytecode" in uncutjson:
+            pr = uncutjson["bytecode"]
+            if "object" in pr:
+                pr2 = pr["object"]
+                pr2 = pr2.replace("0x", "")
+                writeFile(pr2, binfile)
+            if "linkReferences" in pr:
+                links = pr["linkReferences"]
+                for a in links:
+                    print("found link")
+
+        return self
+
+    def SetOutput(self, path: str) -> "SolcWrap":
         self.OUTPUTBUILD = path
         return self
 
-    def SetSolPath(self, path):
+    def SetSolPath(self, path) -> "SolcWrap":
         self.solfolder = path
         return self
 
-    def BuildRemote(self):
+    def _justrun(self, cmd_name: str):
+        exec_path = f"{self.WORKSPACE_PATH}/{cmd_name}"
+        if os.path.isfile(exec_path):
+            subprocess.run(["cd", self.WORKSPACE_PATH])
+            list_files = subprocess.run(["sh", cmd_name])
+            print("The exit code was: %d" % list_files.returncode)
+
+    def RunTranspile(self) -> "SolcWrap":
+        """This is the remote command to execute the localpile bash file
+        using remote compile method to compile the sol files
+        all works will be done with the remote server or using the docker"""
+        self._justrun("localpile")
+        return self
+
+    def ForgeGen(self) -> "SolcWrap":
+        """This is the remote command to execute the buildforgebin bash file
+        using remote compile method to compile the sol files
+        all works will be done with the remote server or using the docker"""
+        self._justrun("buildforgebin")
+        return self
+
+    def BuildRemote(self) -> "SolcWrap":
         """This is the remote command to execute the solc_remote bash file
         using remote compile method to compile the sol files
         all works will be done with the remote server or using the docker"""
-        list_files = subprocess.run(["{}/solc_remote".format(self.WORKSPACE_PATH)])
-        print("The exit code was: %d" % list_files.returncode)
+        self._justrun("solc_remote")
         return self
 
-    def WrapModel(self):
+    def WrapModel(self) -> "SolcWrap":
         """setup initialize the file for combined.json"""
         pathc = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, "combined.json")
         try:
@@ -56,29 +133,29 @@ class SolcWrap(object):
             print("Problems from loading items from the file: ", e)
         return self
 
-    def GetCodeClass(self, classname) -> [any, any]:
-        p1bin = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, "{}.bin".format(classname))
-        p2abi = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, "{}.abi".format(classname))
+    def GetCodeClass(self, classname: str) -> [any, any]:
+        p1bin = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, f"{classname}.bin")
+        p2abi = os.path.join(self.WORKSPACE_PATH, self.OUTPUT_BUILD, f"{classname}.abi")
         bin = codecs.open(p1bin, 'r', 'utf-8-sig').read()
         abi = json.load(codecs.open(p2abi, 'r', 'utf-8-sig'))
         return abi, bin
 
-    def byClassName(self, path, classname):
+    def byClassName(self, path: str, classname: str):
         return "{prefix}:{name}".format(prefix=path, name=classname)
 
-    def GetCodeTag(self, fullname):
+    def GetCodeTag(self, fullname: str):
         return self.combined_data["contracts"][fullname]["abi"], self.combined_data["contracts"][fullname]["bin"]
 
-    def GetCode(self, path, classname) -> [str, str]:
+    def GetCode(self, path: str, classname: str) -> [str, str]:
         abi = self.combined_data["contracts"][self.byClassName(path, classname)]["abi"]
         bin = self.combined_data["contracts"][self.byClassName(path, classname)]["bin"]
         return abi, bin
 
-    def writeFile(self, content, filename):
+    def writeFile(self, content: str, filename: str):
         fo = open(filename, "w")
         fo.write(content)
         fo.close()
-        print(self.statement.format(time.ctime(), filename))
+        print(statement.format(time.ctime(), filename))
 
     @property
     def workspace(self):
@@ -100,6 +177,7 @@ class CoreBase:
     sol_wrap: SolcWrap = None
     pathfinder: Paths = None
     is_debug: bool = False
+    is_forge: bool = False
     EVM_VERSION = Evm.BERLIN
 
 
@@ -182,16 +260,35 @@ class CoreDeploy(CoreBase):
         return self.is_deploy
 
     def ready_io(self, show_address: bool = False):
+
         """try to load up the file from the existing path"""
+
+        path = os.path.join(self.pathfinder.BUILDPATH, "deploy_results")
+        jsonpath = self.pathfinder.GetDeploymentJson()
+        mode = 0o777
         try:
+            if not os.path.isfile(jsonpath):
+                print(f"- {path}")
+                if not os.path.isdir(path):
+                    os.mkdir(path, mode)
+
+                print(f"-- write in path {jsonpath}")
+                writeFile("{}", jsonpath)
+                print("===> New deployment file is created")
+
             self._contract_dict = self.pathfinder.LoadDeploymentFile()
             print("==== 🛄 data is prepared and it is ready now.. ")
             if show_address:
                 self.preview_all_addresses()
+
+        except FileNotFoundError as e:
+            self.is_deploy = False
+
+        except FileExistsError as b:
+            os.mkdir(path, mode)
+
         except ValueError:
             pass
-        except TypeError as e:
-            print(e)
 
     def connect_deploy_core(self, workspace: str, rebuild=False, deploy=False) -> None:
         if rebuild:
@@ -245,7 +342,7 @@ class CoreDeploy(CoreBase):
         txID = tx["txID"]
         contract_address = self.tron.address.from_hex(contract_address_hex)
         self._contract_dict[class_name] = contract_address
-        self._contract_dict["kv_{}".format(class_name)] = dict(
+        self._contract_dict[f"kv_{class_name}"] = dict(
             owner=self.tron.default_address.base58,
         )
         print(txID)
@@ -331,7 +428,27 @@ class CoreDeploy(CoreBase):
 
     def localTranspile(self, dapp_folder: str = "app") -> "CoreDeploy":
         self.pathfinder.updateTargetDappFolder(dapp_folder)
-        BuildLang(self.pathfinder, self._sol_list)
+        if self.is_forge:
+            BuildLangForge(self.pathfinder, self._sol_list)
+        else:
+            BuildLang(self.pathfinder, self._sol_list)
+
+        self.sol_wrap.RunTranspile()
+        return self
+
+    def useForge(self) -> "CoreDeploy":
+        self.is_forge = True
+        BuildForgeLinuxBuildCommand(self.pathfinder)
+        self.sol_wrap.ForgeGen()
+
+        # ==================================================
+        if self._sol_list is not None:
+            for v in self._sol_list:
+                based_name = os.path.basename(v)
+                class_name = based_name.replace(".sol", "")
+                # class_name_process = filter_file_name(based_name).replace('.sol', '')
+                self.sol_wrap.SplitForgeBuild(class_name)
+
         return self
 
     def setKV(self, key: str, value: any) -> "CoreDeploy":
@@ -456,8 +573,9 @@ class WrapContract(object):
         if nn1.is_connected():
             self.tron_client = nn1
         else:
-            print("client v1 is not connected. please check the internet connection or the service is down! network: {}".format(
-                _network))
+            print(
+                "client v1 is not connected. please check the internet connection or the service is down! network: {}".format(
+                    _network))
         self._tron_module = nn1.Chain
         self._contract = None
         self._network = _network
@@ -476,6 +594,14 @@ class WrapContract(object):
         client.private_key = pri_key
         client.default_address = wallet_address
         return client
+
+    def setDefaultKeys(self) -> "WrapContract":
+        print("USING DEFAULT KEYS")
+        default_key = 'TU6JdEDQGPus64LTMksvnxF2cv4FQrXPCa'
+        default_prk = 'b1ba1db577a36421924a87026cda27523851c6e88123d0a0a1def9a974376176'
+        self.tron_client.private_key = default_prk
+        self.tron_client.default_address = default_key
+        return self
 
     def setMasterKey(self, pub: str, pri: str) -> "WrapContract":
         self.tron_client.private_key = pri

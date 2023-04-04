@@ -15,6 +15,8 @@
     :copyright: © 2019 by the fInvention.c.
     :license: MIT License
 """
+import os
+
 from trx_utils import is_string
 
 from .constants import DEFAULT_NODES
@@ -134,3 +136,4 @@ class TronManager(object):
         for key, value in self.providers.items():
             is_node.update({key: value.is_connected()})
         return is_node
+

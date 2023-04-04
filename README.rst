@@ -74,6 +74,37 @@ Smart Contract
 
 
 
+
+
+Code compile
+------------
+
+Integration of forge that can work perfectly with latest version with ONE LINE code.
+
+.. code-block:: python
+
+    # !/usr/bin/env python
+    # coding: utf-8
+    import os
+
+    from tronpytool import TronBrew, Evm
+
+    solidity_files = [
+        "vault/token/RaceToken.sol",
+    ]
+
+    ROOT = '.../Documents/b95/devtron'
+    FACTORY = '$HOME/Documents/piplines/factoryabi'
+
+    print("-----> job from here")
+    print(ROOT)
+    print("-----> now its ready to go")
+
+    TronBrew(ROOT, FACTORY).setClassSolNames(solidity_files).setEvm(Evm.ISTANBUL).useForge().localTranspile()
+
+
+
+
 Documentation
 =============
 Read the library manual by the `manual <docs/tronpytool/index.html>`__

@@ -30,7 +30,13 @@ class Paths:
     COMPRESSED_NAME = "solc-build.tar.gz"
     SOLC_VER = "0.5.15"
     SOLCPATH = "/root/contracts/vault"
+    # ---- local paths
+    # the workspace path
     BUILDPATH = ""
+    # the source code including all the transpile factory codes
+    FACTORY_PATH = ""
+    SOURCE_PATH = "vault"
+    FORGE_BUILD = "build"
     WEB_DAPP_SRC = "app"
     EVM_VERSION = Evm.ISTANBUL
 
@@ -63,7 +69,11 @@ class Paths:
     def setSolVersion(self, version: str) -> "Paths":
         self.SOLC_VER = version
         return self
-    
+
+    def setFactory(self, fac: str) -> "Paths":
+        self.FACTORY_PATH = fac
+        return self
+
     def setEvm(self, ver: str) -> "Paths":
         self.EVM_VERSION = ver
         return self
@@ -84,7 +94,8 @@ class Paths:
 
     @property
     def __deploymentPath(self) -> str:
-        return os.path.join(self.___current_deployment_path, self.DEPLOYMENT_FILE_NAME.format(self.___network_name, self.subFix))
+        return os.path.join(self.___current_deployment_path,
+                            self.DEPLOYMENT_FILE_NAME.format(self.___network_name, self.subFix))
 
     @property
     def SaveDeployConfig(self) -> str:
@@ -94,11 +105,13 @@ class Paths:
     def SavePlayersList(self) -> str:
         return self.__playerAddrsFilePath
 
-    """
-    :type Config the network name
-    """
+    def GetDeploymentJson(self) -> str:
+        return self.__deploymentPath
 
     def Network(self, name) -> "Paths":
+        """
+        :type Config the network name
+        """
         self.___network_name = name
         return self
 

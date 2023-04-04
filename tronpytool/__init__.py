@@ -14,6 +14,7 @@ from .constants import Evm, Bolors
 from .compile.paths import Paths
 from .compile.service import Service, BackgroundRun
 from .main import Tron  # noqa: E402
+from .tronbrew import TronBrew
 from .pen.collectfundscn import Collector
 from .pen.contracttest import CoreSimulatePlayers
 from .pen.eventtest import EventTestCase
@@ -41,5 +42,6 @@ __all__ = [
     'BackgroundRun',
     'Paths',
     'Evm',
-    'Bolors'
+    'Bolors',
+    'TronBrew'
 ]

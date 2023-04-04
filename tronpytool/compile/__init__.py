@@ -33,6 +33,7 @@ TRANS_LOCAL = """#!/bin/bash
 
 {LISTP}
 
+{FOOTER}
 """
 ITEM = """
 echo "🍯 Compiling from {COMPILE_COIN} 🧀"
@@ -80,14 +81,12 @@ echo "==> compile abi to typescript 🚸✅"
 """
 ITEM_TRANSPILE_GO = """
 echo "==> 🚸 compile abi to golang"
-local SOL=$1
-local CLASSNAME=$2
-local GO_CONTRACT_SRC_PATH=$3
-if [[ ! -f $GO_CONTRACT_SRC_PATH/$CLASSNAME ]]; then
-    mkdir -p "$GO_CONTRACT_SRC_PATH/$CLASSNAME"
+
+if [[ ! -f {outputfolder} ]]; then
+    mkdir -p {outputfolder}
 fi
 
-abigen --abi "$BUILDPATH/build/$CLASSNAME.abi" --pkg $CLASSNAME --out "$GO_CONTRACT_SRC_PATH/$CLASSNAME/init.go"
+abigen --abi "{target_abi}" --pkg {classname} --out "{outputfolder}/init.go"
 
 echo "==> compile abi to golang 🚸✅"
 """
@@ -96,7 +95,37 @@ PRE_HEAD = """
 
 if ! command -v abi-gen-uni &>/dev/null; then
     echo "abi-gen-uni could not be found"
-    cnpm i -g easy-abi-gen
+    cnpm i -g easy-abi-gen;
+    exit;   
 fi
+
+if ! command -v abigen &>/dev/null; then
+    echo "abigen could not be found or implemented. Please install golang abigen";
+    exit;
+fi
+
+
+
+cp -R {FACTORY} {BUILDPATH}/factoryabi 2>/dev/null
+
+
+"""
+
+SUB_FOOTER="""
+
+rm buildforgebin
+rm localpile
+rm -rf factoryabi
+
+"""
+FORGE_BUILD="""#!/bin/bash
+
+if ! command -v forge &>/dev/null; then
+    echo "forge in command is not install. Please visit: https://github.com/foundry-rs/foundry"
+    curl -L https://foundry.paradigm.xyz | bash
+    exit;
+fi
+echo "generating compiled files into {BUILD} from {SRC} on forge runs"
+forge build --contracts {SRC} --out {BUILD} --optimizer-runs {RUNS} --force
 
 """

@@ -52,14 +52,17 @@ clean_publish_pypi() {
   # sudo pip3 install --proxy 127.0.0.1:1087 tronpytool==$VERSION
 }
 git_update() {
+  local gitcheck=$(git diff --shortstat)
   git add .
-  # git remote add origin https://gitee.com/jjhoc/tronpytool.git
-  git commit -m "package updates related items. please check in commit details"
-  #git remote add origin https://gitee.com/jjhoc/b-explorer-settings.git
+  echo "Please enter your commit message:"
+  # shellcheck disable=SC2162
+  read name
+  git commit -m "♻️ $name $gitcheck"
   git push origin
   git push github
-}
 
+  echo "♻️ You can open ${GIT_LOC} or git clone ${GIT_LOC}.git to copy to the local"
+}
 swap_src() {
   local DEV_SRC=$HOME/Documents/b95/devtron/tronpytool
   local DEPLOY_SRC=$HOME/Documents/piplines/tron-tool-py/tronpytool
@@ -70,6 +73,6 @@ swap_src() {
   fi
 }
 
-#swap_src
-#clean_publish_pypi
+# swap_src
+# clean_publish_pypi
 git_update

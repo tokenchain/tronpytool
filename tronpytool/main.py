@@ -9,9 +9,7 @@
 """
     tronpytool.main
     ===============
-
     Connect to the Tron network.
-
     :copyright: © 2019 by the fInvention.c.
     :license: MIT License
 """

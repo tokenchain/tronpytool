@@ -91,6 +91,34 @@ import os
 
 ```
 
+#### Code compile
+Integration of forge that can work perfectly with latest version with ONE LINE code.
+```
+
+# !/usr/bin/env python
+# coding: utf-8
+import os
+
+from tronpytool import TronBrew, Evm
+
+solidity_files = [
+    "vault/token/RaceToken.sol",
+]
+
+ROOT = '.../Documents/b95/devtron'
+FACTORY = '$HOME/Documents/piplines/factoryabi'
+
+print("-----> job from here")
+print(ROOT)
+print("-----> now its ready to go")
+
+TronBrew(ROOT, FACTORY).setClassSolNames(solidity_files).setEvm(Evm.ISTANBUL).useForge().localTranspile()
+
+```
+
+
+
+
 Documentation is ready [here](https://htmlpreview.github.io/?https://github.com/tokenchain/tronpytool/blob/master/docs/tronpytool/index.html)
 
 Also there is a brother library for those who works with [EVM](https://github.com/tokenchain/moodyeth) network.

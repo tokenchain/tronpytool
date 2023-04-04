@@ -23,7 +23,7 @@ class Key:
 
 
 def PrintNetworkName(tron):
-    print(f"You are not using network {Bolors.WARNING}{str(tron.network_name).upper()}{Bolors.RESET}")
+    print(f"You are now using network {Bolors.WARNING}{str(tron.network_name).upper()}{Bolors.RESET}")
 
 
 class Payment(CoreDeploy):

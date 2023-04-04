@@ -1,40 +1,5 @@
-import os
-import re
-
-from tronpytool import Paths
-from . import REC, ITEM, ITEMLINK, ITEM_CP_LOCAL, TRANS_LOCAL, ITEM_TRANSPILE_PYTHON, ITEM_TRANSPILE_TS, PRE_HEAD
-
-
-def compileItem1(tar: Paths, k0: str) -> str:
-    """
-    list the item content
-    :param tar:
-    :param k0:
-    :return:
-    """
-    return ITEM.format(
-        SOLCPATH=tar.SOLCPATH,
-        COMPILE_COIN=k0,
-        SOLVER=tar.SOLC_VER,
-        EVMVERSION=tar.EVM_VERSION
-    )
-
-
-def compileItem2(tar: Paths, k0: str, link_lib_conf: str) -> str:
-    """
-
-    :param tar:
-    :param k0:
-    :param link:
-    :return:
-    """
-
-    return ITEMLINK.format(
-        SOLCPATH=tar.SOLCPATH,
-        COMPILE_COIN=k0,
-        FILES_CONFIG=link_lib_conf,
-        SOLVER=tar.SOLC_VER,
-    )
+from . import SUB_FOOTER
+from .commoncompile import *
 
 
 def BuildRemoteLinuxCommand(p: Paths, list_files: list = None, linked: dict = None) -> None:
@@ -80,82 +45,6 @@ def BuildRemoteLinuxCommand(p: Paths, list_files: list = None, linked: dict = No
     # ==================================================
 
 
-REG = r"(.+?)([A-Z])"
-
-
-def snake(match):
-    return match.group(1).lower() + "_" + match.group(2).lower()
-
-
-def filter_file_name(y: str) -> str:
-    classNameNew = y
-    if y.startswith("TRC"):
-        classNameNew = y.lower()
-    elif y.startswith("ERC20"):
-        classNameNew = y.upper()
-    else:
-        classNameNew = re.sub(REG, snake, y, 0)
-    print(classNameNew)
-    return classNameNew
-
-
-def buildCmdTsUpdate(p: Paths, pathName: str) -> str:
-    nameClass = filter_file_name(os.path.basename(pathName)).replace('.sol', '')
-    fromp = "{}/codec/gen_ts/{}.ts".format(p.BUILDPATH, nameClass)
-    top = "{}/{}/src/api/abi/{}.ts".format(p.BUILDPATH, p.WEB_DAPP_SRC, nameClass)
-    return ITEM_CP_LOCAL.format(
-        fromlocation=fromp,
-        tolocation=top
-    )
-
-
-def buildCmdPy(p: Paths, pathName: str) -> str:
-    return ITEM_TRANSPILE_PYTHON.format(
-        outputfolder=f"{p.BUILDPATH}/codec/gen_py",
-        target_abi=f"{p.BUILDPATH}/build/{os.path.basename(pathName).replace('.sol', '')}.abi",
-        BUILDPATH=p.BUILDPATH
-    )
-
-
-def buildCmdTs(p: Paths, pathName: str) -> str:
-    return ITEM_TRANSPILE_TS.format(
-        outputfolder=f"{p.BUILDPATH}/codec/gen_ts",
-        target_abi=f"{p.BUILDPATH}/build/{os.path.basename(pathName).replace('.sol', '')}.abi",
-        BUILDPATH=p.BUILDPATH
-    )
-
-
-def wrapContentTranspile(tar: Paths, compile_list: list) -> str:
-    """
-    wrap content
-    :param tar:
-    :param compile_list:
-    :return:
-    """
-    return TRANS_LOCAL.format(
-        LISTP="\n".join(compile_list),
-        TARGET_LOC=tar.TARGET_LOC,
-        COMPRESSED_NAME=tar.COMPRESSED_NAME,
-        SOLVER=tar.SOLC_VER,
-        PRE_HEAD=PRE_HEAD
-    )
-
-
-def wrapContentCompile(tar: Paths, compile_list: list) -> str:
-    """
-    wrap content
-    :param tar:
-    :param compile_list:
-    :return:
-    """
-    return REC.format(
-        LISTP="\n".join(compile_list),
-        TARGET_LOC=tar.TARGET_LOC,
-        COMPRESSED_NAME=tar.COMPRESSED_NAME,
-        SOLVER=tar.SOLC_VER
-    )
-
-
 def BuildLang(p: Paths, list_class_names: list) -> None:
     """
 
@@ -172,4 +61,34 @@ def BuildLang(p: Paths, list_class_names: list) -> None:
     # ==================================================
     with open(p.workspaceFilename("localpile"), 'w') as f:
         f.write(wrapContentTranspile(p, k))
+        f.close()
+
+
+def BuildLangForge(p: Paths, list_class_names: list) -> None:
+    """
+
+    :param p: path in string
+    :param list_class_names: the class name
+    :return:
+    """
+    k = list()
+    # ==================================================
+    for v in list_class_names:
+        k.append(buildCmdPy2(p, v))
+        k.append(buildCmdTs2(p, v))
+        k.append(buildCmdGo2(p, v))
+        if p.WEB_DAPP_SRC is not None:
+            if os.path.isdir(p.WEB_DAPP_SRC):
+                k.append(moveTsFiles(p, v))
+            else:
+                print(f"app path for implementation {p.WEB_DAPP_SRC} is not exist. file move is stopped.")
+    # ==================================================
+    with open(p.workspaceFilename("localpile"), 'w') as f:
+        f.write(wrapContentTranspile(p, k))
+        f.close()
+
+
+def BuildForgeLinuxBuildCommand(p: Paths) -> None:
+    with open(p.workspaceFilename("buildforgebin"), 'w') as f:
+        f.write(wrapForgeCompile(p))
         f.close()
