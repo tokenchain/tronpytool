@@ -92,7 +92,15 @@ import os
 ```
 
 #### Code compile
-Integration of forge that can work perfectly with latest version with ONE LINE code.
+Integration of forge that can work perfectly with latest version with ONE LINE code. In order to use this feature, the required package will need to be installed to the system. Otherwise the error message will show.
+
+- factoryabi (source transpiler for ts and python)
+- forge (solidity compiler)
+- abigen (golang transpile generator)
+- abi-gen-uni (transpiler consumer)
+
+If you are all set, then you are ready to run the following code for example:
+
 ```
 
 # !/usr/bin/env python
